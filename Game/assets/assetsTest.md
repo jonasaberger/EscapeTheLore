@@ -1,0 +1,1 @@
+## All assets shouls be saved in this folder! ##
