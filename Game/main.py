@@ -1,7 +1,5 @@
-from logging import _Level
 import pygame
 import constants
-import csv # import for csv-file
 from character import Character # Import Character class
 
 pygame.init()
