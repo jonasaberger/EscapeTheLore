@@ -8,7 +8,6 @@ screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGH
 pygame.display.set_caption("Escape The Lore")
 
 
-
 # Creating Clock -> Frame Rate
 clock = pygame.time.Clock()
 

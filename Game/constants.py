@@ -8,6 +8,10 @@ SCREEN_HEIGHT = 600
 # Player
 SPEED = 5
 
+# backend
+ROWS = 150
+COLS = 150
+
 # Colours
 RED = (255,0,0)
 BACKGROUND = (40,25,25)
