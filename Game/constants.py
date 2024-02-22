@@ -9,7 +9,7 @@ BUTTON_SCALE = 1
 # Player
 SPEED = 5
 
-# backend
+# Backend
 ROWS = 150
 COLS = 150
 
