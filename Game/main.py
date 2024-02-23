@@ -33,12 +33,15 @@ moving_right = False
 moving_up = False
 moving_down = False
 
+# Initialize 
+player_image = pygame.image.load("Game/assets/images/characters/Player/Idle/Down/0.png").convert_alpha()
+
 # Delta X and Delta Y
 dx = 0
 dy = 0
 
 # Create Player
-player = Character(100,100)
+player = Character(100,100,player_image)
 
 # Create button
 start_button = Button(constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150, start_img)
@@ -105,16 +108,16 @@ while run:
             
         # Key-Press
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_a:
+            if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                 moving_left = True
 
-            if event.key == pygame.K_d:
+            if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 moving_right = True
 
-            if event.key == pygame.K_w:
+            if event.key == pygame.K_w or event.key == pygame.K_UP:
                 moving_up = True
 
-            if event.key == pygame.K_s:
+            if event.key == pygame.K_s or event.key == pygame.K_DOWN:
                 moving_down = True
             if event.key == pygame.K_ESCAPE:
                 pause_game = True
@@ -122,16 +125,16 @@ while run:
 
         # Key-Release
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_a:
+            if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                 moving_left = False
 
-            if event.key == pygame.K_d:
+            if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 moving_right = False
 
-            if event.key == pygame.K_w:
+            if event.key == pygame.K_w or event.key == pygame.K_UP:
                 moving_up = False
 
-            if event.key == pygame.K_s:
+            if event.key == pygame.K_s or event.key == pygame.K_DOWN:
                 moving_down = False
 
 
