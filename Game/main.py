@@ -33,6 +33,7 @@ moving_right = False
 moving_up = False
 moving_down = False
 
+
 # Initialize 
 player_image = pygame.image.load("Game/assets/images/characters/Player/Idle/Down/0.png").convert_alpha()
 
