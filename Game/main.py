@@ -10,9 +10,9 @@ pygame.display.set_caption("Escape The Lore")
 
 # Helper function to scale image
 def scale_img(image, scale):
-  w = image.get_width()
-  h = image.get_height()
-  return pygame.transform.scale(image, (w * scale, h * scale))
+  image_width = image.get_width()
+  image_heigth = image.get_height()
+  return pygame.transform.scale(image, (image_width * scale, image_heigth * scale)) 
 
 # Define game variables
 start_game = False
@@ -36,6 +36,7 @@ moving_down = False
 
 # Initialize 
 player_image = pygame.image.load("Game/assets/images/characters/Player/Idle/Down/0.png").convert_alpha()
+player_image = scale_img(player_image, constants.GAME_SCALE)
 
 # Delta X and Delta Y
 dx = 0

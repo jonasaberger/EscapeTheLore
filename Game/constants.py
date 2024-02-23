@@ -1,9 +1,14 @@
 # This File defines all the constants used for Colours, Sizes,...
 
 # Sizes
+
+# Game
 FRAMES_PER_SECOND = 60
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
+GAME_SCALE = 3
+
+# Menu
 BUTTON_SCALE = 1
 
 # Player

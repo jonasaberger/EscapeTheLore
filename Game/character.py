@@ -11,7 +11,6 @@ class Character():
 
     # Player Movement Function
     def move(self, dx, dy):
-
         # Diagonal Speed
         if dx != 0 and dy != 0:
             dx = dx * (math.sqrt(2)/2)
