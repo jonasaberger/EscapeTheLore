@@ -19,6 +19,9 @@ ROWS = 150
 COLS = 150
 
 # Colours
+WHITE = (255, 255, 255)
 RED = (255,0,0)
+BLACK = (0, 0, 0)
+PINK = (235, 65, 54)
 BACKGROUND = (40,25,25)
 MENU_BG = (130,0,0)

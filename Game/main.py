@@ -17,12 +17,38 @@ def scale_img(image, scale):
 # Define game variables
 start_game = False
 pause_game = False
+start_intro = False
 
 # Load button images
 start_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_start.png").convert_alpha(), constants.BUTTON_SCALE)
 exit_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_exit.png").convert_alpha(), constants.BUTTON_SCALE)
 restart_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_restart.png").convert_alpha(), constants.BUTTON_SCALE)
 resume_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_resume.png").convert_alpha(), constants.BUTTON_SCALE)
+
+#classes down here:
+#class for screen fade
+class ScreenFade():
+  def __init__(self, direction, colour, speed):
+    self.direction = direction
+    self.colour = colour
+    self.speed = speed
+    self.fade_counter = 0
+
+  def fade(self):
+    fade_complete = False
+    self.fade_counter += self.speed
+    if self.direction == 1:#whole screen fade
+      pygame.draw.rect(screen, self.colour, (0 - self.fade_counter, 0, constants.SCREEN_WIDTH // 2, constants.SCREEN_HEIGHT))
+      pygame.draw.rect(screen, self.colour, (constants.SCREEN_WIDTH // 2 + self.fade_counter, 0, constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
+      pygame.draw.rect(screen, self.colour, (0, 0 - self.fade_counter, constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT // 2))
+      pygame.draw.rect(screen, self.colour, (0, constants.SCREEN_HEIGHT // 2 + self.fade_counter, constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
+    elif self.direction == 2:#vertical screen fade down
+      pygame.draw.rect(screen, self.colour, (0, 0, constants.SCREEN_WIDTH, 0 + self.fade_counter))
+
+    if self.fade_counter >= constants.SCREEN_WIDTH:
+      fade_complete = True
+
+    return fade_complete
 
 # Creating Clock -> Frame Rate
 clock = pygame.time.Clock()
@@ -51,6 +77,9 @@ exit_button = Button(constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT 
 restart_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 50, restart_img)
 resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, resume_img)
 
+#create screen fades
+intro_fade = ScreenFade(1, constants.BLACK, 4)
+death_fade = ScreenFade(2, constants.PINK, 4)
 
 # Main-Game Loop
 run = True 
@@ -97,6 +126,13 @@ while run:
 
             # Draw Player
             player.draw(screen)
+
+    #show intro
+    if start_intro == True:
+        if intro_fade.fade():
+          start_intro = False
+          intro_fade.fade_counter = 0
+
 
     # Event Handler
     for event in pygame.event.get():
