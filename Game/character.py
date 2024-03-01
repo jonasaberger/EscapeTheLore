@@ -7,6 +7,7 @@ class Character():
         self.image = image
         self.rect = pygame.Rect(0,0,constants.TILE_SIZE, constants.TILE_SIZE)
         self.rect.center = (x,y)
+        self.rect = pygame.Rect(0,0, constants.TILE_SIZE,40)
 
 
     # Player Movement Function
