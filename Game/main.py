@@ -1,3 +1,4 @@
+from logging import _Level
 import pygame
 import constants
 from character import Character # Import Character class
@@ -26,15 +27,13 @@ world_data = []
 for row in range(constants.ROWS):
     r = [-1] * constants.COLS
     world_data.append(r)
-print(world_data)
 
 # Load in level data and create world
-with open("Game/levels/level1_data.CSV", newline="") as csvfile: 
+with open(f"Game/levels/{_Level}_data.CSV", newline="") as csvfile: 
     reader = csv.reader(csvfile, delimiter=",")
     for x, row in enumerate(reader):
-        for y, tile in row:
+        for y, tile in enumerate(row):
             world_data[x][y] = int(tile)
-
 
 #load tilemap images
 tile_list = []
@@ -76,7 +75,9 @@ exit_button = Button(constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT 
 restart_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 50, restart_img)
 resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, resume_img)
 
+#World Data
 world = World()
+world.process_data(world_data,tile_list)
 
 def draw_grid():
     for x in range(30):
