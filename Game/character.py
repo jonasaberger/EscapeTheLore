@@ -5,7 +5,7 @@ import math
 class Character():
     def __init__(self,x,y,image):
         self.image = image
-        self.rect = pygame.Rect(0,0,40,40)
+        self.rect = pygame.Rect(0,0,constants.TILE_SIZE, constants.TILE_SIZE)
         self.rect.center = (x,y)
 
 

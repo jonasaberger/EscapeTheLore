@@ -1,4 +1,3 @@
-import enum
 import constants
 import csv
 
