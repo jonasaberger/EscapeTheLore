@@ -3,35 +3,21 @@ import constants
 import math
 
 class Character():
-    def __init__(self,x,y,image):
-        self.image = image
-        self.rect = pygame.Rect(0,0,40,40)
+    def __init__(self,x,y,animation_list):
+        self.running = False
+        self.animation_list = animation_list
+        self.frame_index = 0
+        self.action = 0 # 0 = Idle | 1 = Down | 2 = Up | 3 = Right | 4 = Left
+        self.updated_time = pygame.time.get_ticks()
+        self.image = animation_list[self.action][self.frame_index]
+        self.rect = pygame.Rect(0,0,constants.CHARACTER_WIDTH*constants.GAME_SCALE,constants.CHARACTER_HEIGHT*constants.GAME_SCALE)
         self.rect.center = (x,y)
 
     
 
-        
-
-
+    
     # Player Movement Function
     def move(self, dx, dy):
-
-        def scale_player(playerImage):
-            image_width = playerImage.get_width()
-            image_height = playerImage.get_height()
-            return pygame.transform.scale(playerImage, (image_width * constants.GAME_SCALE, image_height * constants.GAME_SCALE)) 
-
-
-        if dx < 0:
-            self.image = scale_player((pygame.image.load("Game/assets/images/characters/Player/Idle/Left/0.png").convert_alpha()))
-        if dx > 0:
-            self.image = scale_player((pygame.image.load("Game/assets/images/characters/Player/Idle/Right/0.png").convert_alpha()))
-
-        if dy < 0:
-            self.image = scale_player((pygame.image.load("Game/assets/images/characters/Player/Idle/Up/0.png").convert_alpha()))
-        if dy > 0:
-            self.image = scale_player((pygame.image.load("Game/assets/images/characters/Player/Idle/Down/0.png").convert_alpha()))
-
 
         # Diagonal Speed
         if dx != 0 and dy != 0:
@@ -41,6 +27,32 @@ class Character():
         self.rect.x += dx 
         self.rect.y += dy
 
+
+    def update(self, action):
+
+        #Check which action player is performing
+        self.update_action(action)
+
+        animation_cooldown = 70
+        self.image = self.animation_list[self.action][self.frame_index]
+
+        if pygame.time.get_ticks() - self.updated_time > animation_cooldown:
+            self.frame_index += 1
+            self.updated_time = pygame.time.get_ticks()
+        
+        if self.frame_index >= len(self.animation_list[self.action]):
+            self.frame_index = 0
+
+
+
+    def update_action(self,new_action):
+        # Check if new Action is different
+        if new_action != self.action:
+            self.action = new_action
+            print(f"Action: {self.action} New Action: {new_action}")
+            # Update Animation Settings -> Sudden Changes update Index!
+            self.frame_index = 0
+            self.update_time = pygame.time.get_ticks()
         
 
     # Draw the Player Character

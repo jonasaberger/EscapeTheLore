@@ -1,3 +1,4 @@
+from turtle import right
 import pygame
 import constants
 from character import Character # Import Character class
@@ -33,17 +34,68 @@ moving_right = False
 moving_up = False
 moving_down = False
 
+# PLayer Animation
+if moving_right == True:
+    direction = "Right"
+if moving_left == True:
+    direction = "Left"
+if moving_up == True:
+    direction = "Up"
+if moving_down == True:
+    direction = "Down"
 
-# Initialize 
-player_image = pygame.image.load("Game/assets/images/characters/Player/Idle/Down/0.png").convert_alpha()
+# Master Animation List -> contains all animations
+animation_list = []
+
+# Different Sub-Lists
+idle_list = []
+down_list = []
+up_list = []
+right_list = []
+left_list = []
+
+player_image = pygame.image.load(f"Game/assets/images/characters/Player/Idle/Default/0.png").convert_alpha()
 player_image = scale_img(player_image, constants.GAME_SCALE)
+idle_list.append(player_image)
+
+
+for i in range(10):
+    player_image = pygame.image.load(f"Game/assets/images/characters/Player/Run/Down/{i}.png").convert_alpha()
+    player_image = scale_img(player_image, constants.GAME_SCALE)
+    down_list.append(player_image)
+
+for i in range(10):
+    player_image = pygame.image.load(f"Game/assets/images/characters/Player/Run/Up/{i}.png").convert_alpha()
+    player_image = scale_img(player_image, constants.GAME_SCALE)
+    up_list.append(player_image)
+
+for i in range(10):
+    player_image = pygame.image.load(f"Game/assets/images/characters/Player/Run/Right/{i}.png").convert_alpha()
+    player_image = scale_img(player_image, constants.GAME_SCALE)
+    right_list.append(player_image)
+
+for i in range(10):
+    player_image = pygame.image.load(f"Game/assets/images/characters/Player/Run/Left/{i}.png").convert_alpha()
+    player_image = scale_img(player_image, constants.GAME_SCALE)
+    left_list.append(player_image)
+    
+
+animation_list.append(idle_list)
+animation_list.append(down_list)
+animation_list.append(up_list)
+animation_list.append(right_list)
+animation_list.append(left_list)
+
+print(animation_list)
+
+
 
 # Delta X and Delta Y
 dx = 0
 dy = 0
 
 # Create Player
-player = Character(100,100,player_image)
+player = Character(100,100,animation_list)
 
 # Create button
 start_button = Button(constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150, start_img)
@@ -78,22 +130,26 @@ while run:
             # Reset movement momentum
             dx = 0
             dy = 0
+            updatedAction = 0
 
             if moving_right == True:
                 dx = constants.SPEED
+                updatedAction = 3
             if moving_left == True:
                 dx = -(constants.SPEED)
+                updatedAction = 4
             
             if moving_up == True:
                 dy = -(constants.SPEED)
+                updatedAction = 2
             if moving_down == True:
                 dy = constants.SPEED
+                updatedAction = 1
 
             # Move Player
             player.move(dx,dy)
-
-            print(str(dx) + "," + str(dy))
             
+            player.update(updatedAction)
 
             # Draw Player
             player.draw(screen)
