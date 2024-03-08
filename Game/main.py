@@ -34,15 +34,6 @@ moving_right = False
 moving_up = False
 moving_down = False
 
-# PLayer Animation
-if moving_right == True:
-    direction = "Right"
-if moving_left == True:
-    direction = "Left"
-if moving_up == True:
-    direction = "Up"
-if moving_down == True:
-    direction = "Down"
 
 # Master Animation List -> contains all animations
 animation_list = []
@@ -87,7 +78,6 @@ animation_list.append(right_list)
 animation_list.append(left_list)
 
 print(animation_list)
-
 
 
 # Delta X and Delta Y
