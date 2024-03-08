@@ -137,8 +137,6 @@ animation_list.append(up_list)
 animation_list.append(right_list)
 animation_list.append(left_list)
 
-print(animation_list)
-
 
 # Delta X and Delta Y
 dx = 0
