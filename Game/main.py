@@ -1,8 +1,10 @@
-from turtle import right
+# from logging import _Level
 import pygame
 import constants
 from character import Character # Import Character class
 from button import Button
+from world import World
+import csv
 
 pygame.init()
 
@@ -16,9 +18,36 @@ def scale_img(image, scale):
   return pygame.transform.scale(image, (image_width * scale, image_heigth * scale)) 
 
 # Define game variables
+level = 1
+
+# Define game variables
 start_game = False
 pause_game = False
 start_intro = False
+
+# Load tilemap images
+tile_list = []
+for x in range(constants.TILE_TYPES):
+    tile_image = pygame.image.load(f"Game/assets/tiles/{x}.png").convert_alpha()
+    tile_image = pygame.transform.scale(tile_image, (constants.TILE_SIZE, constants.TILE_SIZE))
+    tile_list.append(tile_image)
+
+ # Create empty tile list
+world_data = []
+for row in range(constants.ROWS):
+    row = [-1] * constants.COLS
+    world_data.append(row)
+
+# Load in level data and create world
+with open("Game/levels/level1_Data.csv", newline="") as csvfile: 
+    reader = csv.reader(csvfile, delimiter=",")
+    for x, row in enumerate(reader):
+        for y, tile in enumerate(row):
+            world_data[x][y] = int(tile)
+
+#World Data
+world = World()
+world.process_data(world_data,tile_list)
 
 # Load button images
 start_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_start.png").convert_alpha(), constants.BUTTON_SCALE)
@@ -128,11 +157,20 @@ resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGH
 intro_fade = ScreenFade(1, constants.BLACK, 4)
 death_fade = ScreenFade(2, constants.PINK, 4)
 
+#Draw_grid
+def draw_grid():
+    for x in range(30):
+        pygame.draw.line(screen,constants.WHITE, (x * constants.TILE_SIZE, 0), (x * constants.TILE_SIZE, constants.SCREEN_HEIGHT))
+        pygame.draw.line(screen,constants.WHITE, (0, x * constants.TILE_SIZE), (constants.SCREEN_HEIGHT, x * constants.TILE_SIZE))
+
+
 # Main-Game Loop
 run = True 
 while run:
     # Limit Frame Rate
     clock.tick(constants.FRAMES_PER_SECOND)
+
+    draw_grid()
 
     if start_game == False:
         screen.fill(constants.MENU_BG)

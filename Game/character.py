@@ -10,8 +10,9 @@ class Character():
         self.action = 0 # 0 = Idle | 1 = Down | 2 = Up | 3 = Right | 4 = Left
         self.updated_time = pygame.time.get_ticks()
         self.image = animation_list[self.action][self.frame_index]
-        self.rect = pygame.Rect(0,0,constants.CHARACTER_WIDTH*constants.GAME_SCALE,constants.CHARACTER_HEIGHT*constants.GAME_SCALE)
-        self.rect.center = (x/2,y/2)
+        self.rect = pygame.Rect(0,0,constants.TILE_SIZE, constants.TILE_SIZE)
+        self.rect.center = (x,y)
+        self.rect = pygame.Rect(0,0, constants.TILE_SIZE,40)
 
     
 
