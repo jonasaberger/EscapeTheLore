@@ -25,6 +25,11 @@ exit_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_exit.p
 restart_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_restart.png").convert_alpha(), constants.BUTTON_SCALE)
 resume_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_resume.png").convert_alpha(), constants.BUTTON_SCALE)
 
+# Load heart images
+heart_empty = scale_img(pygame.image.load("Game/assets/images/GUI/heart_empty.png").convert_alpha(), constants.HEART_SCALE)
+heart_half = scale_img(pygame.image.load("Game/assets/images/GUI/heart_half.png").convert_alpha(), constants.HEART_SCALE)
+heart_full = scale_img(pygame.image.load("Game/assets/images/GUI/heart_full.png").convert_alpha(), constants.HEART_SCALE)
+
 #classes down here:
 #class for screen fade
 class ScreenFade():

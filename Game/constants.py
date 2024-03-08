@@ -14,6 +14,9 @@ BUTTON_SCALE = 1
 # Player
 SPEED = 5
 
+#GUI
+HEART_SCALE = 3
+
 # Backend
 ROWS = 150
 COLS = 150
