@@ -8,7 +8,6 @@ from button import Button
 from world import World
 import csv
 
-
 pygame.init()
 
 screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
@@ -89,7 +88,6 @@ player_image = pygame.image.load(f"Game/assets/images/characters/Player/Idle/Def
 player_image = scale_img(player_image, constants.GAME_SCALE)
 idle_list.append(player_image)
 
-
 for i in range(10):
     player_image = pygame.image.load(f"Game/assets/images/characters/Player/Run/Down/{i}.png").convert_alpha()
     player_image = scale_img(player_image, constants.GAME_SCALE)
@@ -110,13 +108,11 @@ for i in range(10):
     player_image = scale_img(player_image, constants.GAME_SCALE)
     left_list.append(player_image)
     
-
 animation_list.append(idle_list)
 animation_list.append(down_list)
 animation_list.append(up_list)
 animation_list.append(right_list)
 animation_list.append(left_list)
-
 
 # Delta X and Delta Y
 dx = 0
@@ -135,13 +131,11 @@ resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGH
 intro_fade = ScreenFade(1, constants.BLACK, 4, screen)
 death_fade = ScreenFade(2, constants.PINK, 4, screen)
 
-
 #Draw_grid
 def draw_grid():
     for x in range(30):
         pygame.draw.line(screen,constants.WHITE, (x * constants.TILE_SIZE, 0), (x * constants.TILE_SIZE, constants.SCREEN_HEIGHT))
         pygame.draw.line(screen,constants.WHITE, (0, x * constants.TILE_SIZE), (constants.SCREEN_HEIGHT, x * constants.TILE_SIZE))
-
 
 # Main-Game Loop
 run = True 
@@ -192,6 +186,8 @@ while run:
             player.move(dx,dy)
             
             player.update(updatedAction)
+
+            world.draw(screen)
 
             # Draw Player
             player.draw(screen)

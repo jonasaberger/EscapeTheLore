@@ -1,7 +1,7 @@
 import constants
 
 class World():
-   def _init_(self):
+   def __init__(self):
     self.map_tiles = []
 
    def process_data(self, data, tile_list):
@@ -17,8 +17,8 @@ class World():
       tile_data = [image, image_rect, image_x, image_y]
 
       #add image data to main tiles list
-     if tile >= 0:
-      self.map_tiles.append(tile_data)
+      if tile >= 0:
+       self.map_tiles.append(tile_data)
 
    def draw(self, surface):
       for tile in self.map_tiles:
