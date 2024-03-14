@@ -1,10 +1,13 @@
 # from logging import _Level
+from pickle import TRUE
 import pygame
 import constants
 from character import Character # Import Character class
+from screenfade import ScreenFade
 from button import Button
 from world import World
 import csv
+
 
 pygame.init()
 
@@ -24,7 +27,7 @@ level = 1
 start_game = False
 pause_game = False
 start_intro = False
-
+ 
 # Load tilemap images
 tile_list = []
 for x in range(constants.TILE_TYPES):
@@ -62,28 +65,6 @@ heart_full = scale_img(pygame.image.load("Game/assets/images/GUI/heart_full.png"
 
 #classes down here:
 #class for screen fade
-class ScreenFade():
-  def __init__(self, direction, colour, speed):
-    self.direction = direction
-    self.colour = colour
-    self.speed = speed
-    self.fade_counter = 0
-
-  def fade(self):
-    fade_complete = False
-    self.fade_counter += self.speed
-    if self.direction == 1:#whole screen fade
-      pygame.draw.rect(screen, self.colour, (0 - self.fade_counter, 0, constants.SCREEN_WIDTH // 2, constants.SCREEN_HEIGHT))
-      pygame.draw.rect(screen, self.colour, (constants.SCREEN_WIDTH // 2 + self.fade_counter, 0, constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
-      pygame.draw.rect(screen, self.colour, (0, 0 - self.fade_counter, constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT // 2))
-      pygame.draw.rect(screen, self.colour, (0, constants.SCREEN_HEIGHT // 2 + self.fade_counter, constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
-    elif self.direction == 2:#vertical screen fade down
-      pygame.draw.rect(screen, self.colour, (0, 0, constants.SCREEN_WIDTH, 0 + self.fade_counter))
-
-    if self.fade_counter >= constants.SCREEN_WIDTH:
-      fade_complete = True
-
-    return fade_complete
 
 # Creating Clock -> Frame Rate
 clock = pygame.time.Clock()
@@ -93,7 +74,6 @@ moving_left = False
 moving_right = False
 moving_up = False
 moving_down = False
-
 
 # Master Animation List -> contains all animations
 animation_list = []
@@ -152,8 +132,9 @@ restart_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIG
 resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, resume_img)
 
 #create screen fades
-intro_fade = ScreenFade(1, constants.BLACK, 4)
-death_fade = ScreenFade(2, constants.PINK, 4)
+intro_fade = ScreenFade(1, constants.BLACK, 4, screen)
+death_fade = ScreenFade(2, constants.PINK, 4, screen)
+
 
 #Draw_grid
 def draw_grid():
@@ -174,6 +155,7 @@ while run:
         screen.fill(constants.MENU_BG)
         if start_button.draw(screen):
             start_game = True
+            start_intro = True
         if exit_button.draw(screen):
             run = False
     else:

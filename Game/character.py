@@ -3,6 +3,7 @@ import constants
 import math
 
 class Character():
+
     def __init__(self,x,y,animation_list):
         self.running = False
         self.animation_list = animation_list
@@ -12,13 +13,9 @@ class Character():
         self.image = animation_list[self.action][self.frame_index]
         self.rect = pygame.Rect(0,0,constants.TILE_SIZE*constants.GAME_SCALE, constants.TILE_SIZE*constants.GAME_SCALE)
         self.rect.center = (x/2,y/2)
-
-    
-
     
     # Player Movement Function
     def move(self, dx, dy):
-
         # Diagonal Speed
         if dx != 0 and dy != 0:
             dx = dx * (math.sqrt(2)/2)
@@ -29,7 +26,6 @@ class Character():
 
 
     def update(self, action):
-
         #Check which action player is performing
         self.update_action(action)
 
