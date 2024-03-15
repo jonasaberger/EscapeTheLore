@@ -60,7 +60,7 @@ resume_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_resu
 
 # Load weapon images
 ruler_image = scale_img(pygame.image.load("Game/assets/images/weapons/ruler.png").convert_alpha(), constants.WEAPON_SCALE)
-pencil_image = scale_img(pygame.image.load("Game/assets/images/weapons/arrow.png").convert_alpha(), constants.WEAPON_SCALE)
+pencil_image = scale_img(pygame.image.load("Game/assets/images/weapons/pencil.png").convert_alpha(), constants.WEAPON_SCALE)
 
 # Load heart images
 heart_empty = scale_img(pygame.image.load("Game/assets/images/GUI/heart_empty.png").convert_alpha(), constants.HEART_SCALE)
@@ -202,16 +202,19 @@ while run:
             pencil = ruler.update(player)
             if pencil:
                 pencil_group.add(pencil)
+            for pencil in pencil_group:
+                pencil.update()
             
-            print(pencil_group)
 
             world.draw(screen)
 
             # Draw Player
             player.draw(screen)
 
-            # Draw Ruler
+            # Draw Ruler & pencil
             ruler.draw(screen)
+            for pencil in pencil_group:
+                pencil.draw(screen)
 
     #show intro
     if start_intro == True:
