@@ -3,6 +3,7 @@ import pygame
 import constants
 from character import Character # Import Character class
 from button import Button
+from weapon import Weapon
 
 pygame.init()
 
@@ -25,6 +26,10 @@ start_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_start
 exit_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_exit.png").convert_alpha(), constants.BUTTON_SCALE)
 restart_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_restart.png").convert_alpha(), constants.BUTTON_SCALE)
 resume_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_resume.png").convert_alpha(), constants.BUTTON_SCALE)
+
+# Load weapon images
+ruler_image = scale_img(pygame.image.load("Game/assets/images/weapons/ruler.png").convert_alpha(), constants.WEAPON_SCALE)
+pencil_image = scale_img(pygame.image.load("Game/assets/images/weapons/arrow.png").convert_alpha(), constants.WEAPON_SCALE)
 
 # Load heart images
 heart_empty = scale_img(pygame.image.load("Game/assets/images/GUI/heart_empty.png").convert_alpha(), constants.HEART_SCALE)
@@ -118,6 +123,12 @@ dy = 0
 # Create Player
 player = Character(100,100,animation_list)
 
+# Create Player's weapon
+ruler = Weapon(ruler_image, pencil_image)
+
+#create Sprite Groups
+pencil_group = pygame.sprite.Group()
+
 # Create button
 start_button = Button(constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150, start_img)
 exit_button = Button(constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT // 2 + 50, exit_img)
@@ -175,8 +186,18 @@ while run:
             
             player.update(updatedAction)
 
+            # Update Ruler
+            pencil = ruler.update(player)
+            if pencil:
+                pencil_group.add(pencil)
+            
+            print(pencil_group)
+
             # Draw Player
             player.draw(screen)
+
+            # Draw Ruler
+            ruler.draw(screen)
 
     #show intro
     if start_intro == True:
