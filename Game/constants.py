@@ -18,6 +18,10 @@ BUTTON_SCALE = 1
 
 # Player
 SPEED = 5
+OFFSET = 12
+
+# Weapon
+WEAPON_SCALE = 1.5
 
 #GUI
 HEART_SCALE = 3
