@@ -223,6 +223,7 @@ while run:
 
             # Update Ruler
             pencil = ruler.update(player)
+
             if pencil:
                 pencil_group.add(pencil)
             for pencil in pencil_group:
