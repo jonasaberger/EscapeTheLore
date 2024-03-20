@@ -4,8 +4,9 @@ import math
 
 class Character():
 
-    def __init__(self,x,y,animation_list):
+    def __init__(self,x,y,health,animation_list):
         self.running = False
+        self.health = health
         self.animation_list = animation_list
         self.frame_index = 0
         self.action = 0 # 0 = Idle | 1 = Down | 2 = Up | 3 = Right | 4 = Left

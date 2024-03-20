@@ -123,8 +123,28 @@ animation_list.append(left_list)
 dx = 0
 dy = 0
 
+#function for displaying Game Info
+def draw_info():
+
+    #Draw Panel
+    pygame.draw.rect(screen, constants.PANEL, (0,0, constants.SCREEN_WIDTH, 50))
+    pygame.draw.line(screen, constants.WHITE, (0,50), (constants.SCREEN_WIDTH, 50))
+
+    #Draw lives
+    half_heart_drawn = False
+    for i in range(5):
+        if player.health >= ((i + 1) * 20):
+            screen.blit(heart_full, (10 + i * 50, 0))
+        elif (player.health % 20 > 0) and half_heart_drawn == False:
+            screen.blit(heart_half, (10 + i * 50, 0))
+            half_heart_drawn = True
+        else:
+           screen.blit(heart_empty, (10 + i * 50, 0))
+
+
+
 # Create Player
-player = Character(100,100,animation_list)
+player = Character(100,100,100,animation_list)
 
 # Create Player's weapon
 ruler = Weapon(ruler_image, pencil_image)
@@ -207,6 +227,8 @@ while run:
             
 
             world.draw(screen)
+
+            draw_info()
 
             # Draw Player
             player.draw(screen)
