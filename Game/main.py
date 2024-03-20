@@ -67,6 +67,9 @@ heart_empty = scale_img(pygame.image.load("Game/assets/images/GUI/heart_empty.pn
 heart_half = scale_img(pygame.image.load("Game/assets/images/GUI/heart_half.png").convert_alpha(), constants.HEART_SCALE)
 heart_full = scale_img(pygame.image.load("Game/assets/images/GUI/heart_full.png").convert_alpha(), constants.HEART_SCALE)
 
+#load bg image
+bg = pygame.image.load("Game/assets/images/GUI/menu_bg.jpg")
+
 #classes down here:
 #class for screen fade
 
@@ -157,7 +160,7 @@ while run:
     draw_grid()
 
     if start_game == False:
-        screen.fill(constants.MENU_BG)
+        screen.blit(bg, (0, 0))
         if start_button.draw(screen):
             start_game = True
             start_intro = True
