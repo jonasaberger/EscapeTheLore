@@ -144,7 +144,7 @@ def draw_info():
 
 
 # Create Player
-player = Character(100,100,100,animation_list)
+player = Character(100,100,50,animation_list)
 
 # Create Player's weapon
 ruler = Weapon(ruler_image, pencil_image)
