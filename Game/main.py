@@ -68,7 +68,7 @@ heart_half = scale_img(pygame.image.load("Game/assets/images/GUI/heart_half.png"
 heart_full = scale_img(pygame.image.load("Game/assets/images/GUI/heart_full.png").convert_alpha(), constants.HEART_SCALE)
 
 #load bg image
-bg = pygame.image.load("Game/assets/images/GUI/menu_bg.jpg")
+titlescreen = pygame.image.load("Game/assets/images/GUI/menu_bg.jpg")
 
 #classes down here:
 #class for screen fade
@@ -166,10 +166,7 @@ intro_fade = ScreenFade(1, constants.BLACK, 4, screen)
 death_fade = ScreenFade(2, constants.PINK, 4, screen)
 
 #Draw_grid
-def draw_grid():
-    for x in range(30):
-        pygame.draw.line(screen,constants.WHITE, (x * constants.TILE_SIZE, 0), (x * constants.TILE_SIZE, constants.SCREEN_HEIGHT))
-        pygame.draw.line(screen,constants.WHITE, (0, x * constants.TILE_SIZE), (constants.SCREEN_HEIGHT, x * constants.TILE_SIZE))
+
 
 # Main-Game Loop
 run = True 
@@ -177,10 +174,9 @@ while run:
     # Limit Frame Rate
     clock.tick(constants.FRAMES_PER_SECOND)
 
-    draw_grid()
 
     if start_game == False:
-        screen.blit(bg, (0, 0))
+        screen.blit(titlescreen, (0, 0))
         if start_button.draw(screen):
             start_game = True
             start_intro = True
@@ -188,7 +184,6 @@ while run:
             run = False
     else:
         if pause_game == True:
-            screen.fill(constants.MENU_BG)
             if resume_button.draw(screen):
                 pause_game = False
             if exit_button.draw(screen):
