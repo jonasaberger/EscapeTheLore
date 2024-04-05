@@ -258,7 +258,10 @@ while run:
             for pencil in pencil_group:
                 damage, damage_pos = pencil.update(enemy_list)
                 if damage != 0:
-                    damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.RED)
+                    if damage == 14:
+                        damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.YELLOW)
+                    else:
+                     damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.RED)
                     damage_text_group.add(damage_text)
             damage_text_group.update()
             

@@ -29,6 +29,8 @@ OFFSET = 12
 WEAPON_SCALE = 1.5
 PENCIL_SPEED = 10
 DAMAGE_FONT = pygame.font.Font("Game/assets/fonts/MainFont.ttf",35)
+DAMAGE_BASE = 10
+DAMAGE_EXTRA = 5
 
 #GUI
 HEART_SCALE = 3
@@ -47,3 +49,4 @@ BACKGROUND = (40,25,25)
 MENU_BG = (0,0,0)
 WHITE = (255, 255, 255)
 PANEL = (50,50,50)
+YELLOW = (255,215,0)
