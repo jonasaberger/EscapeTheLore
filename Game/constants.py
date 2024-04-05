@@ -1,3 +1,8 @@
+import pygame;
+import pygame.font;
+
+pygame.init()
+
 # This File defines all the constants used for Colours, Sizes,...
 
 # Sizes
@@ -5,8 +10,8 @@
 # Game
 FPS = 60
 FRAMES_PER_SECOND = 60
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 750
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 720
 GAME_SCALE = 2
 CHARACTER_HEIGHT = 32
 CHARACTER_WIDTH = 32
@@ -23,6 +28,7 @@ OFFSET = 12
 # Weapon
 WEAPON_SCALE = 1.5
 PENCIL_SPEED = 10
+DAMAGE_FONT = pygame.font.Font("Game/assets/fonts/MainFont.ttf",35)
 
 #GUI
 HEART_SCALE = 3

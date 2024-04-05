@@ -1,9 +1,11 @@
 # from logging import _Level
 from pickle import TRUE
 import pygame
+import pygame.font
 import constants
 from character import Character # Import Character class
 from screenfade import ScreenFade
+from damagetext import DamageText
 from button import Button
 from weapon import Weapon
 from world import World
@@ -169,12 +171,15 @@ ruler = Weapon(ruler_image, pencil_image)
 
 # Create Enemy-List
 enemy_list = []
-
 # Add Enemies to the List
 enemy_list.append(enemy)
 
+
 # Create Sprite Groups
+damage_text_group = pygame.sprite.Group()
 pencil_group = pygame.sprite.Group()
+
+
 
 # Create button
 start_button = Button(constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150, start_img)
@@ -251,14 +256,18 @@ while run:
             if pencil:
                 pencil_group.add(pencil)
             for pencil in pencil_group:
-                pencil.update(enemy_list)
+                damage, damage_pos = pencil.update(enemy_list)
+                if damage != 0:
+                    damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.RED)
+                    damage_text_group.add(damage_text)
+            damage_text_group.update()
             
 
             world.draw(screen)
 
             draw_info()
 
-            # Draw Player
+            # Player Update & Draw
             player.draw(screen)
 
 
@@ -272,6 +281,10 @@ while run:
             ruler.draw(screen)
             for pencil in pencil_group:
                 pencil.draw(screen)
+
+            damage_text_group.draw(screen)
+
+
 
     #show intro
     if start_intro == True:

@@ -58,6 +58,10 @@ class Pencil(pygame.sprite.Sprite):
     
     def update(self, enemy_list):
 
+        # Reset variables
+        damage = 0
+        damage_pos = 0
+
         #reposition based on speed
         self.rect.x = int(round(self.rect.x + self.dx))
         self.rect.y = int(round(self.rect.y + self.dy))
@@ -71,9 +75,12 @@ class Pencil(pygame.sprite.Sprite):
             if enemy.rect.colliderect(self.rect) and enemy.alive:
                 # Calculate the damage delt
                 damage = 10 + random.randint(-5,5)
+                damage_pos = enemy.rect
                 enemy.health -= damage
                 self.kill()
-                break # Exit the for loop
+                break # Exit the for-loop
+
+        return damage, damage_pos
         
 
 
