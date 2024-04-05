@@ -4,13 +4,16 @@ import math
 
 class Character():
 
-    def __init__(self,x,y,health,animation_list):
+    def __init__(self,x,y,health,animation_list, mob_type):
+        self.mob_type = mob_type
         self.running = False
         self.health = health
-        self.animation_list = animation_list
+        self.alive = True
+        self.animation_list = animation_list[mob_type]
         self.frame_index = 0
         self.action = 0 # 0 = Idle | 1 = Down | 2 = Up | 3 = Right | 4 = Left
         self.updated_time = pygame.time.get_ticks()
+
         self.image = animation_list[self.action][self.frame_index]
         self.rect = pygame.Rect(0,0,constants.TILE_SIZE*constants.GAME_SCALE, constants.TILE_SIZE*constants.GAME_SCALE)
         self.rect.center = (x/2,y/2)
@@ -27,6 +30,12 @@ class Character():
 
 
     def update(self, action):
+        # Check if Character is even alive
+        if self.health <= 0:
+            self.health = 0
+            self.alive = False
+
+
         #Check which action player is performing
         self.update_action(action)
 
@@ -42,6 +51,7 @@ class Character():
             self.updated_time = pygame.time.get_ticks()
 
 
+    
 
     def update_action(self,new_action):
         # Check if new Action is different

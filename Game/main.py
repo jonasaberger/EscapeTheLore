@@ -1,9 +1,11 @@
 # from logging import _Level
 from pickle import TRUE
 import pygame
+import pygame.font
 import constants
 from character import Character # Import Character class
 from screenfade import ScreenFade
+from damagetext import DamageText
 from button import Button
 from weapon import Weapon
 from world import World
@@ -82,45 +84,54 @@ moving_right = False
 moving_up = False
 moving_down = False
 
-# Master Animation List -> contains all animations
-animation_list = []
+# Mob Types -> Different Types of Mobs and enemies
+mob_animations = []
+mob_types = ["Player", "Player"] #TODO:"Change PlayerPlaceholder to Aberga-Animation"
+ 
 
-# Different Sub-Lists
-idle_list = []
-down_list = []
-up_list = []
-right_list = []
-left_list = []
+for mob in mob_types:
+    # Master Animation List -> contains all animations
+    animation_list = []
 
-player_image = pygame.image.load(f"Game/assets/images/characters/Player/Idle/Default/0.png").convert_alpha()
-player_image = scale_img(player_image, constants.GAME_SCALE)
-idle_list.append(player_image)
+    # Different Sub-Lists
+    idle_list = []
+    down_list = []
+    up_list = []
+    right_list = []
+    left_list = []
 
-for i in range(10):
-    player_image = pygame.image.load(f"Game/assets/images/characters/Player/Run/Down/{i}.png").convert_alpha()
+    player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Idle/Default/0.png").convert_alpha()
     player_image = scale_img(player_image, constants.GAME_SCALE)
-    down_list.append(player_image)
+    idle_list.append(player_image)
 
-for i in range(10):
-    player_image = pygame.image.load(f"Game/assets/images/characters/Player/Run/Up/{i}.png").convert_alpha()
-    player_image = scale_img(player_image, constants.GAME_SCALE)
-    up_list.append(player_image)
+    for i in range(10):
+        player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Down/{i}.png").convert_alpha()
+        player_image = scale_img(player_image, constants.GAME_SCALE)
+        down_list.append(player_image)
 
-for i in range(10):
-    player_image = pygame.image.load(f"Game/assets/images/characters/Player/Run/Right/{i}.png").convert_alpha()
-    player_image = scale_img(player_image, constants.GAME_SCALE)
-    right_list.append(player_image)
+    for i in range(10):
+        player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Up/{i}.png").convert_alpha()
+        player_image = scale_img(player_image, constants.GAME_SCALE)
+        up_list.append(player_image)
 
-for i in range(10):
-    player_image = pygame.image.load(f"Game/assets/images/characters/Player/Run/Left/{i}.png").convert_alpha()
-    player_image = scale_img(player_image, constants.GAME_SCALE)
-    left_list.append(player_image)
-    
-animation_list.append(idle_list)
-animation_list.append(down_list)
-animation_list.append(up_list)
-animation_list.append(right_list)
-animation_list.append(left_list)
+    for i in range(10):
+        player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Right/{i}.png").convert_alpha()
+        player_image = scale_img(player_image, constants.GAME_SCALE)
+        right_list.append(player_image)
+
+    for i in range(10):
+        player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Left/{i}.png").convert_alpha()
+        player_image = scale_img(player_image, constants.GAME_SCALE)
+        left_list.append(player_image)
+        
+    animation_list.append(idle_list)
+    animation_list.append(down_list)
+    animation_list.append(up_list)
+    animation_list.append(right_list)
+    animation_list.append(left_list)
+    mob_animations.append(animation_list)
+
+
 
 # Delta X and Delta Y
 dx = 0
@@ -146,14 +157,29 @@ def draw_info():
 
 
 
+
+
 # Create Player
-player = Character(100,100,50,animation_list)
+player = Character(100,100,75,mob_animations,0)
+
+# Create Enemy
+enemy = Character(200, 300, 100, mob_animations,1)
+
 
 # Create Player's weapon
 ruler = Weapon(ruler_image, pencil_image)
 
-#create Sprite Groups
+# Create Enemy-List
+enemy_list = []
+# Add Enemies to the List
+enemy_list.append(enemy)
+
+
+# Create Sprite Groups
+damage_text_group = pygame.sprite.Group()
 pencil_group = pygame.sprite.Group()
+
+
 
 # Create button
 start_button = Button(constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150, start_img)
@@ -214,7 +240,15 @@ while run:
             # Move Player
             player.move(dx,dy)
             
+
+            # Updates
+
             player.update(updatedAction)
+
+            # Update all enemies in enemy_list
+            for enemy in enemy_list:
+                enemy.update(0)
+
 
             # Update Ruler
             pencil = ruler.update(player)
@@ -222,20 +256,38 @@ while run:
             if pencil:
                 pencil_group.add(pencil)
             for pencil in pencil_group:
-                pencil.update()
+                damage, damage_pos = pencil.update(enemy_list)
+                if damage != 0:
+                    if damage == 14:
+                        damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.YELLOW)
+                    else:
+                     damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.RED)
+                    damage_text_group.add(damage_text)
+            damage_text_group.update()
             
 
             world.draw(screen)
 
             draw_info()
 
-            # Draw Player
+            # Player Update & Draw
             player.draw(screen)
+
+
+            # Draw all enemies in enemy_list
+            for enemy in enemy_list:
+             enemy.draw(screen)
+
+            print(f"Enemy-Health: {enemy.health}")
 
             # Draw Ruler & pencil
             ruler.draw(screen)
             for pencil in pencil_group:
                 pencil.draw(screen)
+
+            damage_text_group.draw(screen)
+
+
 
     #show intro
     if start_intro == True:
