@@ -2,6 +2,7 @@ from asyncio import constants
 from turtle import pen
 import pygame
 import math
+import random
 import constants
 
 class Weapon():
@@ -55,7 +56,7 @@ class Pencil(pygame.sprite.Sprite):
         self.dy = -(math.sin(math.radians(self.angle)) * constants.PENCIL_SPEED) # -ve because pygame y coordinats increases down the screen 
 
     
-    def update(self):
+    def update(self, enemy_list):
 
         #reposition based on speed
         self.rect.x = int(round(self.rect.x + self.dx))
@@ -64,6 +65,16 @@ class Pencil(pygame.sprite.Sprite):
         #check if arrow has gone off screen 
         if self.rect.right < 0 or self.rect.left > constants.SCREEN_WIDTH or self.rect.bottom < 0 or self.rect.top > constants.SCREEN_HEIGHT:
            self.kill() 
+
+        # Check for enemy-collision
+        for enemy in enemy_list:
+            if enemy.rect.colliderect(self.rect) and enemy.alive:
+                # Calculate the damage delt
+                damage = 10 + random.randint(-5,5)
+                enemy.health -= damage
+                self.kill()
+                break # Exit the for loop
+        
 
 
     def draw(self, surface):
