@@ -182,8 +182,9 @@ pencil_group = pygame.sprite.Group()
 
 
 # Create button
-start_button = Button(constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150, start_img)
-exit_button = Button(constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT // 2 + 50, exit_img)
+start_button = Button(630, 530, start_img) #constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150
+exit_button = Button(665,630, exit_img) #constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT // 2 + 50
+exit_pause_button = Button(constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT // 2 + 50, exit_img)
 restart_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 50, restart_img)
 resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, resume_img)
 
@@ -212,7 +213,7 @@ while run:
         if pause_game == True:
             if resume_button.draw(screen):
                 pause_game = False
-            if exit_button.draw(screen):
+            if exit_pause_button.draw(screen):
                 run = False
         else:
             screen.fill(constants.BACKGROUND)
