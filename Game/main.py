@@ -70,7 +70,7 @@ heart_half = scale_img(pygame.image.load("Game/assets/images/GUI/heart_half.png"
 heart_full = scale_img(pygame.image.load("Game/assets/images/GUI/heart_full.png").convert_alpha(), constants.HEART_SCALE)
 
 #load bg image
-titlescreen = pygame.image.load("Game/assets/images/GUI/menu_bg.jpg")
+titlescreen = pygame.image.load("Game/assets/images/GUI/menu_bg.png")
 
 #classes down here:
 #class for screen fade
