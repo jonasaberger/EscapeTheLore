@@ -86,7 +86,7 @@ moving_down = False
 
 # Mob Types -> Different Types of Mobs and enemies
 mob_animations = []
-mob_types = ["Player", "Player"] #TODO:"Change PlayerPlaceholder to Aberga-Animation"
+mob_types = ["Player", "Aberga"] #TODO:"Change PlayerPlaceholder to Aberga-Animation"
  
 
 for mob in mob_types:
