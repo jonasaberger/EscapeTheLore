@@ -5,6 +5,7 @@ import math
 class Character():
 
     def __init__(self,x,y,health,animation_list, mob_type):
+        self.score = 0
         self.mob_type = mob_type
         self.running = False
         self.health = health
