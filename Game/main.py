@@ -34,7 +34,7 @@ start_intro = False
 tile_list = []
 for x in range(constants.TILE_TYPES):
     tile_image = pygame.image.load(f"Game/assets/tiles/{x}.png").convert_alpha()
-    tile_image = pygame.transform.scale(tile_image, (constants.TILE_SIZE, constants.TILE_SIZE))
+    tile_image = pygame.transform.scale(tile_image, (constants.TILE_SIZE*constants.GAME_SCALE, constants.TILE_SIZE*constants.GAME_SCALE))
     tile_list.append(tile_image)
 
  # Create empty tile list
@@ -44,7 +44,7 @@ for row in range(constants.ROWS):
     world_data.append(row)
 
 # Load in level data and create world
-with open("Game/levels/level1_Data.csv", newline="") as csvfile: 
+with open("Game/levels/test.csv", newline="") as csvfile: 
     reader = csv.reader(csvfile, delimiter=",")
     for x, row in enumerate(reader):
         for y, tile in enumerate(row):

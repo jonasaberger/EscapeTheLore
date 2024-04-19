@@ -11,8 +11,8 @@ class World():
      for y, tile in enumerate(row):
       image = tile_list[tile]
       image_rect = image.get_rect()
-      image_x = x * constants.TILE_SIZE
-      image_y = y * constants.TILE_SIZE
+      image_x = x * constants.TILE_SIZE*constants.GAME_SCALE
+      image_y = y * constants.TILE_SIZE*constants.GAME_SCALE
       image_rect.center = (image_x, image_y)
       tile_data = [image, image_rect, image_x, image_y]
 

@@ -15,7 +15,7 @@ class Character():
         self.updated_time = pygame.time.get_ticks()
 
         self.image = animation_list[self.action][self.frame_index]
-        self.rect = pygame.Rect(0,0,constants.TILE_SIZE*constants.GAME_SCALE, constants.TILE_SIZE*constants.GAME_SCALE)
+        self.rect = pygame.Rect(0,0,constants.CHARACTER_WIDTH*constants.GAME_SCALE, constants.CHARACTER_HEIGHT*constants.GAME_SCALE)
         self.rect.center = (x/2,y/2)
     
     # Player Movement Function
