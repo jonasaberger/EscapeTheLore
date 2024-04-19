@@ -22,5 +22,5 @@ class World():
 
    def draw(self, surface):
       for tile in self.map_tiles:
-        surface.blit(tile[0],tile[1])  
+        surface.blit(tile[0],tile[1])
 
