@@ -9,6 +9,7 @@ from damagetext import DamageText
 from button import Button
 from weapon import Weapon
 from world import World
+from item import Item
 import csv
 
 pygame.init()
@@ -69,6 +70,16 @@ heart_empty = scale_img(pygame.image.load("Game/assets/images/GUI/heart_empty.pn
 heart_half = scale_img(pygame.image.load("Game/assets/images/GUI/heart_half.png").convert_alpha(), constants.HEART_SCALE)
 heart_full = scale_img(pygame.image.load("Game/assets/images/GUI/heart_full.png").convert_alpha(), constants.HEART_SCALE)
 
+#load coin images
+coin_image = []
+for x in range(4):
+    img = scale_img(pygame.image.load(f"Game/assets/images/GUI/coin_f{x}.png").convert_alpha(), constants.ITEM_SCALE)
+    coin_image.append(img)
+
+#load potion image
+lore_potion = scale_img(pygame.image.load("Game/assets/images/items/lore_potion.png").convert_alpha(), constants.POTION_SCALE)
+
+
 #load bg image
 titlescreen = pygame.image.load("Game/assets/images/GUI/menu_bg.png")
 
@@ -83,6 +94,9 @@ moving_left = False
 moving_right = False
 moving_up = False
 moving_down = False
+
+#define font
+font = pygame.font.Font("Game/assets/fonts/MainFont.ttf", 30)
 
 # Mob Types -> Different Types of Mobs and enemies
 mob_animations = []
@@ -137,6 +151,11 @@ for mob in mob_types:
 dx = 0
 dy = 0
 
+#function for outputing text onto the screen
+def draw_text(text, font, text_col, x, y):
+    img = font.render(text, True, text_col)
+    screen.blit(img, (x, y))
+
 #function for displaying Game Info
 def draw_info():
 
@@ -154,9 +173,10 @@ def draw_info():
             half_heart_drawn = True
         else:
            screen.blit(heart_empty, (10 + i * 50, 0))
-
-
-
+    
+    #show score
+    draw_text(f"CoinScore: {player.score}", font, constants.WHITE,constants.SCREEN_WIDTH - 150, 20)
+    
 
 
 # Create Player
@@ -178,8 +198,15 @@ enemy_list.append(enemy)
 # Create Sprite Groups
 damage_text_group = pygame.sprite.Group()
 pencil_group = pygame.sprite.Group()
+item_group = pygame.sprite.Group()
 
+score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, coin_image)
+item_group.add(score_coin)
 
+potion = Item(200, 200, 1, [lore_potion])
+item_group.add(potion)
+coin = Item(400, 400, 0, coin_image)
+item_group.add(coin)
 
 # Create button
 start_button = Button(630, 530, start_img) #constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150
@@ -265,11 +292,13 @@ while run:
                      damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.RED)
                     damage_text_group.add(damage_text)
             damage_text_group.update()
+            item_group.update(player)
             
 
             world.draw(screen)
-
+            item_group.draw(screen)
             draw_info()
+            score_coin.draw(screen)
 
             # Player Update & Draw
             player.draw(screen)
