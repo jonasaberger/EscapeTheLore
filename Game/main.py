@@ -180,7 +180,7 @@ def draw_info():
 
 
 # Create Player
-player = Character(100,100,75,mob_animations,0)
+player = Character(256,256,75,mob_animations,0)
 
 # Create Enemy
 enemy = Character(200, 300, 100, mob_animations,1)
@@ -308,7 +308,6 @@ while run:
             for enemy in enemy_list:
              enemy.draw(screen)
 
-            print(f"Enemy-Health: {enemy.health}")
 
             # Draw Ruler & pencil
             ruler.draw(screen)
