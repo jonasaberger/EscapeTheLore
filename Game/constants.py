@@ -43,6 +43,7 @@ HEART_SCALE = 3
 # Backend
 ROWS = 150
 COLS = 150
+SCROLL_THRES = 200
 
 # Colours
 WHITE = (255, 255, 255)

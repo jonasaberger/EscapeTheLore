@@ -21,6 +21,8 @@ class Character():
     
     # Player Movement Function
     def move(self, dx, dy):
+        screen_scroll = [0,0]
+
         # Diagonal Speed
         if dx != 0 and dy != 0:
             dx = dx * (math.sqrt(2)/2)
@@ -28,6 +30,33 @@ class Character():
 
         self.rect.x += dx 
         self.rect.y += dy
+
+        # Only scroll screen if it's the player
+        if self.mob_type == 0:
+            # Update Scroll -> Move camera
+
+            # Left & Right
+            if self.rect.right > (constants.SCREEN_WIDTH - constants.SCROLL_THRES):
+                screen_scroll[0] = (constants.SCREEN_WIDTH - constants.SCROLL_THRES) - self.rect.right
+                self.rect.right = (constants.SCREEN_WIDTH - constants.SCROLL_THRES)
+
+            if self.rect.left < constants.SCROLL_THRES:
+                screen_scroll[0] = constants.SCROLL_THRES - self.rect.left
+                self.rect.left = constants.SCROLL_THRES
+
+            # Up & Down
+            if self.rect.bottom > (constants.SCREEN_HEIGHT - constants.SCROLL_THRES):
+                screen_scroll[1] = (constants.SCREEN_HEIGHT - constants.SCROLL_THRES) - self.rect.bottom
+                self.rect.bottom = (constants.SCREEN_HEIGHT - constants.SCROLL_THRES)
+
+            if self.rect.top < constants.SCROLL_THRES:
+                screen_scroll[1] = constants.SCROLL_THRES - self.rect.top
+                self.rect.top = constants.SCROLL_THRES
+
+            
+        print(screen_scroll)
+        return screen_scroll
+
 
 
     def update(self, action):
@@ -52,6 +81,10 @@ class Character():
             self.updated_time = pygame.time.get_ticks()
 
 
+    def ai(self, screen_scroll):
+        # Reposition enemies based on screen_scroll
+        self.rect.x += screen_scroll[0]
+        self.rect.y += screen_scroll[1]
     
 
     def update_action(self,new_action):

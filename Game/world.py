@@ -24,3 +24,10 @@ class World():
       for tile in self.map_tiles:
         surface.blit(tile[0],tile[1])
 
+   def update(self,screen_scroll):
+     for tile in self.map_tiles:
+       tile[2] += screen_scroll[0] # Update X-Kord
+       tile[3] += screen_scroll[1] # Update Y-Kord
+       tile[1].center = (tile[2],tile[3])
+
+

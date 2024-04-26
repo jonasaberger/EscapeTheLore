@@ -56,15 +56,15 @@ class Pencil(pygame.sprite.Sprite):
         self.dy = -(math.sin(math.radians(self.angle)) * constants.PENCIL_SPEED) # -ve because pygame y coordinats increases down the screen 
 
     
-    def update(self, enemy_list):
+    def update(self, screen_scroll, enemy_list):
 
         # Reset variables
         damage = 0
         damage_pos = 0
-
+ 
         #reposition based on speed
-        self.rect.x = int(round(self.rect.x + self.dx))
-        self.rect.y = int(round(self.rect.y + self.dy))
+        self.rect.x = screen_scroll[0] + int(round(self.rect.x + self.dx))
+        self.rect.y = screen_scroll[1] + int(round(self.rect.y + self.dy))
 
         #check if arrow has gone off screen 
         if self.rect.right < 0 or self.rect.left > constants.SCREEN_WIDTH or self.rect.bottom < 0 or self.rect.top > constants.SCREEN_HEIGHT:

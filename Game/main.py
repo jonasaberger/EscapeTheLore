@@ -89,6 +89,10 @@ titlescreen = pygame.image.load("Game/assets/images/GUI/menu_bg.png")
 # Creating Clock -> Frame Rate
 clock = pygame.time.Clock()
 
+# Define Game variables
+level = 1
+screen_scroll = [0,0]
+
 # Define Player movement variables
 moving_left = False
 moving_right = False
@@ -183,8 +187,7 @@ def draw_info():
 player = Character(256,256,75,mob_animations,0)
 
 # Create Enemy
-enemy = Character(200, 300, 100, mob_animations,1)
-
+enemy = Character(300, 300, 100, mob_animations,1)
 
 # Create Player's weapon
 ruler = Weapon(ruler_image, pencil_image)
@@ -200,7 +203,7 @@ damage_text_group = pygame.sprite.Group()
 pencil_group = pygame.sprite.Group()
 item_group = pygame.sprite.Group()
 
-score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, coin_image)
+score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, coin_image, True)
 item_group.add(score_coin)
 
 potion = Item(200, 200, 1, [lore_potion])
@@ -227,7 +230,6 @@ run = True
 while run:
     # Limit Frame Rate
     clock.tick(constants.FRAMES_PER_SECOND)
-
 
     if start_game == False:
         screen.blit(titlescreen, (0, 0))
@@ -266,17 +268,23 @@ while run:
                 updatedAction = 1
 
             # Move Player
-            player.move(dx,dy)
+            screen_scroll = player.move(dx,dy)
+            print(screen_scroll)
             
 
-            # Updates
+            # UPDATES
 
-            player.update(updatedAction)
+            # Update the world
+            world.update(screen_scroll)
+
 
             # Update all enemies in enemy_list
             for enemy in enemy_list:
+                enemy.ai(screen_scroll)
                 enemy.update(0)
 
+            # Update the player
+            player.update(updatedAction)
 
             # Update Ruler
             pencil = ruler.update(player)
@@ -284,15 +292,15 @@ while run:
             if pencil:
                 pencil_group.add(pencil)
             for pencil in pencil_group:
-                damage, damage_pos = pencil.update(enemy_list)
+                damage, damage_pos = pencil.update(screen_scroll, enemy_list)
                 if damage != 0:
                     if damage == 14:
                         damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.YELLOW)
                     else:
                      damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.RED)
                     damage_text_group.add(damage_text)
-            damage_text_group.update()
-            item_group.update(player)
+            damage_text_group.update(screen_scroll)
+            item_group.update(screen_scroll,player)
             
 
             world.draw(screen)
