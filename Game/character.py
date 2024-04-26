@@ -4,7 +4,7 @@ import math
 
 class Character():
 
-    def __init__(self,x,y,health,animation_list, mob_type):
+    def __init__(self,x,y,health,animation_list, mob_type,width,height):
         self.score = 0
         self.mob_type = mob_type
         self.running = False
@@ -16,7 +16,7 @@ class Character():
         self.updated_time = pygame.time.get_ticks()
 
         self.image = animation_list[self.action][self.frame_index]
-        self.rect = pygame.Rect(0,0,(constants.CHARACTER_WIDTH*constants.GAME_SCALE)/2, constants.CHARACTER_HEIGHT*constants.GAME_SCALE)
+        self.rect = pygame.Rect(0,0,width, height)
         self.rect.center = (x,y)
     
     # Player Movement Function

@@ -25,6 +25,8 @@ def scale_img(image, scale):
 
 # Define game variables
 level = 1
+constants.LEVEL_NAMES.append("HTL")
+constants.LEVEL_NAMES.append("HAK")
 
 # Define game variables
 start_game = False
@@ -51,9 +53,6 @@ with open("Game/levels/test.csv", newline="") as csvfile:
         for y, tile in enumerate(row):
             world_data[x][y] = int(tile)
 
-#World Data
-world = World()
-world.process_data(world_data,tile_list)
 
 # Load button images
 start_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_start.png").convert_alpha(), constants.BUTTON_SCALE)
@@ -71,20 +70,27 @@ heart_half = scale_img(pygame.image.load("Game/assets/images/GUI/heart_half.png"
 heart_full = scale_img(pygame.image.load("Game/assets/images/GUI/heart_full.png").convert_alpha(), constants.HEART_SCALE)
 
 #load coin images
-coin_image = []
+coin_images = []
 for x in range(4):
     img = scale_img(pygame.image.load(f"Game/assets/images/GUI/coin_f{x}.png").convert_alpha(), constants.ITEM_SCALE)
-    coin_image.append(img)
+    coin_images.append(img)
 
 #load potion image
-lore_potion = scale_img(pygame.image.load("Game/assets/images/items/lore_potion.png").convert_alpha(), constants.POTION_SCALE)
+potion = scale_img(pygame.image.load("Game/assets/images/items/lore_potion.png").convert_alpha(), constants.POTION_SCALE)
 
+
+# Add different Items to the general Item-List
+item_images = []
+item_images.append(coin_images)
+item_images.append(potion)
+
+#World Data
+world = World()
+world.process_data(world_data,tile_list,item_images)
 
 #load bg image
 titlescreen = pygame.image.load("Game/assets/images/GUI/menu_bg.png")
 
-#classes down here:
-#class for screen fade
 
 # Creating Clock -> Frame Rate
 clock = pygame.time.Clock()
@@ -177,17 +183,21 @@ def draw_info():
             half_heart_drawn = True
         else:
            screen.blit(heart_empty, (10 + i * 50, 0))
+
+
+    # Display level
+    draw_text(f"LEVEL: {constants.LEVEL_NAMES[level-1]}", constants.MAIN_FONT,constants.WHITE,constants.SCREEN_WIDTH/2,15)
     
-    #show score
+    # Display score
     draw_text(f"CoinScore: {player.score}", font, constants.WHITE,constants.SCREEN_WIDTH - 150, 20)
     
 
 
 # Create Player
-player = Character(256,256,75,mob_animations,0)
+player = Character(256,256,75,mob_animations,0,constants.PLAYER_WIDTH,constants.PLAYER_HEIGHT)
 
 # Create Enemy
-enemy = Character(300, 300, 100, mob_animations,1)
+enemy = Character(300, 300, 100, mob_animations,1,constants.ABERGA_WIDTH,constants.ABERGA_HEIGHT)
 
 # Create Player's weapon
 ruler = Weapon(ruler_image, pencil_image)
@@ -203,13 +213,17 @@ damage_text_group = pygame.sprite.Group()
 pencil_group = pygame.sprite.Group()
 item_group = pygame.sprite.Group()
 
-score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, coin_image, True)
+score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, coin_images, True)
 item_group.add(score_coin)
 
-potion = Item(200, 200, 1, [lore_potion])
+potion = Item(200, 200, 1, [potion])
 item_group.add(potion)
-coin = Item(400, 400, 0, coin_image)
+coin = Item(400, 400, 0, coin_images)
 item_group.add(coin)
+
+# Add the Items from the level data
+for item in world.item_list:
+    item_group.add(item)
 
 # Create button
 start_button = Button(630, 530, start_img) #constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150
@@ -323,15 +337,13 @@ while run:
                 pencil.draw(screen)
 
             damage_text_group.draw(screen)
-
-
+            
 
     #show intro
     if start_intro == True:
         if intro_fade.fade():
           start_intro = False
           intro_fade.fade_counter = 0
-
 
     # Event Handler
     for event in pygame.event.get():
@@ -345,6 +357,7 @@ while run:
             
         # Key-Press
         if event.type == pygame.KEYDOWN:
+            # Movement
             if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                 moving_left = True
 
@@ -356,8 +369,12 @@ while run:
 
             if event.key == pygame.K_s or event.key == pygame.K_DOWN:
                 moving_down = True
-            if event.key == pygame.K_ESCAPE:
+
+            # Menu
+            if event.key == pygame.K_ESCAPE and pause_game == False:
                 pause_game = True
+            elif event.key == pygame.K_ESCAPE and pause_game == True:
+                pause_game = False
 
 
         # Key-Release
@@ -373,7 +390,6 @@ while run:
 
             if event.key == pygame.K_s or event.key == pygame.K_DOWN:
                 moving_down = False
-
 
     # Update Screen
     pygame.display.update()
