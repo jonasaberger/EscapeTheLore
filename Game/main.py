@@ -363,7 +363,7 @@ while run:
                 pause_game = True
             if event.key == pygame.K_e:
                 shop_keypressed = True
-                print("E pressed")
+                print("Checking for Shop collision")
 
 
         # Key-Release
