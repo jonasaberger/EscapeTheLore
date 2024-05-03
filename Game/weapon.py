@@ -6,7 +6,7 @@ import random
 import constants
 
 class Weapon():
-    def __init__(self, image, pencil_image):
+    def __init__(self, image, pencil_image, outerWalls):
         self.original_image = image
         self.angle = 0
         self.image = pygame.transform.rotate(self.original_image, self.angle)
@@ -14,6 +14,7 @@ class Weapon():
         self.rect = self.image.get_rect()
         self.fired = False
         self.last_shot = pygame.time.get_ticks()
+        self.outerWalls = outerWalls
     
     def update(self, player):
         shot_cooldown = 300
@@ -28,7 +29,7 @@ class Weapon():
 
         #get mouseclick
         if pygame.mouse.get_pressed()[0] and self.fired == False and (pygame.time.get_ticks() - self.last_shot) >= shot_cooldown:
-            pencil = Pencil(self.pencil_image, self.rect.centerx, self.rect.centery, self.angle)
+            pencil = Pencil(self.pencil_image, self.rect.centerx, self.rect.centery, self.angle, self.outerWalls)
             self.fired = True
             self.last_shot = pygame.time.get_ticks()
         #reset mouse click
@@ -44,13 +45,14 @@ class Weapon():
 
 
 class Pencil(pygame.sprite.Sprite):
-    def __init__(self, image, x, y, angle): 
+    def __init__(self, image, x, y, angle, outerWalls): 
         pygame.sprite.Sprite.__init__(self)
         self.original_image = image
         self.angle = angle
         self.image = pygame.transform.rotate(self.original_image, self.angle - 90)
         self.rect = self.image.get_rect()
         self.rect.center =  (x,y)
+        self.outerWalls = outerWalls
         #calculate horizontal and vertical speeds based on the angle
         self.dx = math.cos(math.radians(self.angle)) * constants.PENCIL_SPEED
         self.dy = -(math.sin(math.radians(self.angle)) * constants.PENCIL_SPEED) # -ve because pygame y coordinats increases down the screen 
@@ -80,7 +82,15 @@ class Pencil(pygame.sprite.Sprite):
                 self.kill()
                 break # Exit the for-loop
 
+
+            for wall in self.outerWalls:
+                if wall[1].colliderect(self.rect):
+                    self.kill()
+
         return damage, damage_pos
+    
+
+        
         
 
 
