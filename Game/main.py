@@ -83,6 +83,9 @@ lore_potion = scale_img(pygame.image.load("Game/assets/images/items/lore_potion.
 #load bg image
 titlescreen = pygame.image.load("Game/assets/images/GUI/menu_bg.png")
 
+#load shop images
+ingameshopBG = pygame.image.load("Game/assets/images/GUI/ingameshop.png")
+
 #classes down here:
 #class for screen fade
 
@@ -358,6 +361,9 @@ while run:
                 moving_down = True
             if event.key == pygame.K_ESCAPE:
                 pause_game = True
+            if event.key == pygame.K_e:
+                shop_keypressed = True
+                print("E pressed")
 
 
         # Key-Release
@@ -373,6 +379,8 @@ while run:
 
             if event.key == pygame.K_s or event.key == pygame.K_DOWN:
                 moving_down = False
+            if event.key == pygame.K_e:
+                shop_keypressed = False
 
 
     # Update Screen
