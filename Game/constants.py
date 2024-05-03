@@ -20,7 +20,7 @@ SCREEN_HEIGHT = 720
 GAME_SCALE = 2
 
 TILE_SIZE = 16 * GAME_SCALE
-TILE_TYPES = 12
+TILE_TYPES = 113
 LEVEL_NAMES = []
 MAIN_FONT = pygame.font.Font("Game/assets/fonts/MainFont.ttf",35)
 

@@ -45,7 +45,7 @@ for row in range(constants.ROWS):
     world_data.append(row)
 
 # Load in level data and create world
-with open("Game/levels/test.csv", newline="") as csvfile: 
+with open("Game/levels/Level1.csv", newline="") as csvfile: 
     reader = csv.reader(csvfile, delimiter=",")
     for x, row in enumerate(reader):
         for y, tile in enumerate(row):
@@ -84,7 +84,7 @@ item_images.append(potion)
 
 #World Data
 world = World()
-world.process_data(world_data,tile_list,item_images)
+
 
 #load bg image
 titlescreen = pygame.image.load("Game/assets/images/GUI/menu_bg.png")
@@ -153,6 +153,8 @@ for mob in mob_types:
     animation_list.append(left_list)
     mob_animations.append(animation_list)
 
+world.process_data(world_data,tile_list,item_images, mob_animations)
+
 
 # Delta X and Delta Y
 dx = 0
@@ -173,9 +175,9 @@ def draw_info():
     #Draw lives
     half_heart_drawn = False
     for i in range(5):
-        if player.health >= ((i + 1) * 20):
+        if player.health >= ((i + 1) * 20): # type: ignore
             screen.blit(heart_full, (10 + i * 50, 0))
-        elif (player.health % 20 > 0) and half_heart_drawn == False:
+        elif (player.health % 20 > 0) and half_heart_drawn == False: # type: ignore
             screen.blit(heart_half, (10 + i * 50, 0))
             half_heart_drawn = True
         else:
@@ -185,16 +187,16 @@ def draw_info():
     draw_text(f"LEVEL: {constants.LEVEL_NAMES[level-1]}", constants.MAIN_FONT,constants.WHITE,constants.SCREEN_WIDTH/2,15)
     
     # Display score
-    draw_text(f"CoinScore: {player.score}", font, constants.WHITE,constants.SCREEN_WIDTH - 150, 20)
+    draw_text(f"CoinScore: {player.score}", font, constants.WHITE,constants.SCREEN_WIDTH - 150, 20) # type: ignore
     
 # Create Player
-player = Character(256,256,75,mob_animations,0,constants.PLAYER_WIDTH,constants.PLAYER_HEIGHT)
+player = world.player
 
 # Create Enemy
 enemy = Character(300, 300, 100, mob_animations,1,constants.ABERGA_WIDTH,constants.ABERGA_HEIGHT)
 
 # Create Player's weapon
-ruler = Weapon(ruler_image, pencil_image)
+ruler = Weapon(ruler_image, pencil_image, world.outerWalls)
 
 # Create Enemy-List
 enemy_list = []
@@ -276,7 +278,7 @@ while run:
                 updatedAction = 1
 
             # Move Player
-            screen_scroll = player.move(dx,dy,world.obstacle_tiles)
+            screen_scroll = player.move(dx,dy,world.obstacle_tiles) #type:ignore
             print(screen_scroll)
             
 
@@ -292,7 +294,7 @@ while run:
                 enemy.update(0)
 
             # Update the player
-            player.update(updatedAction)
+            player.update(updatedAction) # type: ignore
 
             # Update Ruler
             pencil = ruler.update(player)
@@ -317,7 +319,7 @@ while run:
             score_coin.draw(screen)
 
             # Player Update & Draw
-            player.draw(screen)
+            player.draw(screen) #type: ignore
 
 
             # Draw all enemies in enemy_list
