@@ -6,6 +6,11 @@ pygame.init()
 # This File defines all the constants used for Colours, Sizes,...
 
 # Sizes
+PLAYER_HEIGHT = 48
+PLAYER_WIDTH = 32
+
+ABERGA_HEIGHT = 48
+ABERGA_WIDTH = 32
 
 # Game
 FPS = 60
@@ -13,10 +18,11 @@ FRAMES_PER_SECOND = 60
 SCREEN_WIDTH = 1148
 SCREEN_HEIGHT = 720
 GAME_SCALE = 2
-CHARACTER_HEIGHT = 32
-CHARACTER_WIDTH = 32
+
 TILE_SIZE = 16 * GAME_SCALE
 TILE_TYPES = 12
+LEVEL_NAMES = []
+MAIN_FONT = pygame.font.Font("Game/assets/fonts/MainFont.ttf",35)
 
 # Menu
 BUTTON_SCALE = 1
@@ -32,7 +38,6 @@ POTION_SCALE = 2
 # Weapon
 WEAPON_SCALE = 1.5
 PENCIL_SPEED = 10
-DAMAGE_FONT = pygame.font.Font("Game/assets/fonts/MainFont.ttf",35)
 DAMAGE_BASE = 10
 DAMAGE_EXTRA = 5
 

@@ -4,7 +4,7 @@ import math
 
 class Character():
 
-    def __init__(self,x,y,health,animation_list, mob_type):
+    def __init__(self,x,y,health,animation_list, mob_type,width,height):
         self.score = 0
         self.mob_type = mob_type
         self.running = False
@@ -16,11 +16,11 @@ class Character():
         self.updated_time = pygame.time.get_ticks()
 
         self.image = animation_list[self.action][self.frame_index]
-        self.rect = pygame.Rect(0,0,constants.CHARACTER_WIDTH*constants.GAME_SCALE, constants.CHARACTER_HEIGHT*constants.GAME_SCALE)
-        self.rect.center = (x/2,y/2)
+        self.rect = pygame.Rect(0,0,width, height)
+        self.rect.center = (x,y)
     
     # Player Movement Function
-    def move(self, dx, dy):
+    def move(self, dx, dy, obstacle_tiles):
         screen_scroll = [0,0]
 
         # Diagonal Speed
@@ -28,8 +28,26 @@ class Character():
             dx = dx * (math.sqrt(2)/2)
             dy = dy * (math.sqrt(2)/2)
 
-        self.rect.x += dx 
+        # Check for collission x
+        self.rect.x += dx
+        for obstacle in obstacle_tiles:
+            if obstacle[1].colliderect(self.rect):
+                # Check which side it collides with
+                if dx > 0:
+                    self.rect.right = obstacle[1].left
+                if dx < 0:
+                     self.rect.left = obstacle[1].right
+
+
+        # Check for collission y
         self.rect.y += dy
+        for obstacle in obstacle_tiles:
+            if obstacle[1].colliderect(self.rect):
+                # Check which side it collides with
+                if dy > 0:
+                    self.rect.bottom = obstacle[1].top
+                if dy < 0:
+                    self.rect.top = obstacle[1].bottom
 
         # Only scroll screen if it's the player
         if self.mob_type == 0:
@@ -98,7 +116,12 @@ class Character():
 
     # Draw the Player Character
     def draw(self, surface):
-        surface.blit(self.image,self.rect)
-        pygame.draw.rect(surface, constants.RED, self.rect,1)
+        x_offset = (self.rect.width - self.image.get_width()) / 2
+        y_offset = (self.rect.height - self.image.get_height()) / 2
+
+
+        surface.blit(self.image, (self.rect.x + x_offset, self.rect.y + y_offset))
+        pygame.draw.rect(surface, constants.RED, self.rect.move(0, 0), 1)
+
 
 
