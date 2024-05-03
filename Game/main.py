@@ -1,4 +1,3 @@
-# from logging import _Level
 from pickle import TRUE
 import pygame
 import pygame.font
@@ -11,17 +10,16 @@ from weapon import Weapon
 from world import World
 from item import Item
 import csv
-
 pygame.init()
-
 screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
 pygame.display.set_caption("Escape The Lore")
+# HELPER FUNCTIONS
 
-# Helper function to scale image
+# Function to scale images
 def scale_img(image, scale):
-  image_width = image.get_width()
-  image_heigth = image.get_height()
-  return pygame.transform.scale(image, (image_width * scale, image_heigth * scale)) 
+    image_width = image.get_width()
+    image_heigth = image.get_height()
+    return pygame.transform.scale(image, (image_width * scale, image_heigth * scale)) 
 
 # Define game variables
 level = 1
@@ -156,7 +154,6 @@ for mob in mob_types:
     mob_animations.append(animation_list)
 
 
-
 # Delta X and Delta Y
 dx = 0
 dy = 0
@@ -184,15 +181,12 @@ def draw_info():
         else:
            screen.blit(heart_empty, (10 + i * 50, 0))
 
-
     # Display level
     draw_text(f"LEVEL: {constants.LEVEL_NAMES[level-1]}", constants.MAIN_FONT,constants.WHITE,constants.SCREEN_WIDTH/2,15)
     
     # Display score
     draw_text(f"CoinScore: {player.score}", font, constants.WHITE,constants.SCREEN_WIDTH - 150, 20)
     
-
-
 # Create Player
 player = Character(256,256,75,mob_animations,0,constants.PLAYER_WIDTH,constants.PLAYER_HEIGHT)
 
@@ -282,7 +276,7 @@ while run:
                 updatedAction = 1
 
             # Move Player
-            screen_scroll = player.move(dx,dy)
+            screen_scroll = player.move(dx,dy,world.obstacle_tiles)
             print(screen_scroll)
             
 
@@ -393,5 +387,8 @@ while run:
 
     # Update Screen
     pygame.display.update()
+
+
+
 
 pygame.quit()

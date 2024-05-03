@@ -20,7 +20,7 @@ class Character():
         self.rect.center = (x,y)
     
     # Player Movement Function
-    def move(self, dx, dy):
+    def move(self, dx, dy, obstacle_tiles):
         screen_scroll = [0,0]
 
         # Diagonal Speed
@@ -28,8 +28,26 @@ class Character():
             dx = dx * (math.sqrt(2)/2)
             dy = dy * (math.sqrt(2)/2)
 
-        self.rect.x += dx 
+        # Check for collission x
+        self.rect.x += dx
+        for obstacle in obstacle_tiles:
+            if obstacle[1].colliderect(self.rect):
+                # Check which side it collides with
+                if dx > 0:
+                    self.rect.right = obstacle[1].left
+                if dx < 0:
+                     self.rect.left = obstacle[1].right
+
+
+        # Check for collission y
         self.rect.y += dy
+        for obstacle in obstacle_tiles:
+            if obstacle[1].colliderect(self.rect):
+                # Check which side it collides with
+                if dy > 0:
+                    self.rect.bottom = obstacle[1].top
+                if dy < 0:
+                    self.rect.top = obstacle[1].bottom
 
         # Only scroll screen if it's the player
         if self.mob_type == 0:
@@ -98,8 +116,12 @@ class Character():
 
     # Draw the Player Character
     def draw(self, surface):
-        surface.blit(self.image, self.rect)
-        pygame.draw.rect(surface, constants.RED, self.rect.move(15,0), 1)
+        x_offset = (self.rect.width - self.image.get_width()) / 2
+        y_offset = (self.rect.height - self.image.get_height()) / 2
+
+
+        surface.blit(self.image, (self.rect.x + x_offset, self.rect.y + y_offset))
+        pygame.draw.rect(surface, constants.RED, self.rect.move(0, 0), 1)
 
 
 

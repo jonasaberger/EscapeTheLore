@@ -6,10 +6,10 @@ pygame.init()
 # This File defines all the constants used for Colours, Sizes,...
 
 # Sizes
-PLAYER_HEIGHT = 64
+PLAYER_HEIGHT = 48
 PLAYER_WIDTH = 32
 
-ABERGA_HEIGHT = 64
+ABERGA_HEIGHT = 48
 ABERGA_WIDTH = 32
 
 # Game
