@@ -108,7 +108,7 @@ font = pygame.font.Font("Game/assets/fonts/MainFont.ttf", 30)
 
 # Mob Types -> Different Types of Mobs and enemies
 mob_animations = []
-mob_types = ["Player", "Aberga"] #TODO:"Change PlayerPlaceholder to Aberga-Animation"
+mob_types = ["Player", "Aberga"]
  
 
 for mob in mob_types:
@@ -284,7 +284,7 @@ while run:
 
             # Update all enemies in enemy_list
             for enemy in world.enemy_list:
-                enemy.ai(screen_scroll)
+                enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
                 enemy.update(0)
 
             # Update the player
@@ -345,8 +345,7 @@ while run:
 
         # Take Keyboard Input
             
-        # Key-Press
-        if event.type == pygame.KEYDOWN:
+        # Key-Pressa
             # Movement
             if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                 moving_left = True

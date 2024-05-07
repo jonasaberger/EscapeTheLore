@@ -97,7 +97,7 @@ class World():
 
       
       # Specify Obstacle-Tiles
-      if tile != 0 and tile != 2 and tile != 3 and tile != 72:
+      if tile != 0 and tile != 2 and tile != 3 and tile != 72 and tile != 62 and tile != 71 and tile != 63 and tile != 61 and tile != 59 and tile != 58:
         self.obstacle_tiles.append(tile_data)
 
       # Add all tiles to main tiles list
