@@ -192,16 +192,10 @@ def draw_info():
 # Create Player
 player = world.player
 
-# Create Enemy
-enemy = Character(300, 300, 100, mob_animations,1,constants.ABERGA_WIDTH,constants.ABERGA_HEIGHT)
 
 # Create Player's weapon
 ruler = Weapon(ruler_image, pencil_image, world.outerWalls)
 
-# Create Enemy-List
-enemy_list = []
-# Add Enemies to the List
-enemy_list.append(enemy)
 
 
 # Create Sprite Groups
@@ -289,7 +283,7 @@ while run:
 
 
             # Update all enemies in enemy_list
-            for enemy in enemy_list:
+            for enemy in world.enemy_list:
                 enemy.ai(screen_scroll)
                 enemy.update(0)
 
@@ -302,7 +296,7 @@ while run:
             if pencil:
                 pencil_group.add(pencil)
             for pencil in pencil_group:
-                damage, damage_pos = pencil.update(screen_scroll, enemy_list)
+                damage, damage_pos = pencil.update(screen_scroll, world.enemy_list)
                 if damage != 0:
                     if damage == 14:
                         damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.YELLOW)
@@ -323,7 +317,7 @@ while run:
 
 
             # Draw all enemies in enemy_list
-            for enemy in enemy_list:
+            for enemy in world.enemy_list:
              enemy.draw(screen)
 
 
