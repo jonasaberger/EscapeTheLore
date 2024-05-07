@@ -162,14 +162,16 @@ class Character():
         # Check if the enemy is alive
         if self.alive:
             # Determine movement direction
-            if ai_dy > 0:
-                moving_down = True  # Moving downwards
-            elif ai_dy < 0:
-                moving_up = True  # Moving upwards
-            if ai_dx > 0:
-                moving_right = True  # Moving towards the right
-            elif ai_dx < 0:
-                moving_left = True  # Moving towards the left
+            if abs(ai_dy) > abs(ai_dx):
+                if ai_dy > 0:
+                    moving_down = True  # Moving downwards
+                elif ai_dy < 0:
+                    moving_up = True  # Moving upwards
+            else:
+                if ai_dx > 0:
+                    moving_right = True  # Moving towards the right
+                elif ai_dx < 0:
+                    moving_left = True  # Moving towards the left
 
             if not self.stunned:
                 # Move towards the Player
