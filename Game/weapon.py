@@ -76,9 +76,11 @@ class Pencil(pygame.sprite.Sprite):
         for enemy in enemy_list:
             if enemy.rect.colliderect(self.rect) and enemy.alive:
                 # Calculate the damage delt
-                damage = constants.DAMAGE_BASE + random.randint(0,constants.DAMAGE_EXTRA)
+                damage = constants.P_DAMAGE_BASE + random.randint(0,constants.P_DAMAGE_EXTRA)
                 damage_pos = enemy.rect
                 enemy.health -= damage
+                enemy.hit = True
+
                 self.kill()
                 break # Exit the for-loop
 

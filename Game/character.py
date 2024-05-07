@@ -15,6 +15,10 @@ class Character():
         self.action = 0 # 0 = Idle | 1 = Down | 2 = Up | 3 = Right | 4 = Left
         self.updated_time = pygame.time.get_ticks()
 
+        self.hit = False
+        self.last_hit = pygame.time.get_ticks() # Timer for when player received last hit
+        self.stunned = False
+
         self.image = animation_list[self.action][self.frame_index]
         self.rect = pygame.Rect(0,0,width, height)
         self.rect.center = (x,y)
@@ -71,8 +75,6 @@ class Character():
                 screen_scroll[1] = constants.SCROLL_THRES - self.rect.top
                 self.rect.top = constants.SCROLL_THRES
 
-            
-        print(screen_scroll)
         return screen_scroll
 
 
@@ -82,6 +84,12 @@ class Character():
         if self.health <= 0:
             self.health = 0
             self.alive = False
+
+        # Timer to reset player getting hit
+        if self.mob_type == 0:
+            if self.hit == True and (pygame.time.get_ticks() - self.last_hit) > constants.P_HIT_COOLDOWN:
+                self.hit = False
+            
 
 
         #Check which action player is performing
@@ -99,10 +107,82 @@ class Character():
             self.updated_time = pygame.time.get_ticks()
 
 
-    def ai(self, screen_scroll):
+    def ai(self, screen, player, obstacle_tiles, screen_scroll):
+        
+        # Movement Variables
+        ai_dx = 2
+        ai_dy = 0
+        enemy_speed = 0
+        enemy_range = 0
+        enemy_damage = 0
+        enemy_stun_cooldown = 0
+
+        clipped_line = ()
+        
+        # Get the correct STATS for the specific mob-type
+        if self.mob_type == 1:
+            enemy_speed = constants.ABERGA_SPEED
+            enemy_range = constants.ABERGA_RANGE
+            enemy_damage = constants.ABERGA_DAMAGE
+            enemy_stun_cooldown = constants.ABERGA_STUN_COOLDOWN
+
+
         # Reposition enemies based on screen_scroll
         self.rect.x += screen_scroll[0]
         self.rect.y += screen_scroll[1]
+
+        # Creating line of sight
+        line_of_sight = ((self.rect.centerx,self.rect.centery),(player.rect.centerx,player.rect.centery))
+         # Use this to demonstrate the line of sight -> comment out world.draw
+         # pygame.draw.line(screen,constants.RED,line_of_sight[0],line_of_sight[1])
+
+        # Check if the line_of_sight collides with a obstacle_tile
+        for obstacle in obstacle_tiles:
+            if obstacle[1].clipline(line_of_sight):
+                clipped_line = obstacle[1].clipline(line_of_sight)
+
+
+        # Check distance to player -> Pythagoras
+        distanceToPlayer = math.sqrt(((self.rect.centerx - player.rect.centerx)**2)+((self.rect.centery - player.rect.centery)**2))
+
+        # Enemy has simple line of sight and moves to player
+        if not clipped_line and distanceToPlayer > constants.RANGE:
+            if self.rect.centerx > player.rect.centerx:
+                ai_dx = -enemy_speed
+            if self.rect.centerx < player.rect.centerx:
+                ai_dx = enemy_speed
+
+            if self.rect.centery > player.rect.centery:
+                ai_dy = -enemy_speed
+            if self.rect.centery < player.rect.centery:
+                ai_dy = enemy_speed
+
+        # Check if the enemy is even alive!
+        if self.alive:
+
+            if not self.stunned:
+                # Move towards the Player
+                self.move(ai_dx, ai_dy, obstacle_tiles)
+
+                # Attack the Player
+                if distanceToPlayer < enemy_range and player.hit == False:
+                    player.health -= enemy_damage
+                    player.hit = True
+                    player.last_hit = pygame.time.get_ticks()
+
+
+            # Check if hit
+            if self.hit == True:
+                self.hit = False
+                self.last_hit = pygame.time.get_ticks()
+                self.stunned = True
+                self.update_action(0)
+
+            # Reset the stun timeout
+            if (pygame.time.get_ticks() - self.last_hit > enemy_stun_cooldown):
+                self.stunned = False
+
+
     
 
     def update_action(self,new_action):

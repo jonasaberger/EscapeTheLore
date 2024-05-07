@@ -11,6 +11,7 @@ class World():
     self.exit_tile = None
     self.player = None
     self.item_list = []
+    self.enemy_list = []
     self.outerWalls = []
 
 
@@ -71,11 +72,14 @@ class World():
 
       # ABERGA-TILE
       if tile == 62:
+        aberga = Character(image_x, image_y, 100, mob_animations,1,constants.ABERGA_WIDTH,constants.ABERGA_HEIGHT)
+        self.enemy_list.append(aberga)
         tile_data[0] = tile_list[0]
+        
 
       # LORE-GETRÄNK
       if tile == 63:
-        potion = Item(200, 200, 1, [potion])
+        potion = Item(image_x, image_y, 1, [potion])
         self.item_list.append(potion)
         tile_data[0] = tile_list[0]
 
@@ -93,7 +97,7 @@ class World():
 
       
       # Specify Obstacle-Tiles
-      if tile != 0 and tile != 2 and tile != 3 and tile != 72:
+      if tile != 0 and tile != 2 and tile != 3 and tile != 72 and tile != 62 and tile != 71 and tile != 63 and tile != 61 and tile != 59 and tile != 58:
         self.obstacle_tiles.append(tile_data)
 
       # Add all tiles to main tiles list
