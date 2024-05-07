@@ -345,7 +345,8 @@ while run:
 
         # Take Keyboard Input
             
-        # Key-Pressa
+        # Key-Press
+        if event.type == pygame.KEYDOWN:
             # Movement
             if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                 moving_left = True
