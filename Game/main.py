@@ -45,7 +45,7 @@ for row in range(constants.ROWS):
     world_data.append(row)
 
 # Load in level data and create world
-with open("Game/levels/Level1.csv", newline="") as csvfile: 
+with open("Game/levels/test.csv", newline="") as csvfile: 
     reader = csv.reader(csvfile, delimiter=",")
     for x, row in enumerate(reader):
         for y, tile in enumerate(row):
@@ -108,7 +108,7 @@ font = pygame.font.Font("Game/assets/fonts/MainFont.ttf", 30)
 
 # Mob Types -> Different Types of Mobs and enemies
 mob_animations = []
-mob_types = ["Player", "Aberga"]
+mob_types = ['Player', 'Aberga']
  
 
 for mob in mob_types:
@@ -273,9 +273,7 @@ while run:
 
             # Move Player
             screen_scroll = player.move(dx,dy,world.obstacle_tiles) #type:ignore
-            print(screen_scroll)
             
-
             # UPDATES
 
             # Update the world
@@ -285,7 +283,6 @@ while run:
             # Update all enemies in enemy_list
             for enemy in world.enemy_list:
                 enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
-                enemy.update(0)
 
             # Update the player
             player.update(updatedAction) # type: ignore

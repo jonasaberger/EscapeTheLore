@@ -108,17 +108,21 @@ class Character():
 
 
     def ai(self, screen, player, obstacle_tiles, screen_scroll):
-        
         # Movement Variables
-        ai_dx = 2
+        ai_dx = 0
         ai_dy = 0
         enemy_speed = 0
         enemy_range = 0
         enemy_damage = 0
         enemy_stun_cooldown = 0
 
+        moving_left = False
+        moving_right = False
+        moving_down = False
+        moving_up = False
+
         clipped_line = ()
-        
+
         # Get the correct STATS for the specific mob-type
         if self.mob_type == 1:
             enemy_speed = constants.ABERGA_SPEED
@@ -126,61 +130,83 @@ class Character():
             enemy_damage = constants.ABERGA_DAMAGE
             enemy_stun_cooldown = constants.ABERGA_STUN_COOLDOWN
 
-
         # Reposition enemies based on screen_scroll
         self.rect.x += screen_scroll[0]
         self.rect.y += screen_scroll[1]
 
         # Creating line of sight
-        line_of_sight = ((self.rect.centerx,self.rect.centery),(player.rect.centerx,player.rect.centery))
-         # Use this to demonstrate the line of sight -> comment out world.draw
-         # pygame.draw.line(screen,constants.RED,line_of_sight[0],line_of_sight[1])
+        line_of_sight = ((self.rect.centerx, self.rect.centery), (player.rect.centerx, player.rect.centery))
+        pygame.draw.line(screen,constants.RED,self.rect.center,player.rect.center)
 
-        # Check if the line_of_sight collides with a obstacle_tile
+        # Check if the line_of_sight collides with an obstacle_tile
         for obstacle in obstacle_tiles:
             if obstacle[1].clipline(line_of_sight):
                 clipped_line = obstacle[1].clipline(line_of_sight)
 
-
         # Check distance to player -> Pythagoras
-        distanceToPlayer = math.sqrt(((self.rect.centerx - player.rect.centerx)**2)+((self.rect.centery - player.rect.centery)**2))
+        distance_to_player = math.sqrt(((self.rect.centerx - player.rect.centerx) ** 2) +
+                                       ((self.rect.centery - player.rect.centery) ** 2))
 
         # Enemy has simple line of sight and moves to player
-        if not clipped_line and distanceToPlayer > constants.RANGE:
+        if not clipped_line and distance_to_player > constants.RANGE:
             if self.rect.centerx > player.rect.centerx:
                 ai_dx = -enemy_speed
-            if self.rect.centerx < player.rect.centerx:
+            elif self.rect.centerx < player.rect.centerx:
                 ai_dx = enemy_speed
 
             if self.rect.centery > player.rect.centery:
                 ai_dy = -enemy_speed
-            if self.rect.centery < player.rect.centery:
+            elif self.rect.centery < player.rect.centery:
                 ai_dy = enemy_speed
 
-        # Check if the enemy is even alive!
+        # Check if the enemy is alive
         if self.alive:
+            # Determine movement direction
+            if ai_dy > 0:
+                moving_down = True  # Moving downwards
+            elif ai_dy < 0:
+                moving_up = True  # Moving upwards
+            if ai_dx > 0:
+                moving_right = True  # Moving towards the right
+            elif ai_dx < 0:
+                moving_left = True  # Moving towards the left
 
             if not self.stunned:
                 # Move towards the Player
                 self.move(ai_dx, ai_dy, obstacle_tiles)
 
                 # Attack the Player
-                if distanceToPlayer < enemy_range and player.hit == False:
+                if distance_to_player < enemy_range and not player.hit:
                     player.health -= enemy_damage
                     player.hit = True
                     player.last_hit = pygame.time.get_ticks()
 
-
             # Check if hit
-            if self.hit == True:
+            if self.hit:
                 self.hit = False
                 self.last_hit = pygame.time.get_ticks()
                 self.stunned = True
                 self.update_action(0)
+            else:
+                # Update animation based on movement direction
+                if moving_up:
+                    self.update(2)
+                elif moving_down:
+                    self.update(1)
+                elif moving_right:
+                    self.update(3)
+                elif moving_left:
+                    self.update(4)
+                else:
+                    # Stay at the current animation state
+                    pass
 
             # Reset the stun timeout
-            if (pygame.time.get_ticks() - self.last_hit > enemy_stun_cooldown):
+            if pygame.time.get_ticks() - self.last_hit > enemy_stun_cooldown:
                 self.stunned = False
+
+        print(ai_dy, ai_dx)
+
 
 
     
