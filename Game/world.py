@@ -72,7 +72,7 @@ class World():
 
       # ABERGA-TILE
       if tile == 62:
-        aberga = Character(image_x, image_y, 100, mob_animations,1,constants.ABERGA_WIDTH,constants.ABERGA_HEIGHT)
+        aberga = Character(image_x, image_y, constants.ABERGA_HEALTH, mob_animations,1,constants.ABERGA_WIDTH,constants.ABERGA_HEIGHT)
         self.enemy_list.append(aberga)
         tile_data[0] = tile_list[0]
         

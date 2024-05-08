@@ -149,28 +149,38 @@ class Character():
 
         # Enemy has simple line of sight and moves to player
         if not clipped_line and distance_to_player > constants.RANGE:
+            
+            
+
+            # Move left
             if self.rect.centerx > player.rect.centerx:
                 ai_dx = -enemy_speed
+                print(f"LEFT | X: {self.rect.centerx} - {player.rect.centerx} | Y: {self.rect.centery} - {player.rect.centery}")
+            # Move right
             elif self.rect.centerx < player.rect.centerx:
                 ai_dx = enemy_speed
+                print(f"RIGHT | X: {self.rect.centerx} - {player.rect.centerx} | Y: {self.rect.centery} - {player.rect.centery}")
 
+            # Move up
             if self.rect.centery > player.rect.centery:
                 ai_dy = -enemy_speed
+                print(f"UP | X: {self.rect.centerx} - {player.rect.centerx} | Y: {self.rect.centery} - {player.rect.centery}")
+            # Move down
             elif self.rect.centery < player.rect.centery:
                 ai_dy = enemy_speed
+                print(f"DOWN | X: {self.rect.centerx} - {player.rect.centerx} | Y: {self.rect.centery} - {player.rect.centery}")
 
         # Check if the enemy is alive
         if self.alive:
             # Determine movement direction
-            if abs(ai_dy) > abs(ai_dx):
-                if ai_dy > 0:
+            if ai_dy > 0:
                     moving_down = True  # Moving downwards
-                elif ai_dy < 0:
+            if ai_dy < 0:
                     moving_up = True  # Moving upwards
-            else:
-                if ai_dx > 0:
+
+            if ai_dx > 0:
                     moving_right = True  # Moving towards the right
-                elif ai_dx < 0:
+            if ai_dx < 0:
                     moving_left = True  # Moving towards the left
 
             if not self.stunned:
@@ -191,23 +201,27 @@ class Character():
                 self.update_action(0)
             else:
                 # Update animation based on movement direction
-                if moving_up:
+                if (moving_up and moving_right) or (moving_up and moving_left):
                     self.update(2)
-                elif moving_down:
+                elif (moving_down and moving_right) or (moving_down and moving_left):
                     self.update(1)
-                elif moving_right:
-                    self.update(3)
-                elif moving_left:
-                    self.update(4)
                 else:
-                    # Stay at the current animation state
-                    pass
+                    if moving_up:
+                        self.update(2)
+                    if moving_down:
+                        self.update(1)
+                    if moving_right:
+                        self.update(3)
+                    if moving_left:
+                        self.update(4)
+                    else:
+                        # Stay at the current animation state
+                        pass
 
             # Reset the stun timeout
             if pygame.time.get_ticks() - self.last_hit > enemy_stun_cooldown:
                 self.stunned = False
 
-        print(ai_dy, ai_dx)
 
 
 
