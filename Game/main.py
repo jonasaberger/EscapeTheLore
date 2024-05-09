@@ -20,12 +20,12 @@ def scale_img(image, scale):
     image_heigth = image.get_height()
     return pygame.transform.scale(image, (image_width * scale, image_heigth * scale)) 
 
-#function for outputing text onto the screen
+# Function for outputing text onto the screen
 def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     screen.blit(img, (x, y))
 
-#function for displaying Game Info
+# Function for displaying Game Info
 def draw_info():
 
     #Draw Panel
@@ -121,13 +121,25 @@ def getImages():
         restart_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_restart.png").convert_alpha(), constants.BUTTON_SCALE)
         resume_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_resume.png").convert_alpha(), constants.BUTTON_SCALE)
         return start_img, exit_img, restart_img, resume_img
-    
+    def getTileImages():
+        tile_images = []
+        for x in range(constants.TILE_TYPES):
+            tile_image = pygame.image.load(f"Game/assets/tiles/{x}.png").convert_alpha()
+            tile_image = pygame.transform.scale(tile_image, (constants.TILE_SIZE*constants.GAME_SCALE, constants.TILE_SIZE*constants.GAME_SCALE))
+            tile_images.append(tile_image)
+        return tile_images
+
     item_images = getItemImages()
     heart_images = getHeartImages()
     weapon_images = getWeaponImages()
     button_images = getButtonImages()
     titlescreen_image = pygame.image.load("Game/assets/images/GUI/menu_bg.png")
-    return item_images, heart_images, weapon_images, button_images, titlescreen_image
+    tile_images = getTileImages()
+
+    return item_images, heart_images, weapon_images, button_images, titlescreen_image, tile_images
+
+
+
 
 # Define game variables
 level = 1
@@ -135,36 +147,9 @@ start_game = False
 pause_game = False
 start_intro = False
  
-# Load tilemap images
-tile_list = []
-for x in range(constants.TILE_TYPES):
-    tile_image = pygame.image.load(f"Game/assets/tiles/{x}.png").convert_alpha()
-    tile_image = pygame.transform.scale(tile_image, (constants.TILE_SIZE*constants.GAME_SCALE, constants.TILE_SIZE*constants.GAME_SCALE))
-    tile_list.append(tile_image)
-
- # Create empty tile list
-world_data = []
-for row in range(constants.ROWS):
-    row = [-1] * constants.COLS
-    world_data.append(row)
-
-# Load in level data and create world
-with open("Game/levels/test.csv", newline="") as csvfile: 
-    reader = csv.reader(csvfile, delimiter=",")
-    for x, row in enumerate(reader):
-        for y, tile in enumerate(row):
-            world_data[x][y] = int(tile)
-
-
-
-
-
-
-# Define MAIN-GAME variables
 world = World()
 level = 1
 screen_scroll = [0,0]
-
 
 
 # Creating Clock -> Frame Rate
@@ -179,20 +164,28 @@ moving_up = False
 moving_down = False
 
 # Get the different images-lists
-item_images,heart_images,weapon_images,button_images,titlescreen_image = getImages()
+item_images,heart_images,weapon_images,button_images,titlescreen_image,tile_images = getImages()
 
 # Mob Types -> Different Types of Mobs and enemies
 mob_animations = getMobAnimations()
 
+# Create empty tile list
+world_data = []
+for row in range(constants.ROWS):
+    row = [-1] * constants.COLS
+    world_data.append(row)
 
-world.process_data(world_data,tile_list,item_images, mob_animations)
+# Load in level data and create world
+with open("Game/levels/test.csv", newline="") as csvfile: 
+    reader = csv.reader(csvfile, delimiter=",")
+    for x, row in enumerate(reader):
+        for y, tile in enumerate(row):
+            world_data[x][y] = int(tile)
 
+world.process_data(world_data,tile_images,item_images, mob_animations)
 
-# Create Player
+# Create Player + Weapon
 player = world.player
-
-
-# Create Player's weapon
 ruler = Weapon(weapon_images[0], weapon_images[1], world.outerWalls)
 
 # Create Sprite Groups
