@@ -13,7 +13,6 @@ import csv
 pygame.init()
 screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
 pygame.display.set_caption("Escape The Lore")
-# HELPER FUNCTIONS
 
 # Function to scale images
 def scale_img(image, scale):
@@ -21,12 +20,83 @@ def scale_img(image, scale):
     image_heigth = image.get_height()
     return pygame.transform.scale(image, (image_width * scale, image_heigth * scale)) 
 
-# Define game variables
-level = 1
-constants.LEVEL_NAMES.append("HTL")
-constants.LEVEL_NAMES.append("HAK")
+#function for outputing text onto the screen
+def draw_text(text, font, text_col, x, y):
+    img = font.render(text, True, text_col)
+    screen.blit(img, (x, y))
+
+#function for displaying Game Info
+def draw_info():
+
+    #Draw Panel
+    pygame.draw.rect(screen, constants.PANEL, (0,0, constants.SCREEN_WIDTH, 50))
+    pygame.draw.line(screen, constants.WHITE, (0,50), (constants.SCREEN_WIDTH, 50))
+
+    #Draw lives
+    half_heart_drawn = False
+    for i in range(5):
+        if player.health >= ((i + 1) * 20): # type: ignore
+            screen.blit(heart_full, (10 + i * 50, 0))
+        elif (player.health % 20 > 0) and half_heart_drawn == False: # type: ignore
+            screen.blit(heart_half, (10 + i * 50, 0))
+            half_heart_drawn = True
+        else:
+           screen.blit(heart_empty, (10 + i * 50, 0))
+
+    # Display level
+    draw_text(f"LEVEL: {constants.LEVEL_NAMES[level-1]}", constants.MAIN_FONT,constants.WHITE,constants.SCREEN_WIDTH/2,15)
+    
+    # Display score
+    draw_text(f"CoinScore: {player.score}", font, constants.WHITE,constants.SCREEN_WIDTH - 150, 20) # type: ignore
+    
+def getMobAnimations():
+    mob_animations = []
+    for mob in constants.MOB_TYPES:
+        # Master Animation List -> contains all animations
+        animation_list = []
+
+        # Different Sub-Lists
+        idle_list = []
+        down_list = []
+        up_list = []
+        right_list = []
+        left_list = []
+
+        player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Idle/Default/0.png").convert_alpha()
+        player_image = scale_img(player_image, constants.GAME_SCALE)
+        idle_list.append(player_image)
+
+        for i in range(10):
+            player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Down/{i}.png").convert_alpha()
+            player_image = scale_img(player_image, constants.GAME_SCALE)
+            down_list.append(player_image)
+
+        for i in range(10):
+            player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Up/{i}.png").convert_alpha()
+            player_image = scale_img(player_image, constants.GAME_SCALE)
+            up_list.append(player_image)
+
+        for i in range(10):
+            player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Right/{i}.png").convert_alpha()
+            player_image = scale_img(player_image, constants.GAME_SCALE)
+            right_list.append(player_image)
+
+        for i in range(10):
+            player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Left/{i}.png").convert_alpha()
+            player_image = scale_img(player_image, constants.GAME_SCALE)
+            left_list.append(player_image)
+            
+        animation_list.append(idle_list)
+        animation_list.append(down_list)
+        animation_list.append(up_list)
+        animation_list.append(right_list)
+        animation_list.append(left_list)
+        mob_animations.append(animation_list)
+
+    return mob_animations
 
 # Define game variables
+level = 1
 start_game = False
 pause_game = False
 start_intro = False
@@ -106,89 +176,21 @@ moving_down = False
 #define font
 font = pygame.font.Font("Game/assets/fonts/MainFont.ttf", 30)
 
-# Mob Types -> Different Types of Mobs and enemies
-mob_animations = []
-mob_types = ['Player', 'Aberga']
+
  
 
-for mob in mob_types:
-    # Master Animation List -> contains all animations
-    animation_list = []
-
-    # Different Sub-Lists
-    idle_list = []
-    down_list = []
-    up_list = []
-    right_list = []
-    left_list = []
-
-    player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Idle/Default/0.png").convert_alpha()
-    player_image = scale_img(player_image, constants.GAME_SCALE)
-    idle_list.append(player_image)
-
-    for i in range(10):
-        player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Down/{i}.png").convert_alpha()
-        player_image = scale_img(player_image, constants.GAME_SCALE)
-        down_list.append(player_image)
-
-    for i in range(10):
-        player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Up/{i}.png").convert_alpha()
-        player_image = scale_img(player_image, constants.GAME_SCALE)
-        up_list.append(player_image)
-
-    for i in range(10):
-        player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Right/{i}.png").convert_alpha()
-        player_image = scale_img(player_image, constants.GAME_SCALE)
-        right_list.append(player_image)
-
-    for i in range(10):
-        player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Left/{i}.png").convert_alpha()
-        player_image = scale_img(player_image, constants.GAME_SCALE)
-        left_list.append(player_image)
-        
-    animation_list.append(idle_list)
-    animation_list.append(down_list)
-    animation_list.append(up_list)
-    animation_list.append(right_list)
-    animation_list.append(left_list)
-    mob_animations.append(animation_list)
+# Mob Types -> Different Types of Mobs and enemies
+mob_animations = getMobAnimations()
 
 world.process_data(world_data,tile_list,item_images, mob_animations)
 
+mob_animations = getMobAnimations()
 
 # Delta X and Delta Y
 dx = 0
 dy = 0
 
-#function for outputing text onto the screen
-def draw_text(text, font, text_col, x, y):
-    img = font.render(text, True, text_col)
-    screen.blit(img, (x, y))
 
-#function for displaying Game Info
-def draw_info():
-
-    #Draw Panel
-    pygame.draw.rect(screen, constants.PANEL, (0,0, constants.SCREEN_WIDTH, 50))
-    pygame.draw.line(screen, constants.WHITE, (0,50), (constants.SCREEN_WIDTH, 50))
-
-    #Draw lives
-    half_heart_drawn = False
-    for i in range(5):
-        if player.health >= ((i + 1) * 20): # type: ignore
-            screen.blit(heart_full, (10 + i * 50, 0))
-        elif (player.health % 20 > 0) and half_heart_drawn == False: # type: ignore
-            screen.blit(heart_half, (10 + i * 50, 0))
-            half_heart_drawn = True
-        else:
-           screen.blit(heart_empty, (10 + i * 50, 0))
-
-    # Display level
-    draw_text(f"LEVEL: {constants.LEVEL_NAMES[level-1]}", constants.MAIN_FONT,constants.WHITE,constants.SCREEN_WIDTH/2,15)
-    
-    # Display score
-    draw_text(f"CoinScore: {player.score}", font, constants.WHITE,constants.SCREEN_WIDTH - 150, 20) # type: ignore
-    
 # Create Player
 player = world.player
 
@@ -206,10 +208,6 @@ item_group = pygame.sprite.Group()
 score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, coin_images, True)
 item_group.add(score_coin)
 
-potion = Item(200, 200, 1, [potion])
-item_group.add(potion)
-coin = Item(400, 400, 0, coin_images)
-item_group.add(coin)
 
 # Add the Items from the level data
 for item in world.item_list:
@@ -326,7 +324,7 @@ while run:
             damage_text_group.draw(screen)
             
 
-    #show intro
+    # Show intro
     if start_intro == True:
         if intro_fade.fade():
           start_intro = False
@@ -362,7 +360,6 @@ while run:
             elif event.key == pygame.K_ESCAPE and pause_game == True:
                 pause_game = False
 
-
         # Key-Release
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a or event.key == pygame.K_LEFT:
@@ -379,8 +376,4 @@ while run:
 
     # Update Screen
     pygame.display.update()
-
-
-
-
 pygame.quit()

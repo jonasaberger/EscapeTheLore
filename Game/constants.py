@@ -6,10 +6,11 @@ pygame.init()
 # This File defines all the constants used for Colours, Sizes,...
 
 # Sizes
+MOB_TYPES = ["Player","Aberga"]
 PLAYER_HEIGHT = 48
 PLAYER_WIDTH = 32
 
-ABERGA_HEALTH = 100
+ABERGA_HEALTH = 1
 ABERGA_HEIGHT = 48
 ABERGA_WIDTH = 32
 ABERGA_SPEED = 2
@@ -27,7 +28,7 @@ GAME_SCALE = 2
 
 TILE_SIZE = 16 * GAME_SCALE
 TILE_TYPES = 113
-LEVEL_NAMES = []
+LEVEL_NAMES = ["HTL","HAK"]
 MAIN_FONT = pygame.font.Font("Game/assets/fonts/MainFont.ttf",35)
 
 # Menu

@@ -107,28 +107,23 @@ class Character():
             self.updated_time = pygame.time.get_ticks()
 
 
+
+
+
+    # Get the correct STATS for the specific mob-type
+    def getStats(self):
+        # ABERGA
+         if self.mob_type == 1:
+             return constants.ABERGA_SPEED, constants.ABERGA_RANGE, constants.ABERGA_DAMAGE, constants.ABERGA_STUN_COOLDOWN
+
+
     def ai(self, screen, player, obstacle_tiles, screen_scroll):
         # Movement Variables
         ai_dx = 0
         ai_dy = 0
-        enemy_speed = 0
-        enemy_range = 0
-        enemy_damage = 0
-        enemy_stun_cooldown = 0
-
-        moving_left = False
-        moving_right = False
-        moving_down = False
-        moving_up = False
-
+        updatedAction = 0
         clipped_line = ()
-
-        # Get the correct STATS for the specific mob-type
-        if self.mob_type == 1:
-            enemy_speed = constants.ABERGA_SPEED
-            enemy_range = constants.ABERGA_RANGE
-            enemy_damage = constants.ABERGA_DAMAGE
-            enemy_stun_cooldown = constants.ABERGA_STUN_COOLDOWN
+        enemy_speed, enemy_range, enemy_damage, enemy_stun_cooldown = self.getStats() #type: ignore
 
         # Reposition enemies based on screen_scroll
         self.rect.x += screen_scroll[0]
@@ -152,22 +147,21 @@ class Character():
             # Move left
             if self.rect.centerx > player.rect.centerx:
                 ai_dx = -enemy_speed
-                moving_left = True  # Moving towards the left
+                updatedAction = 4  # Moving towards the left
             # Move right
             elif self.rect.centerx < player.rect.centerx:
                 ai_dx = enemy_speed
-                moving_right = True  # Moving towards the right
+                updatedAction = 3 # Moving towards the right
 
             # Move up
             if self.rect.centery > player.rect.centery:
                 ai_dy = -enemy_speed
-                moving_up = True  # Moving upwards
+                updatedAction = 2  # Moving upwards
             # Move down
             elif self.rect.centery < player.rect.centery:
                 ai_dy = enemy_speed
-                moving_down = True  # Moving downwards
-        else:
-            self.update(0)
+                updatedAction = 1  # Moving downwards
+
         # Check if the enemy is alive
         if self.alive:
             if not self.stunned:
@@ -185,39 +179,23 @@ class Character():
                 self.hit = False
                 self.last_hit = pygame.time.get_ticks()
                 self.stunned = True
-                self.update_action(0)
+                self.update(updatedAction)
             else:
                 # Update animation based on movement direction
-                if (moving_up and moving_right) or (moving_up and moving_left):
-                    self.update(2)
-                elif (moving_down and moving_right) or (moving_down and moving_left):
-                    self.update(1)
-                else:
-                    if moving_up:
-                        self.update(2)
-                    if moving_down:
-                        self.update(1)
-                    if moving_right:
-                        self.update(3)
-                    if moving_left:
-                        self.update(4)
-                    else:
-                        # Stay at the current animation state
-                        pass
+                self.update(updatedAction)
 
             # Reset the stun timeout
             if pygame.time.get_ticks() - self.last_hit > enemy_stun_cooldown:
                 self.stunned = False
 
+        
 
-
-
-    
 
     def update_action(self,new_action):
         # Check if new Action is different
         if new_action != self.action:
             self.action = new_action
+
             # Update Animation Settings -> Sudden Changes update Index!
             self.frame_index = 0
             self.update_time = pygame.time.get_ticks()
