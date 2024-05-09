@@ -29,18 +29,15 @@ class World():
 
 
       # Add Obstacle tiles
-      # TODO: Add the rest of the obstacles
 
 
       # TODO: Add the exit tile
 
-      # TODO: Add the item tiles & add them to the item_list
       # if tile == 0:
         # coin = Item(image_x,image_y,0,item_images[0])
         # self.item_list.append(coin)
         # tile_data[0] = tile_list[0] -> Use the replacement image
 
-      # TODO: Add the enemy tiles
       # OuterWall-TILE
       if tile == 1:
         self.outerWalls.append(tile_data)

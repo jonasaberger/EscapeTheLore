@@ -40,7 +40,7 @@ OFFSET = 12
 PENCIL_SPEED = 10
 P_DAMAGE_BASE = 10
 P_DAMAGE_EXTRA = 5
-P_HIT_COOLDOWN = 1000 # in miliseconds
+P_HIT_COOLDOWN = 500 # in miliseconds
 
 # Item
 ITEM_SCALE = 1

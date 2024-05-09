@@ -339,7 +339,6 @@ while run:
         if event.type == pygame.QUIT:
             run = False
         
-
         # Take Keyboard Input
             
         # Key-Press

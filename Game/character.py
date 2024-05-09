@@ -36,46 +36,46 @@ class Character():
         self.rect.x += dx
         for obstacle in obstacle_tiles:
             if obstacle[1].colliderect(self.rect):
-                # Check which side it collides with
+            # Check which side it collides with
                 if dx > 0:
                     self.rect.right = obstacle[1].left
                 if dx < 0:
-                     self.rect.left = obstacle[1].right
+                    self.rect.left = obstacle[1].right
 
 
-        # Check for collission y
-        self.rect.y += dy
-        for obstacle in obstacle_tiles:
-            if obstacle[1].colliderect(self.rect):
-                # Check which side it collides with
-                if dy > 0:
-                    self.rect.bottom = obstacle[1].top
-                if dy < 0:
-                    self.rect.top = obstacle[1].bottom
+            # Check for collission y
+            self.rect.y += dy
+            for obstacle in obstacle_tiles:
+                if obstacle[1].colliderect(self.rect):
+                    # Check which side it collides with
+                    if dy > 0:
+                        self.rect.bottom = obstacle[1].top
+                    if dy < 0:
+                        self.rect.top = obstacle[1].bottom
 
-        # Only scroll screen if it's the player
-        if self.mob_type == 0:
-            # Update Scroll -> Move camera
+            # Only scroll screen if it's the player
+            if self.mob_type == 0:
+                # Update Scroll -> Move camera
 
-            # Left & Right
-            if self.rect.right > (constants.SCREEN_WIDTH - constants.SCROLL_THRES):
-                screen_scroll[0] = (constants.SCREEN_WIDTH - constants.SCROLL_THRES) - self.rect.right
-                self.rect.right = (constants.SCREEN_WIDTH - constants.SCROLL_THRES)
+                # Left & Right
+                if self.rect.right > (constants.SCREEN_WIDTH - constants.SCROLL_THRES):
+                    screen_scroll[0] = (constants.SCREEN_WIDTH - constants.SCROLL_THRES) - self.rect.right
+                    self.rect.right = (constants.SCREEN_WIDTH - constants.SCROLL_THRES)
 
-            if self.rect.left < constants.SCROLL_THRES:
-                screen_scroll[0] = constants.SCROLL_THRES - self.rect.left
-                self.rect.left = constants.SCROLL_THRES
+                if self.rect.left < constants.SCROLL_THRES:
+                    screen_scroll[0] = constants.SCROLL_THRES - self.rect.left
+                    self.rect.left = constants.SCROLL_THRES
 
-            # Up & Down
-            if self.rect.bottom > (constants.SCREEN_HEIGHT - constants.SCROLL_THRES):
-                screen_scroll[1] = (constants.SCREEN_HEIGHT - constants.SCROLL_THRES) - self.rect.bottom
-                self.rect.bottom = (constants.SCREEN_HEIGHT - constants.SCROLL_THRES)
+                # Up & Down
+                if self.rect.bottom > (constants.SCREEN_HEIGHT - constants.SCROLL_THRES):
+                    screen_scroll[1] = (constants.SCREEN_HEIGHT - constants.SCROLL_THRES) - self.rect.bottom
+                    self.rect.bottom = (constants.SCREEN_HEIGHT - constants.SCROLL_THRES)
 
-            if self.rect.top < constants.SCROLL_THRES:
-                screen_scroll[1] = constants.SCROLL_THRES - self.rect.top
-                self.rect.top = constants.SCROLL_THRES
+                if self.rect.top < constants.SCROLL_THRES:
+                    screen_scroll[1] = constants.SCROLL_THRES - self.rect.top
+                    self.rect.top = constants.SCROLL_THRES
 
-        return screen_scroll
+            return screen_scroll
 
 
 
@@ -149,40 +149,27 @@ class Character():
 
         # Enemy has simple line of sight and moves to player
         if not clipped_line and distance_to_player > constants.RANGE:
-            
-            
 
             # Move left
             if self.rect.centerx > player.rect.centerx:
                 ai_dx = -enemy_speed
-                print(f"LEFT | X: {self.rect.centerx} - {player.rect.centerx} | Y: {self.rect.centery} - {player.rect.centery}")
+                moving_left = True  # Moving towards the left
             # Move right
             elif self.rect.centerx < player.rect.centerx:
                 ai_dx = enemy_speed
-                print(f"RIGHT | X: {self.rect.centerx} - {player.rect.centerx} | Y: {self.rect.centery} - {player.rect.centery}")
+                moving_right = True  # Moving towards the right
 
             # Move up
             if self.rect.centery > player.rect.centery:
                 ai_dy = -enemy_speed
-                print(f"UP | X: {self.rect.centerx} - {player.rect.centerx} | Y: {self.rect.centery} - {player.rect.centery}")
+                moving_up = True  # Moving upwards
             # Move down
             elif self.rect.centery < player.rect.centery:
                 ai_dy = enemy_speed
-                print(f"DOWN | X: {self.rect.centerx} - {player.rect.centerx} | Y: {self.rect.centery} - {player.rect.centery}")
+                moving_down = True  # Moving downwards
 
         # Check if the enemy is alive
         if self.alive:
-            # Determine movement direction
-            if ai_dy > 0:
-                    moving_down = True  # Moving downwards
-            if ai_dy < 0:
-                    moving_up = True  # Moving upwards
-
-            if ai_dx > 0:
-                    moving_right = True  # Moving towards the right
-            if ai_dx < 0:
-                    moving_left = True  # Moving towards the left
-
             if not self.stunned:
                 # Move towards the Player
                 self.move(ai_dx, ai_dy, obstacle_tiles)
