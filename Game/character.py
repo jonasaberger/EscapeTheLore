@@ -7,7 +7,6 @@ class Character():
     def __init__(self,x,y,health,animation_list, mob_type,width,height):
         self.score = 0
         self.mob_type = mob_type
-        self.running = False
         self.health = health
         self.alive = True
         self.animation_list = animation_list[mob_type]
@@ -32,9 +31,10 @@ class Character():
             dx = dx * (math.sqrt(2)/2)
             dy = dy * (math.sqrt(2)/2)
 
-        # Check for collission x
+        
         self.rect.x += dx
         for obstacle in obstacle_tiles:
+            
             if obstacle[1].colliderect(self.rect):
             # Check which side it collides with
                 if dx > 0:
@@ -42,16 +42,15 @@ class Character():
                 if dx < 0:
                     self.rect.left = obstacle[1].right
 
-
-            # Check for collission y
-            self.rect.y += dy
-            for obstacle in obstacle_tiles:
-                if obstacle[1].colliderect(self.rect):
-                    # Check which side it collides with
-                    if dy > 0:
-                        self.rect.bottom = obstacle[1].top
-                    if dy < 0:
-                        self.rect.top = obstacle[1].bottom
+     # Check for collission y
+        self.rect.y += dy
+        for obstacle in obstacle_tiles:
+            if obstacle[1].colliderect(self.rect):
+                # Check which side it collides with
+                if dy > 0:
+                     self.rect.bottom = obstacle[1].top
+                if dy < 0:
+                    self.rect.top = obstacle[1].bottom
 
             # Only scroll screen if it's the player
             if self.mob_type == 0:
@@ -89,8 +88,6 @@ class Character():
         if self.mob_type == 0:
             if self.hit == True and (pygame.time.get_ticks() - self.last_hit) > constants.P_HIT_COOLDOWN:
                 self.hit = False
-            
-
 
         #Check which action player is performing
         self.update_action(action)
@@ -107,16 +104,13 @@ class Character():
             self.updated_time = pygame.time.get_ticks()
 
 
-
-
-
     # Get the correct STATS for the specific mob-type
     def getStats(self):
         # ABERGA
          if self.mob_type == 1:
              return constants.ABERGA_SPEED, constants.ABERGA_RANGE, constants.ABERGA_DAMAGE, constants.ABERGA_STUN_COOLDOWN
 
-
+    # AI for chasing the Player
     def ai(self, screen, player, obstacle_tiles, screen_scroll):
         # Movement Variables
         ai_dx = 0
@@ -188,9 +182,6 @@ class Character():
             if pygame.time.get_ticks() - self.last_hit > enemy_stun_cooldown:
                 self.stunned = False
 
-        
-
-
     def update_action(self,new_action):
         # Check if new Action is different
         if new_action != self.action:
@@ -200,15 +191,9 @@ class Character():
             self.frame_index = 0
             self.update_time = pygame.time.get_ticks()
         
-
     # Draw the Player Character
     def draw(self, surface):
         x_offset = (self.rect.width - self.image.get_width()) / 2
         y_offset = (self.rect.height - self.image.get_height()) / 2
-
-
         surface.blit(self.image, (self.rect.x + x_offset, self.rect.y + y_offset))
         pygame.draw.rect(surface, constants.RED, self.rect.move(0, 0), 1)
-
-
-
