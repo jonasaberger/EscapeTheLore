@@ -149,7 +149,6 @@ class Character():
 
         # Enemy has simple line of sight and moves to player
         if not clipped_line and distance_to_player > constants.RANGE:
-
             # Move left
             if self.rect.centerx > player.rect.centerx:
                 ai_dx = -enemy_speed
@@ -167,7 +166,8 @@ class Character():
             elif self.rect.centery < player.rect.centery:
                 ai_dy = enemy_speed
                 moving_down = True  # Moving downwards
-
+        else:
+            self.update(0)
         # Check if the enemy is alive
         if self.alive:
             if not self.stunned:
