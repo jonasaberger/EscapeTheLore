@@ -7,7 +7,6 @@ class Character():
     def __init__(self,x,y,health,animation_list, mob_type,width,height):
         self.score = 0
         self.mob_type = mob_type
-        self.running = False
         self.health = health
         self.alive = True
         self.animation_list = animation_list[mob_type]
@@ -24,17 +23,20 @@ class Character():
         self.rect.center = (x,y)
     
     # Player Movement Function
-    def move(self, dx, dy, obstacle_tiles):
+    def move(self, dx, dy, obstacle_tiles, exit_tile = None):
         screen_scroll = [0,0]
+        level_complete = False
+
 
         # Diagonal Speed
         if dx != 0 and dy != 0:
             dx = dx * (math.sqrt(2)/2)
             dy = dy * (math.sqrt(2)/2)
 
-        # Check for collission x
+        
         self.rect.x += dx
         for obstacle in obstacle_tiles:
+            
             if obstacle[1].colliderect(self.rect):
             # Check which side it collides with
                 if dx > 0:
@@ -42,19 +44,24 @@ class Character():
                 if dx < 0:
                     self.rect.left = obstacle[1].right
 
-
-            # Check for collission y
-            self.rect.y += dy
-            for obstacle in obstacle_tiles:
-                if obstacle[1].colliderect(self.rect):
-                    # Check which side it collides with
-                    if dy > 0:
-                        self.rect.bottom = obstacle[1].top
-                    if dy < 0:
-                        self.rect.top = obstacle[1].bottom
+     # Check for collission y
+        self.rect.y += dy
+        for obstacle in obstacle_tiles:
+            if obstacle[1].colliderect(self.rect):
+                # Check which side it collides with
+                if dy > 0:
+                     self.rect.bottom = obstacle[1].top
+                if dy < 0:
+                    self.rect.top = obstacle[1].bottom
 
             # Only scroll screen if it's the player
             if self.mob_type == 0:
+                # Check for collision with exit tile
+                if exit_tile[1].colliderect(self.rect):
+                    level_complete = True
+
+
+
                 # Update Scroll -> Move camera
 
                 # Left & Right
@@ -75,7 +82,7 @@ class Character():
                     screen_scroll[1] = constants.SCROLL_THRES - self.rect.top
                     self.rect.top = constants.SCROLL_THRES
 
-            return screen_scroll
+        return screen_scroll, level_complete
 
 
 
@@ -89,8 +96,6 @@ class Character():
         if self.mob_type == 0:
             if self.hit == True and (pygame.time.get_ticks() - self.last_hit) > constants.P_HIT_COOLDOWN:
                 self.hit = False
-            
-
 
         #Check which action player is performing
         self.update_action(action)
@@ -107,28 +112,20 @@ class Character():
             self.updated_time = pygame.time.get_ticks()
 
 
+    # Get the correct STATS for the specific mob-type
+    def getStats(self):
+        # ABERGA
+         if self.mob_type == 1:
+             return constants.ABERGA_SPEED, constants.ABERGA_RANGE, constants.ABERGA_DAMAGE, constants.ABERGA_STUN_COOLDOWN
+
+    # AI for chasing the Player
     def ai(self, screen, player, obstacle_tiles, screen_scroll):
         # Movement Variables
         ai_dx = 0
         ai_dy = 0
-        enemy_speed = 0
-        enemy_range = 0
-        enemy_damage = 0
-        enemy_stun_cooldown = 0
-
-        moving_left = False
-        moving_right = False
-        moving_down = False
-        moving_up = False
-
+        updatedAction = 0
         clipped_line = ()
-
-        # Get the correct STATS for the specific mob-type
-        if self.mob_type == 1:
-            enemy_speed = constants.ABERGA_SPEED
-            enemy_range = constants.ABERGA_RANGE
-            enemy_damage = constants.ABERGA_DAMAGE
-            enemy_stun_cooldown = constants.ABERGA_STUN_COOLDOWN
+        enemy_speed, enemy_range, enemy_damage, enemy_stun_cooldown = self.getStats() #type: ignore
 
         # Reposition enemies based on screen_scroll
         self.rect.x += screen_scroll[0]
@@ -149,24 +146,23 @@ class Character():
 
         # Enemy has simple line of sight and moves to player
         if not clipped_line and distance_to_player > constants.RANGE:
-
             # Move left
             if self.rect.centerx > player.rect.centerx:
                 ai_dx = -enemy_speed
-                moving_left = True  # Moving towards the left
+                updatedAction = 4  # Moving towards the left
             # Move right
             elif self.rect.centerx < player.rect.centerx:
                 ai_dx = enemy_speed
-                moving_right = True  # Moving towards the right
+                updatedAction = 3 # Moving towards the right
 
             # Move up
             if self.rect.centery > player.rect.centery:
                 ai_dy = -enemy_speed
-                moving_up = True  # Moving upwards
+                updatedAction = 2  # Moving upwards
             # Move down
             elif self.rect.centery < player.rect.centery:
                 ai_dy = enemy_speed
-                moving_down = True  # Moving downwards
+                updatedAction = 1  # Moving downwards
 
         # Check if the enemy is alive
         if self.alive:
@@ -185,52 +181,27 @@ class Character():
                 self.hit = False
                 self.last_hit = pygame.time.get_ticks()
                 self.stunned = True
-                self.update_action(0)
+                self.update(updatedAction)
             else:
                 # Update animation based on movement direction
-                if (moving_up and moving_right) or (moving_up and moving_left):
-                    self.update(2)
-                elif (moving_down and moving_right) or (moving_down and moving_left):
-                    self.update(1)
-                else:
-                    if moving_up:
-                        self.update(2)
-                    if moving_down:
-                        self.update(1)
-                    if moving_right:
-                        self.update(3)
-                    if moving_left:
-                        self.update(4)
-                    else:
-                        # Stay at the current animation state
-                        pass
+                self.update(updatedAction)
 
             # Reset the stun timeout
             if pygame.time.get_ticks() - self.last_hit > enemy_stun_cooldown:
                 self.stunned = False
 
-
-
-
-    
-
     def update_action(self,new_action):
         # Check if new Action is different
         if new_action != self.action:
             self.action = new_action
+
             # Update Animation Settings -> Sudden Changes update Index!
             self.frame_index = 0
             self.update_time = pygame.time.get_ticks()
         
-
     # Draw the Player Character
     def draw(self, surface):
         x_offset = (self.rect.width - self.image.get_width()) / 2
         y_offset = (self.rect.height - self.image.get_height()) / 2
-
-
         surface.blit(self.image, (self.rect.x + x_offset, self.rect.y + y_offset))
         pygame.draw.rect(surface, constants.RED, self.rect.move(0, 0), 1)
-
-
-
