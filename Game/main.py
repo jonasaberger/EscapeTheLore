@@ -10,15 +10,80 @@ from weapon import Weapon
 from world import World
 from item import Item
 import csv
+
 pygame.init()
+
 screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
 pygame.display.set_caption("Escape The Lore")
 
-# Function to scale images
+# Creating Clock -> Frame Rate
+clock = pygame.time.Clock()
+
+# Define game variables
+level = 1
+screen_scroll = [0,0]
+start_game = False
+pause_game = False
+start_intro = False
+
+# Define Player movement variables
+dx = 0
+dy = 0
+moving_left = False
+moving_right = False
+moving_up = False
+moving_down = False
+
+# Helper Function to scale images
 def scale_img(image, scale):
     image_width = image.get_width()
     image_heigth = image.get_height()
     return pygame.transform.scale(image, (image_width * scale, image_heigth * scale)) 
+
+# Function for loading all the sprite images -> Function for better readability
+def getImages():
+    def getItemImages():
+        # Load Coin Images
+        coin_images = []
+        for x in range(4):
+            img = scale_img(pygame.image.load(f"Game/assets/images/GUI/coin_f{x}.png").convert_alpha(), constants.ITEM_SCALE)
+            coin_images.append(img)
+
+        # Load Potion Images
+        potion_image = scale_img(pygame.image.load("Game/assets/images/items/lore_potion.png").convert_alpha(), constants.POTION_SCALE)
+        return coin_images, potion_image
+    def getHeartImages():
+        heart_empty = scale_img(pygame.image.load("Game/assets/images/GUI/heart_empty.png").convert_alpha(), constants.HEART_SCALE)
+        heart_half = scale_img(pygame.image.load("Game/assets/images/GUI/heart_half.png").convert_alpha(), constants.HEART_SCALE)
+        heart_full = scale_img(pygame.image.load("Game/assets/images/GUI/heart_full.png").convert_alpha(), constants.HEART_SCALE)
+        return heart_empty, heart_half, heart_full
+    def getWeaponImages():
+        ruler_image = scale_img(pygame.image.load("Game/assets/images/weapons/ruler.png").convert_alpha(), constants.WEAPON_SCALE)
+        pencil_image = scale_img(pygame.image.load("Game/assets/images/weapons/pencil.png").convert_alpha(), constants.WEAPON_SCALE)
+        return ruler_image,pencil_image
+    def getButtonImages():
+        start_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_start.png").convert_alpha(), constants.BUTTON_SCALE)
+        exit_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_exit.png").convert_alpha(), constants.BUTTON_SCALE)
+        restart_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_restart.png").convert_alpha(), constants.BUTTON_SCALE)
+        resume_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_resume.png").convert_alpha(), constants.BUTTON_SCALE)
+        return start_img, exit_img, restart_img, resume_img
+    def getTileImages():
+        tile_images = []
+        for x in range(constants.TILE_TYPES):
+            tile_image = pygame.image.load(f"Game/assets/tiles/{x}.png").convert_alpha()
+            tile_image = pygame.transform.scale(tile_image, (constants.TILE_SIZE*constants.GAME_SCALE, constants.TILE_SIZE*constants.GAME_SCALE))
+            tile_images.append(tile_image)
+        return tile_images
+
+    item_images = getItemImages()
+    heart_images = getHeartImages()
+    weapon_images = getWeaponImages()
+    button_images = getButtonImages()
+    titlescreen_image = pygame.image.load("Game/assets/images/GUI/menu_bg.png")
+    tile_images = getTileImages()
+
+    return item_images, heart_images, weapon_images, button_images, titlescreen_image, tile_images
+item_images,heart_images,weapon_images,button_images,titlescreen_image,tile_images = getImages()
 
 # Function for outputing text onto the screen
 def draw_text(text, font, text_col, x, y):
@@ -27,7 +92,6 @@ def draw_text(text, font, text_col, x, y):
 
 # Function for displaying Game Info
 def draw_info():
-
     #Draw Panel
     pygame.draw.rect(screen, constants.PANEL, (0,0, constants.SCREEN_WIDTH, 50))
     pygame.draw.line(screen, constants.WHITE, (0,50), (constants.SCREEN_WIDTH, 50))
@@ -35,9 +99,9 @@ def draw_info():
     #Draw lives
     half_heart_drawn = False
     for i in range(5):
-        if player.health >= ((i + 1) * 20): # type: ignore
+        if player.health >= ((i + 1) * 20):
             screen.blit(heart_images[2], (10 + i * 50, 0))
-        elif (player.health % 20 > 0) and half_heart_drawn == False: # type: ignore
+        elif (player.health % 20 > 0) and half_heart_drawn == False:
             screen.blit(heart_images[1], (10 + i * 50, 0))
             half_heart_drawn = True
         else:
@@ -47,8 +111,23 @@ def draw_info():
     draw_text(f"LEVEL: {constants.LEVEL_NAMES[level-1]}", constants.MAIN_FONT,constants.WHITE,constants.SCREEN_WIDTH/2,15)
     
     # Display score
-    draw_text(f"CoinScore: {player.score}", constants.MAIN_FONT, constants.WHITE,constants.SCREEN_WIDTH - 150, 20) # type: ignore
+    draw_text(f"CoinScore: {player.score}", constants.MAIN_FONT, constants.WHITE,constants.SCREEN_WIDTH - 150, 20)
     
+# Reset the entire tilemap
+def reset_level():
+  damage_text_group.empty()
+  pencil_group.empty()
+  item_group.empty()
+
+  #create empty tile list
+  data = []
+  for row in range(constants.ROWS):
+    r = [-1] * constants.COLS
+    data.append(r)
+
+  return data
+
+# Mob Types -> Different Types of Mobs and enemies -> Function for better readability
 def getMobAnimations():
     mob_animations = []
     for mob in constants.MOB_TYPES:
@@ -94,112 +173,42 @@ def getMobAnimations():
         mob_animations.append(animation_list)
 
     return mob_animations
-
-def getImages():
-    def getItemImages():
-        # Load Coin Images
-        coin_images = []
-        for x in range(4):
-            img = scale_img(pygame.image.load(f"Game/assets/images/GUI/coin_f{x}.png").convert_alpha(), constants.ITEM_SCALE)
-            coin_images.append(img)
-
-        # Load Potion Images
-        potion_image = scale_img(pygame.image.load("Game/assets/images/items/lore_potion.png").convert_alpha(), constants.POTION_SCALE)
-        return coin_images, potion_image
-    def getHeartImages():
-        heart_empty = scale_img(pygame.image.load("Game/assets/images/GUI/heart_empty.png").convert_alpha(), constants.HEART_SCALE)
-        heart_half = scale_img(pygame.image.load("Game/assets/images/GUI/heart_half.png").convert_alpha(), constants.HEART_SCALE)
-        heart_full = scale_img(pygame.image.load("Game/assets/images/GUI/heart_full.png").convert_alpha(), constants.HEART_SCALE)
-        return heart_empty, heart_half, heart_full
-    def getWeaponImages():
-        ruler_image = scale_img(pygame.image.load("Game/assets/images/weapons/ruler.png").convert_alpha(), constants.WEAPON_SCALE)
-        pencil_image = scale_img(pygame.image.load("Game/assets/images/weapons/pencil.png").convert_alpha(), constants.WEAPON_SCALE)
-        return ruler_image,pencil_image
-    def getButtonImages():
-        start_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_start.png").convert_alpha(), constants.BUTTON_SCALE)
-        exit_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_exit.png").convert_alpha(), constants.BUTTON_SCALE)
-        restart_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_restart.png").convert_alpha(), constants.BUTTON_SCALE)
-        resume_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_resume.png").convert_alpha(), constants.BUTTON_SCALE)
-        return start_img, exit_img, restart_img, resume_img
-    def getTileImages():
-        tile_images = []
-        for x in range(constants.TILE_TYPES):
-            tile_image = pygame.image.load(f"Game/assets/tiles/{x}.png").convert_alpha()
-            tile_image = pygame.transform.scale(tile_image, (constants.TILE_SIZE*constants.GAME_SCALE, constants.TILE_SIZE*constants.GAME_SCALE))
-            tile_images.append(tile_image)
-        return tile_images
-
-    item_images = getItemImages()
-    heart_images = getHeartImages()
-    weapon_images = getWeaponImages()
-    button_images = getButtonImages()
-    titlescreen_image = pygame.image.load("Game/assets/images/GUI/menu_bg.png")
-    tile_images = getTileImages()
-
-    return item_images, heart_images, weapon_images, button_images, titlescreen_image, tile_images
-
-
-
-
-# Define game variables
-level = 1
-start_game = False
-pause_game = False
-start_intro = False
- 
-world = World()
-level = 1
-screen_scroll = [0,0]
-
-
-# Creating Clock -> Frame Rate
-clock = pygame.time.Clock()
-
-# Define Player movement variables
-dx = 0
-dy = 0
-moving_left = False
-moving_right = False
-moving_up = False
-moving_down = False
-
-# Get the different images-lists
-item_images,heart_images,weapon_images,button_images,titlescreen_image,tile_images = getImages()
-
-# Mob Types -> Different Types of Mobs and enemies
 mob_animations = getMobAnimations()
 
-# Create empty tile list
+# Load in level data and create world
 world_data = []
 for row in range(constants.ROWS):
     row = [-1] * constants.COLS
     world_data.append(row)
-
-# Load in level data and create world
 with open("Game/levels/test.csv", newline="") as csvfile: 
     reader = csv.reader(csvfile, delimiter=",")
     for x, row in enumerate(reader):
         for y, tile in enumerate(row):
             world_data[x][y] = int(tile)
 
+world = World()
 world.process_data(world_data,tile_images,item_images, mob_animations)
 
 # Create Player + Weapon
 player = world.player
 ruler = Weapon(weapon_images[0], weapon_images[1], world.outerWalls)
 
-# Create Sprite Groups
+# Get the enemy list 
+enemy_list = world.enemy_list
+
+# Create the sprite groups
 damage_text_group = pygame.sprite.Group()
 pencil_group = pygame.sprite.Group()
 item_group = pygame.sprite.Group()
 
+# Score/Display coin
 score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, item_images[0], True)
 item_group.add(score_coin)
-
 
 # Add the Items from the level data
 for item in world.item_list:
     item_group.add(item)
+
 
 # Create button
 start_button = Button(630, 530, button_images[0]) #constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150
@@ -236,7 +245,6 @@ while run:
             screen.fill(constants.BACKGROUND)
 
             # Calculate Player Movement
-            # Reset movement momentum
             dx = 0
             dy = 0
             updatedAction = 0
@@ -254,21 +262,21 @@ while run:
                 dy = constants.SPEED
                 updatedAction = 1
 
-            # Move Player
-            screen_scroll = player.move(dx,dy,world.obstacle_tiles) #type:ignore
+            # Move Player Method
+            screen_scroll, level_complete = player.move(dx,dy,world.obstacle_tiles,world.exit_tile)
             
             # UPDATE-METHODS
-            # Update the world
+
             world.update(screen_scroll)
 
             # Update all enemies in enemy_list
-            for enemy in world.enemy_list:
+            for enemy in enemy_list:
                 enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
 
-            # Update the player
-            player.update(updatedAction) # type: ignore
-
-            # Update Ruler
+            # Update the Player
+            player.update(updatedAction)
+            
+            # Update Ruler / Weapon
             pencil = ruler.update(player)
 
             if pencil:
@@ -287,22 +295,40 @@ while run:
 
             # DRAW-METHODS
             world.draw(screen)
-            item_group.draw(screen)
-            draw_info()
-            score_coin.draw(screen)
-
-            # Player Update & Draw
-            player.draw(screen) #type: ignore
-
-            # Draw all enemies in enemy_list
-            for enemy in world.enemy_list:
-             enemy.draw(screen)
-
-            # Draw Ruler & pencil
+            for enemy in enemy_list:
+                enemy.draw(screen)
+            # Player Draw + Weapon / Projectiles
+            player.draw(screen)
             ruler.draw(screen)
             for pencil in pencil_group:
                 pencil.draw(screen)
             damage_text_group.draw(screen)
+            item_group.draw(screen)
+            draw_info()
+            score_coin.draw(screen)
+
+            # Check if level is complete 
+            if level_complete == True:
+                level += 1
+                world_data = reset_level()
+                #load in level data and create world
+                with open(f"Game/levels/{level}.csv", newline="") as csvfile:
+                    reader = csv.reader(csvfile, delimiter = ",")
+                    for x, row in enumerate(reader):
+                        for y, tile in enumerate(row):
+                            world_data[x][y] = int(tile)
+                world = World()
+                world.process_data(world_data, tile_images, item_images, mob_animations)
+                player = world.player
+                temp_hp = player.health
+                temp_score = player.score
+                player.health = temp_hp
+                player.score = temp_score
+                enemy_list = world.enemy_list
+                score_coin = Item(constants.SCREEN_WIDTH - 115, 23, 0, item_images[0], True)
+                item_group.add(score_coin)
+                for item in world.item_list:
+                    item_group.add(item)
             
     # Show intro
     if start_intro == True:
@@ -318,19 +344,15 @@ while run:
             run = False
         
         # Take Keyboard Input
-            
         # Key-Press
         if event.type == pygame.KEYDOWN:
             # Movement
             if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                 moving_left = True
-
             if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 moving_right = True
-
             if event.key == pygame.K_w or event.key == pygame.K_UP:
                 moving_up = True
-
             if event.key == pygame.K_s or event.key == pygame.K_DOWN:
                 moving_down = True
 
@@ -344,13 +366,10 @@ while run:
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                 moving_left = False
-
             if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 moving_right = False
-
             if event.key == pygame.K_w or event.key == pygame.K_UP:
                 moving_up = False
-
             if event.key == pygame.K_s or event.key == pygame.K_DOWN:
                 moving_down = False
 
