@@ -12,7 +12,6 @@ from item import Item
 import csv
 
 pygame.init()
-
 screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
 pygame.display.set_caption("Escape The Lore")
 
@@ -97,22 +96,25 @@ def draw_info():
     pygame.draw.line(screen, constants.WHITE, (0,50), (constants.SCREEN_WIDTH, 50))
 
     #Draw lives
-    half_heart_drawn = False
-    for i in range(5):
-        if player.health >= ((i + 1) * 20):
-            screen.blit(heart_images[2], (10 + i * 50, 0))
-        elif (player.health % 20 > 0) and half_heart_drawn == False:
-            screen.blit(heart_images[1], (10 + i * 50, 0))
-            half_heart_drawn = True
-        else:
-           screen.blit(heart_images[0], (10 + i * 50, 0))
-
-    # Display level
-    draw_text(f"LEVEL: {constants.LEVEL_NAMES[level-1]}", constants.MAIN_FONT,constants.WHITE,constants.SCREEN_WIDTH/2,15)
+    try:
+        half_heart_drawn = False
+        for i in range(5):
+            if player.health >= ((i + 1) * 20): #type:ignore -> Exception
+                screen.blit(heart_images[2], (10 + i * 50, 0)) 
+            elif (player.health % 20 > 0) and half_heart_drawn == False: #type:ignore -> Exception
+                screen.blit(heart_images[1], (10 + i * 50, 0))
+                half_heart_drawn = True
+            else:
+                screen.blit(heart_images[0], (10 + i * 50, 0))
     
-    # Display score
-    draw_text(f"CoinScore: {player.score}", constants.MAIN_FONT, constants.WHITE,constants.SCREEN_WIDTH - 150, 20)
-    
+        
+        # Display level
+        draw_text(f"LEVEL: {constants.LEVEL_NAMES[level-1]}", constants.MAIN_FONT,constants.WHITE,constants.SCREEN_WIDTH/2,15)
+        
+        # Display score
+        draw_text(f"CoinScore: {player.score}", constants.MAIN_FONT, constants.WHITE,constants.SCREEN_WIDTH - 150, 20) #type:ignore -> Exception
+    except:
+        print("Player is None!")
 # Reset the entire tilemap
 def reset_level():
   damage_text_group.empty()
@@ -262,74 +264,81 @@ while run:
                 dy = constants.SPEED
                 updatedAction = 1
 
-            # Move Player Method
-            screen_scroll, level_complete = player.move(dx,dy,world.obstacle_tiles,world.exit_tile)
-            
-            # UPDATE-METHODS
+            try:
+                # Check if player was actually not defines
+                if player == None:
+                    raise Exception('Player is None!')
 
-            world.update(screen_scroll)
+                # Move Player Method
+                screen_scroll, level_complete = player.move(dx,dy,world.obstacle_tiles,world.exit_tile)
+                # Update the Player
+                player.update(updatedAction)
+                
+                # UPDATE-METHODS
+                world.update(screen_scroll)
 
-            # Update all enemies in enemy_list
-            for enemy in enemy_list:
-                enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
+                # Update all enemies in enemy_list
+                for enemy in enemy_list:
+                    enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
 
-            # Update the Player
-            player.update(updatedAction)
-            
-            # Update Ruler / Weapon
-            pencil = ruler.update(player)
+                # Update Ruler / Weapon
+                pencil = ruler.update(player)
 
-            if pencil:
-                pencil_group.add(pencil)
-            for pencil in pencil_group:
-                damage, damage_pos = pencil.update(screen_scroll, world.enemy_list)
-                if damage != 0:
-                    if damage == 14:
-                        damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.YELLOW)
-                    else:
-                     damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.RED)
-                    damage_text_group.add(damage_text)
-            damage_text_group.update(screen_scroll)
-            item_group.update(screen_scroll,player)
-            
+                if pencil:
+                    pencil_group.add(pencil)
+                for pencil in pencil_group:
+                    damage, damage_pos = pencil.update(screen_scroll, world.enemy_list)
+                    if damage != 0:
+                        if damage == 14:
+                            damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.YELLOW)
+                        else:
+                            damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.RED)
+                            damage_text_group.add(damage_text)
+                damage_text_group.update(screen_scroll)
+                item_group.update(screen_scroll,player)
+                
 
-            # DRAW-METHODS
-            world.draw(screen)
-            for enemy in enemy_list:
-                enemy.draw(screen)
-            # Player Draw + Weapon / Projectiles
-            player.draw(screen)
-            ruler.draw(screen)
-            for pencil in pencil_group:
-                pencil.draw(screen)
-            damage_text_group.draw(screen)
-            item_group.draw(screen)
-            draw_info()
-            score_coin.draw(screen)
+                # DRAW-METHODS
+                world.draw(screen)
+                for enemy in enemy_list:
+                    enemy.draw(screen)
+                # Player Draw + Weapon / Projectiles
+                player.draw(screen)
+                ruler.draw(screen)
+                for pencil in pencil_group:
+                    pencil.draw(screen)
+                damage_text_group.draw(screen)
+                item_group.draw(screen)
+                draw_info()
+                score_coin.draw(screen)
 
-            # Check if level is complete 
-            if level_complete == True:
-                level += 1
-                world_data = reset_level()
-                #load in level data and create world
-                with open(f"Game/levels/{level}.csv", newline="") as csvfile:
-                    reader = csv.reader(csvfile, delimiter = ",")
-                    for x, row in enumerate(reader):
-                        for y, tile in enumerate(row):
-                            world_data[x][y] = int(tile)
-                world = World()
-                world.process_data(world_data, tile_images, item_images, mob_animations)
-                player = world.player
-                temp_hp = player.health
-                temp_score = player.score
-                player.health = temp_hp
-                player.score = temp_score
-                enemy_list = world.enemy_list
-                score_coin = Item(constants.SCREEN_WIDTH - 115, 23, 0, item_images[0], True)
-                item_group.add(score_coin)
-                for item in world.item_list:
-                    item_group.add(item)
-            
+                # Check if level is complete 
+                if level_complete == True:
+                    level += 1
+                    world_data = reset_level()
+                    #load in level data and create world
+                    with open(f"Game/levels/{level}.csv", newline="") as csvfile:
+                        reader = csv.reader(csvfile, delimiter = ",")
+                        for x, row in enumerate(reader):
+                            for y, tile in enumerate(row):
+                                world_data[x][y] = int(tile)
+                    world = World()
+                    world.process_data(world_data, tile_images, item_images, mob_animations)
+                    player = world.player
+                    if player == None:
+                        raise Exception('Player is None!')
+                    temp_hp = player.health
+                    temp_score = player.score
+                    player.health = temp_hp
+                    player.score = temp_score
+                    enemy_list = world.enemy_list
+                    score_coin = Item(constants.SCREEN_WIDTH - 115, 23, 0, item_images[0], True)
+                    item_group.add(score_coin)
+                    for item in world.item_list:
+                        item_group.add(item)
+            except Exception as error:
+                print(error)
+                run = False
     # Show intro
     if start_intro == True:
         if intro_fade.fade():

@@ -27,13 +27,11 @@ class Character():
         screen_scroll = [0,0]
         level_complete = False
 
-
         # Diagonal Speed
         if dx != 0 and dy != 0:
             dx = dx * (math.sqrt(2)/2)
             dy = dy * (math.sqrt(2)/2)
 
-        
         self.rect.x += dx
         for obstacle in obstacle_tiles:
             
@@ -56,12 +54,15 @@ class Character():
 
             # Only scroll screen if it's the player
             if self.mob_type == 0:
-                # Check for collision with exit tile
-                if exit_tile[1].colliderect(self.rect):
-                    level_complete = True
-
-
-
+                try:
+                    # Check for collision with exit tile
+                    if exit_tile == None:
+                        raise Exception('ExitTile is None')
+                    
+                    if exit_tile[1].colliderect(self.rect):
+                        level_complete = True
+                except Exception as error:
+                    print(error)
                 # Update Scroll -> Move camera
 
                 # Left & Right
@@ -83,7 +84,6 @@ class Character():
                     self.rect.top = constants.SCROLL_THRES
 
         return screen_scroll, level_complete
-
 
 
     def update(self, action):
