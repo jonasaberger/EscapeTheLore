@@ -59,7 +59,8 @@ def getImages():
     def getWeaponImages():
         ruler_image = scale_img(pygame.image.load("Game/assets/images/weapons/ruler.png").convert_alpha(), constants.WEAPON_SCALE)
         pencil_image = scale_img(pygame.image.load("Game/assets/images/weapons/pencil.png").convert_alpha(), constants.WEAPON_SCALE)
-        return ruler_image,pencil_image
+        fireball_image = scale_img(pygame.image.load("Game/assets/images/weapons/fireball.png").convert_alpha(), constants.WEAPON_SCALE)
+        return ruler_image,pencil_image,fireball_image
     def getButtonImages():
         start_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_start.png").convert_alpha(), constants.BUTTON_SCALE)
         exit_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_exit.png").convert_alpha(), constants.BUTTON_SCALE)
@@ -202,6 +203,7 @@ enemy_list = world.enemy_list
 damage_text_group = pygame.sprite.Group()
 pencil_group = pygame.sprite.Group()
 item_group = pygame.sprite.Group()
+fireball_group = pygame.sprite.Group()
 
 # Score/Display coin
 score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, item_images[0], True)
@@ -280,6 +282,9 @@ while run:
                 # Update all enemies in enemy_list
                 for enemy in enemy_list:
                     enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
+                    fireball = enemy.ai(player, world.obstacle_tiles, screen_scroll, weapon_images[2])
+                    if fireball:
+                        fireball_group.add(fireball)
 
                 # Update Ruler / Weapon
                 pencil = ruler.update(player)
@@ -295,6 +300,7 @@ while run:
                             damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.RED)
                             damage_text_group.add(damage_text)
                 damage_text_group.update(screen_scroll)
+                fireball_group.update(screen_scroll, player)
                 item_group.update(screen_scroll,player)
                 
 
@@ -307,6 +313,8 @@ while run:
                 ruler.draw(screen)
                 for pencil in pencil_group:
                     pencil.draw(screen)
+                for fireball in fireball_group:
+                    fireball.draw(screen)
                 damage_text_group.draw(screen)
                 item_group.draw(screen)
                 draw_info()
