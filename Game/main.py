@@ -1,6 +1,7 @@
 from pickle import TRUE
 import pygame
 import pygame.font
+import pygame.image
 import constants
 from character import Character # Import Character class
 from screenfade import ScreenFade
@@ -76,6 +77,7 @@ def getImages():
     def getSchanzenShopImages():
         schanzenshop_images = []
         schanzenshop_images.append(pygame.image.load(f"Game/assets/images/schanzenshop/tile-texture.png").convert_alpha())
+        schanzenshop_images.append(pygame.image.load(f"Game/assets/images/schanzenshop/schanzenshop_main.png").convert_alpha())
         return schanzenshop_images
     item_images = getItemImages()
     heart_images = getHeartImages()
@@ -226,6 +228,7 @@ resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGH
 #create screen fades
 intro_fade = ScreenFade(1, constants.BLACK, 4, screen)
 death_fade = ScreenFade(2, constants.PINK, 4, screen)
+shopActive = False
 
 
 # Main-Game Loop
@@ -247,6 +250,10 @@ while run:
                 pause_game = False
             if exit_pause_button.draw(screen):
                 run = False
+        elif shopActive == True:
+            screen.blit(schanzenshop_images[1], (0,50))
+            
+
         else:
             screen.fill(constants.BACKGROUND)
 
@@ -316,6 +323,13 @@ while run:
                 score_coin.draw(screen)
                 world.schanzenshop.draw(screen)
 
+                if player.rect.colliderect(world.schanzenshop.hitbox):
+                    touchShop = True
+
+                else:
+                    touchShop = False
+
+
                 # Check if level is complete 
                 if level_complete == True:
                     level += 1
@@ -371,10 +385,20 @@ while run:
 
             # Menu
             if event.key == pygame.K_ESCAPE and pause_game == False:
-                pause_game = True
+                if shopActive == True:
+                    shopActive = False
+                else:
+                    pause_game = True
             elif event.key == pygame.K_ESCAPE and pause_game == True:
                 pause_game = False
 
+        # Schanzenshop
+            shopActive = False
+            if event.key == pygame.K_e and touchShop == True:
+                shopActive = True
+            else:
+                shopActive = False
+        
         # Key-Release
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a or event.key == pygame.K_LEFT:
