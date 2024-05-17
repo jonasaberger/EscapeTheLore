@@ -117,6 +117,8 @@ class Character():
         # ABERGA
          if self.mob_type == 1:
              return constants.ABERGA_SPEED, constants.ABERGA_RANGE, constants.ABERGA_DAMAGE, constants.ABERGA_STUN_COOLDOWN
+         if self.mob_type == 2:
+             return constants.ROCKER_SPEED,constants.ROCKER_RANGE,constants.ROCKER_DAMAGE,constants.ROCKER_STUN_COOLDOWN
 
     # AI for chasing the Player
     def ai(self, screen, player, obstacle_tiles, screen_scroll):
