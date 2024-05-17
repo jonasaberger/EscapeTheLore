@@ -252,11 +252,13 @@ while run:
                 run = False
         elif shopActive == True:
             screen.blit(schanzenshop_images[1], (0,50))
+            for item in item_group:
+                item.update(screen_scroll,player)
             
-
+            
+            
         else:
             screen.fill(constants.BACKGROUND)
-
             # Calculate Player Movement
             dx = 0
             dy = 0
