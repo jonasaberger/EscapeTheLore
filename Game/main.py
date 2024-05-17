@@ -73,16 +73,20 @@ def getImages():
             tile_image = pygame.transform.scale(tile_image, (constants.TILE_SIZE*constants.GAME_SCALE, constants.TILE_SIZE*constants.GAME_SCALE))
             tile_images.append(tile_image)
         return tile_images
-
+    def getSchanzenShopImages():
+        schanzenshop_images = []
+        schanzenshop_images.append(pygame.image.load(f"Game/assets/images/schanzenshop/tile-texture.png").convert_alpha())
+        return schanzenshop_images
     item_images = getItemImages()
     heart_images = getHeartImages()
     weapon_images = getWeaponImages()
     button_images = getButtonImages()
     titlescreen_image = pygame.image.load("Game/assets/images/GUI/menu_bg.png")
     tile_images = getTileImages()
+    schanzenshop_images = getSchanzenShopImages()
 
-    return item_images, heart_images, weapon_images, button_images, titlescreen_image, tile_images
-item_images,heart_images,weapon_images,button_images,titlescreen_image,tile_images = getImages()
+    return item_images, heart_images, weapon_images, button_images, titlescreen_image, tile_images, schanzenshop_images
+item_images,heart_images,weapon_images,button_images,titlescreen_image,tile_images,schanzenshop_images = getImages()
 
 # Function for outputing text onto the screen
 def draw_text(text, font, text_col, x, y):
@@ -189,7 +193,7 @@ with open("Game/levels/test.csv", newline="") as csvfile:
             world_data[x][y] = int(tile)
 
 world = World()
-world.process_data(world_data,tile_images,item_images, mob_animations)
+world.process_data(world_data,tile_images,item_images, mob_animations, schanzenshop_images)
 
 # Create Player + Weapon
 player = world.player
@@ -283,7 +287,6 @@ while run:
 
                 # Update Ruler / Weapon
                 pencil = ruler.update(player)
-
                 if pencil:
                     pencil_group.add(pencil)
                 for pencil in pencil_group:
@@ -296,8 +299,8 @@ while run:
                             damage_text_group.add(damage_text)
                 damage_text_group.update(screen_scroll)
                 item_group.update(screen_scroll,player)
+                world.schanzenshop.update(screen_scroll)
                 
-
                 # DRAW-METHODS
                 world.draw(screen)
                 for enemy in enemy_list:
@@ -311,6 +314,7 @@ while run:
                 item_group.draw(screen)
                 draw_info()
                 score_coin.draw(screen)
+                world.schanzenshop.draw(screen)
 
                 # Check if level is complete 
                 if level_complete == True:
@@ -323,7 +327,7 @@ while run:
                             for y, tile in enumerate(row):
                                 world_data[x][y] = int(tile)
                     world = World()
-                    world.process_data(world_data, tile_images, item_images, mob_animations)
+                    world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images)
                     player = world.player
                     if player == None:
                         raise Exception('Player is None!')
