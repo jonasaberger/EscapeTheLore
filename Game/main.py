@@ -59,7 +59,8 @@ def getImages():
     def getWeaponImages():
         ruler_image = scale_img(pygame.image.load("Game/assets/images/weapons/ruler.png").convert_alpha(), constants.WEAPON_SCALE)
         pencil_image = scale_img(pygame.image.load("Game/assets/images/weapons/pencil.png").convert_alpha(), constants.WEAPON_SCALE)
-        return ruler_image,pencil_image
+        fireball_image = scale_img(pygame.image.load("Game/assets/images/weapons/fireball.png").convert_alpha(), constants.WEAPON_SCALE)
+        return ruler_image,pencil_image,fireball_image
     def getButtonImages():
         start_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_start.png").convert_alpha(), constants.BUTTON_SCALE)
         exit_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_exit.png").convert_alpha(), constants.BUTTON_SCALE)
@@ -281,7 +282,7 @@ while run:
                 # Update all enemies in enemy_list
                 for enemy in enemy_list:
                     enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
-                    fireball = enemy.ai(player, world.obstacle_tiles, screen_scroll, fireball_image)
+                    fireball = enemy.ai(player, world.obstacle_tiles, screen_scroll, weapon_images[2])
                     if fireball:
                         fireball_group.add(fireball)
 
