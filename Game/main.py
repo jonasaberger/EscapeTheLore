@@ -281,8 +281,7 @@ while run:
 
                 # Update all enemies in enemy_list
                 for enemy in enemy_list:
-                    enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
-                    fireball = enemy.ai(player, world.obstacle_tiles, screen_scroll, weapon_images[2])
+                    fireball = enemy.ai(screen,player, world.obstacle_tiles, screen_scroll)
                     if fireball:
                         fireball_group.add(fireball)
 
@@ -345,7 +344,7 @@ while run:
                     for item in world.item_list:
                         item_group.add(item)
             except Exception as error:
-                print(error)
+                print(error.args)
                 run = False
     # Show intro
     if start_intro == True:
