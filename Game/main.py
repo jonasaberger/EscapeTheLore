@@ -211,10 +211,9 @@ item_group = pygame.sprite.Group()
 
 # Score/Display coin
 score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, item_images[0], True)
-item_group.add(score_coin)
 
 # Add the Items from the level data
-for item in world.item_list:
+for item in world.item_list: 
     item_group.add(item)
 
 
@@ -250,15 +249,14 @@ while run:
                 pause_game = False
             if exit_pause_button.draw(screen):
                 run = False
-        elif shopActive == True:
-            screen.blit(schanzenshop_images[1], (0,50))
-            for item in item_group:
-                item.update(screen_scroll,player)
-            
-            
-            
         else:
-            screen.fill(constants.BACKGROUND)
+            if shopActive == True:
+                screen.blit(schanzenshop_images[1], (0,50))
+                score_coin.draw(screen)
+                score_coin.update(screen_scroll,player)
+
+            else:
+                screen.fill(constants.BACKGROUND)
             # Calculate Player Movement
             dx = 0
             dy = 0
@@ -287,12 +285,14 @@ while run:
                 # Update the Player
                 player.update(updatedAction)
                 
-                # UPDATE-METHODS
-                world.update(screen_scroll)
+                    
 
                 # Update all enemies in enemy_list
-                for enemy in enemy_list:
-                    enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
+                if shopActive == False:
+                    for enemy in enemy_list:
+                        enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
+                    score_coin.update(screen_scroll,player)
+                    world.update(screen_scroll)
 
                 # Update Ruler / Weapon
                 pencil = ruler.update(player)
@@ -311,26 +311,27 @@ while run:
                 world.schanzenshop.update(screen_scroll)
                 
                 # DRAW-METHODS
-                world.draw(screen)
-                for enemy in enemy_list:
-                    enemy.draw(screen)
-                # Player Draw + Weapon / Projectiles
-                player.draw(screen)
-                ruler.draw(screen)
-                for pencil in pencil_group:
-                    pencil.draw(screen)
-                damage_text_group.draw(screen)
-                item_group.draw(screen)
+                if shopActive == False:
+                    world.draw(screen)
+                    for enemy in enemy_list:
+                        enemy.draw(screen)
+                    # Player Draw + Weapon / Projectiles
+                    player.draw(screen)
+                    ruler.draw(screen)
+                    for pencil in pencil_group:
+                        pencil.draw(screen)
+                    damage_text_group.draw(screen)
+                    item_group.draw(screen)
+                    
+                    world.schanzenshop.draw(screen)
                 draw_info()
                 score_coin.draw(screen)
-                world.schanzenshop.draw(screen)
-
+                score_coin.update(screen_scroll,player)
+                
                 if player.rect.colliderect(world.schanzenshop.hitbox):
                     touchShop = True
-
                 else:
                     touchShop = False
-
 
                 # Check if level is complete 
                 if level_complete == True:
@@ -353,7 +354,7 @@ while run:
                     player.score = temp_score
                     enemy_list = world.enemy_list
                     score_coin = Item(constants.SCREEN_WIDTH - 115, 23, 0, item_images[0], True)
-                    item_group.add(score_coin)
+
                     for item in world.item_list:
                         item_group.add(item)
             except Exception as error:
