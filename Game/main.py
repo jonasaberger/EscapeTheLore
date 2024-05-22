@@ -76,8 +76,10 @@ def getImages():
         return tile_images
     def getSchanzenShopImages():
         schanzenshop_images = []
-        schanzenshop_images.append(pygame.image.load(f"Game/assets/images/schanzenshop/tile-texture.png").convert_alpha())
+        tile_texture = scale_img(pygame.image.load("Game/assets/images/schanzenshop/tile-texture.png").convert_alpha(),constants.SHOP_TILE_SCALE)
+        schanzenshop_images.append(tile_texture)
         schanzenshop_images.append(pygame.image.load(f"Game/assets/images/schanzenshop/schanzenshop_main.png").convert_alpha())
+        
         return schanzenshop_images
     item_images = getItemImages()
     heart_images = getHeartImages()
