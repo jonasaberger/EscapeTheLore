@@ -1,5 +1,6 @@
 from pickle import TRUE
 import pygame
+# from pygame import mixer
 import pygame.font
 import constants
 from character import Character # Import Character class
@@ -11,7 +12,9 @@ from world import World
 from item import Item
 import csv
 
+# mixer.init()
 pygame.init()
+
 screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
 pygame.display.set_caption("Escape The Lore")
 
@@ -37,7 +40,20 @@ moving_down = False
 def scale_img(image, scale):
     image_width = image.get_width()
     image_heigth = image.get_height()
-    return pygame.transform.scale(image, (image_width * scale, image_heigth * scale)) 
+    return pygame.transform.scale(image, (image_width * scale, image_heigth * scale))
+
+#Function for loading music and sound effects
+pygame.mixer.music.load("Game/assets/audio/background_music.wav")
+pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.play(-1, 0.0, 5000)
+shot_fx = pygame.mixer.Sound("Game/assets/audio/arrow_shot.mp3")
+shot_fx.set_volume(0.6)
+hit_fx = pygame.mixer.Sound("Game/assets/audio/arrow_hit.wav")
+hit_fx.set_volume(0.6)
+coin_fx = pygame.mixer.Sound("Game/assets/audio/coin.wav")
+coin_fx.set_volume(0.6)
+heal_fx = pygame.mixer.Sound("Game/assets/audio/heal.wav")
+heal_fx.set_volume(0.6)
 
 # Function for loading all the sprite images -> Function for better readability
 def getImages():
@@ -282,7 +298,7 @@ while run:
                 # Update all enemies in enemy_list
                 for enemy in enemy_list:
                     enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
-                    fireball = enemy.ai(player, world.obstacle_tiles, screen_scroll, weapon_images[2])
+                    #fireball = enemy.ai(player, world.obstacle_tiles, screen_scroll, weapon_images[2])
                     if fireball:
                         fireball_group.add(fireball)
 
@@ -291,6 +307,7 @@ while run:
 
                 if pencil:
                     pencil_group.add(pencil)
+                    shot_fx.play()
                 for pencil in pencil_group:
                     damage, damage_pos = pencil.update(screen_scroll, world.enemy_list)
                     if damage != 0:
@@ -299,9 +316,10 @@ while run:
                         else:
                             damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.RED)
                             damage_text_group.add(damage_text)
+                            hit_fx.play()
                 damage_text_group.update(screen_scroll)
                 fireball_group.update(screen_scroll, player)
-                item_group.update(screen_scroll,player)
+                item_group.update(screen_scroll,player, coin_fx, heal_fx)
                 
 
                 # DRAW-METHODS
