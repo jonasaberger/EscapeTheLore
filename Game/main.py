@@ -226,10 +226,22 @@ exit_pause_button = Button(constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_H
 restart_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 50, button_images[2])
 resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, button_images[3])
 
+# Drachenshop buttons
+first_item = Button(210,585,scale_img(item_images[1],3))
+first_item_price = 0
+
+second_item = Button(540,585,scale_img(item_images[1],3))
+second_item_price = 0
+
+third_item = Button(845,585,scale_img(item_images[1],3))
+third_item_price = 0
+
+
 #create screen fades
 intro_fade = ScreenFade(1, constants.BLACK, 4, screen)
 death_fade = ScreenFade(2, constants.PINK, 4, screen)
 shopActive = False
+mouseDown = False
 
 
 # Main-Game Loop
@@ -256,6 +268,26 @@ while run:
                 screen.blit(schanzenshop_images[1], (0,50))
                 score_coin.draw(screen)
                 score_coin.update(screen_scroll,player)
+
+                if first_item.draw(screen) and buttonClicked != True:
+                    buttonClicked = True
+                    print("First Item Bought")
+                if pygame.mouse.get_pressed()[0] == False:
+                    buttonClicked = False
+
+
+                if second_item.draw(screen) and buttonClicked != True:
+                    buttonClicked = True
+                    print("Second Item Bought")
+                if pygame.mouse.get_pressed()[0] == False:
+                    buttonClicked = False
+
+
+                if third_item.draw(screen) and buttonClicked != True:
+                    buttonClicked = True
+                    print("Third Item Bought")
+                if pygame.mouse.get_pressed()[0] == False:
+                    buttonClicked = False
 
             else:
                 screen.fill(constants.BACKGROUND)
