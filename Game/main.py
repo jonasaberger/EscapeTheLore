@@ -60,8 +60,7 @@ def getImages():
     def getWeaponImages():
         ruler_image = scale_img(pygame.image.load("Game/assets/images/weapons/ruler.png").convert_alpha(), constants.WEAPON_SCALE)
         pencil_image = scale_img(pygame.image.load("Game/assets/images/weapons/pencil.png").convert_alpha(), constants.WEAPON_SCALE)
-        fireball_image = scale_img(pygame.image.load("Game/assets/images/weapons/fireball.png").convert_alpha(), constants.WEAPON_SCALE)
-        return ruler_image,pencil_image,fireball_image
+        return ruler_image,pencil_image
     def getButtonImages():
         start_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_start.png").convert_alpha(), constants.BUTTON_SCALE)
         exit_img = scale_img(pygame.image.load("Game/assets/images/buttons/button_exit.png").convert_alpha(), constants.BUTTON_SCALE)
@@ -191,7 +190,7 @@ world_data = []
 for row in range(constants.ROWS):
     row = [-1] * constants.COLS
     world_data.append(row)
-with open("Game/levels/test.csv", newline="") as csvfile: 
+with open("Game/levels/1.csv", newline="") as csvfile: 
     reader = csv.reader(csvfile, delimiter=",")
     for x, row in enumerate(reader):
         for y, tile in enumerate(row):
@@ -211,7 +210,6 @@ enemy_list = world.enemy_list
 damage_text_group = pygame.sprite.Group()
 pencil_group = pygame.sprite.Group()
 item_group = pygame.sprite.Group()
-fireball_group = pygame.sprite.Group()
 
 # Score/Display coin
 score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, item_images[0], True)
@@ -228,22 +226,10 @@ exit_pause_button = Button(constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_H
 restart_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 50, button_images[2])
 resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, button_images[3])
 
-# Drachenshop buttons
-first_item = Button(210,585,scale_img(item_images[1],3))
-first_item_price = 0
-
-second_item = Button(540,585,scale_img(item_images[1],3))
-second_item_price = 0
-
-third_item = Button(845,585,scale_img(item_images[1],3))
-third_item_price = 0
-
-
 #create screen fades
 intro_fade = ScreenFade(1, constants.BLACK, 4, screen)
 death_fade = ScreenFade(2, constants.PINK, 4, screen)
 shopActive = False
-mouseDown = False
 
 
 # Main-Game Loop
@@ -270,26 +256,6 @@ while run:
                 screen.blit(schanzenshop_images[1], (0,50))
                 score_coin.draw(screen)
                 score_coin.update(screen_scroll,player)
-
-                if first_item.draw(screen) and buttonClicked != True:
-                    buttonClicked = True
-                    print("First Item Bought")
-                if pygame.mouse.get_pressed()[0] == False:
-                    buttonClicked = False
-
-
-                if second_item.draw(screen) and buttonClicked != True:
-                    buttonClicked = True
-                    print("Second Item Bought")
-                if pygame.mouse.get_pressed()[0] == False:
-                    buttonClicked = False
-
-
-                if third_item.draw(screen) and buttonClicked != True:
-                    buttonClicked = True
-                    print("Third Item Bought")
-                if pygame.mouse.get_pressed()[0] == False:
-                    buttonClicked = False
 
             else:
                 screen.fill(constants.BACKGROUND)
@@ -326,11 +292,9 @@ while run:
                 # Update all enemies in enemy_list
                 if shopActive == False:
                     for enemy in enemy_list:
-                        fireball = enemy.ai(screen,player, world.obstacle_tiles, screen_scroll)
+                        enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
                     score_coin.update(screen_scroll,player)
                     world.update(screen_scroll)
-                    if fireball:
-                        fireball_group.add(fireball)
 
                 # Update Ruler / Weapon
                 pencil = ruler.update(player)
@@ -345,21 +309,23 @@ while run:
                             damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.RED)
                             damage_text_group.add(damage_text)
                 damage_text_group.update(screen_scroll)
-                fireball_group.update(screen_scroll, player)
                 item_group.update(screen_scroll,player)
                 world.schanzenshop.update(screen_scroll)
                 
                 # DRAW-METHODS
-                world.draw(screen)
-                for enemy in enemy_list:
-                    enemy.draw(screen)
-                # Player Draw + Weapon / Projectiles
-                player.draw(screen)
-                ruler.draw(screen)
-                for pencil in pencil_group:
-                    pencil.draw(screen)
-                damage_text_group.draw(screen)
-                item_group.draw(screen)
+                if shopActive == False:
+                    world.draw(screen)
+                    for enemy in enemy_list:
+                        enemy.draw(screen)
+                    # Player Draw + Weapon / Projectiles
+                    player.draw(screen)
+                    ruler.draw(screen)
+                    for pencil in pencil_group:
+                        pencil.draw(screen)
+                    damage_text_group.draw(screen)
+                    item_group.draw(screen)
+                    
+                    world.schanzenshop.draw(screen)
                 draw_info()
                 score_coin.draw(screen)
                 score_coin.update(screen_scroll,player)
@@ -389,12 +355,12 @@ while run:
                     player.health = temp_hp
                     player.score = temp_score
                     enemy_list = world.enemy_list
-                    score_coin = Item(constants.SCREEN_WIDTH - 115, 23, 0, item_images[0], True)
+                    score_coin = Item(constants.SCREEN_WIDTH - 160, 26.5, 0, item_images[0], True)
 
                     for item in world.item_list:
                         item_group.add(item)
             except Exception as error:
-                print(error.args)
+                print(error)
                 run = False
     # Show intro
     if start_intro == True:
