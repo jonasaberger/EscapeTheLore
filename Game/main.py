@@ -268,6 +268,26 @@ while run:
                 score_coin.draw(screen)
                 score_coin.update(screen_scroll,player)
 
+                if first_item.draw(screen) and buttonClicked != True:
+                    buttonClicked = True
+                    print("First Item Bought")
+                if pygame.mouse.get_pressed()[0] == False:
+                    buttonClicked = False
+
+
+                if second_item.draw(screen) and buttonClicked != True:
+                    buttonClicked = True
+                    print("Second Item Bought")
+                if pygame.mouse.get_pressed()[0] == False:
+                    buttonClicked = False
+
+
+                if third_item.draw(screen) and buttonClicked != True:
+                    buttonClicked = True
+                    print("Third Item Bought")
+                if pygame.mouse.get_pressed()[0] == False:
+                    buttonClicked = False
+
             else:
                 screen.fill(constants.BACKGROUND)
             # Calculate Player Movement
