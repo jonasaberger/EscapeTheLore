@@ -1,4 +1,5 @@
 from pickle import TRUE
+import subprocess
 import pygame
 # from pygame import mixer
 import pygame.font
@@ -12,6 +13,7 @@ from weapon import Weapon
 from world import World
 from item import Item
 import csv
+import os
 
 # mixer.init()
 pygame.init()
@@ -28,6 +30,8 @@ screen_scroll = [0,0]
 start_game = False
 pause_game = False
 start_intro = False
+game_over = False
+restart_available = False
 
 # Define Player movement variables
 dx = 0
@@ -234,17 +238,16 @@ score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, item_images[0], True)
 for item in world.item_list: 
     item_group.add(item)
 
-
 # Create button
 start_button = Button(630, 530, button_images[0]) #constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150
 exit_button = Button(665,630, button_images[1]) #constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT // 2 + 50
 exit_pause_button = Button(constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT // 2 + 50, button_images[1])
-restart_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 50, button_images[2])
+restart_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, button_images[2])
 resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, button_images[3])
 
 #create screen fades
 intro_fade = ScreenFade(1, constants.BLACK, 4, screen)
-death_fade = ScreenFade(2, constants.PINK, 4, screen)
+death_fade = ScreenFade(2, constants.PINK, 14, screen)
 shopActive = False
 mouseDown = False
 
@@ -257,7 +260,6 @@ second_item_price = 0
 
 third_item = Button(845,585,scale_img(item_images[1],3))
 third_item_price = 0
-
 
 # Main-Game Loop
 run = True 
@@ -274,10 +276,17 @@ while run:
             run = False
     else:
         if pause_game == True:
-            if resume_button.draw(screen):
-                pause_game = False
+            if restart_available == True:
+                if restart_button.draw(screen):
+                   restart_available = False
+                   subprocess.Popen(['python','Game/main.py'])
+                   run = False
+                              
+            else:
+                if resume_button.draw(screen):
+                    pause_game = False
             if exit_pause_button.draw(screen):
-                run = False
+                run = False   
         else:
             if shopActive == True:
                 screen.blit(schanzenshop_images[1], (0,50))
@@ -360,7 +369,10 @@ while run:
                 damage_text_group.update(screen_scroll)
                 item_group.update(screen_scroll,player, coin_fx, heal_fx)
                 world.schanzenshop.update(screen_scroll)
-                
+                                # Game over
+                if game_over == True:
+                    restart_available = True
+
                 # DRAW-METHODS
                 if shopActive == False:
                     world.draw(screen)
@@ -383,6 +395,14 @@ while run:
                     touchShop = True
                 else:
                     touchShop = False
+
+                # Check if game over
+                if player.health == 0:
+                    game_over = True
+
+                # Check if game over
+                if player.health == 0:
+                    game_over = True
 
                 # Check if level is complete 
                 if level_complete == True:
@@ -416,6 +436,13 @@ while run:
         if intro_fade.fade():
           start_intro = False
           intro_fade.fade_counter = 0
+
+    # show deathfade
+    if game_over == True:
+        if death_fade.fade():
+          pause_game = True
+          game_over = False
+          death_fade.fade_counter = 0
 
     # Event Handler
     for event in pygame.event.get():
