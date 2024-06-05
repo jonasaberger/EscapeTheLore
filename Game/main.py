@@ -230,6 +230,7 @@ resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGH
 intro_fade = ScreenFade(1, constants.BLACK, 4, screen)
 death_fade = ScreenFade(2, constants.PINK, 4, screen)
 shopActive = False
+mouseDown = False
 
 # Drachenshop buttons
 first_item = Button(210,585,scale_img(item_images[1],3))
