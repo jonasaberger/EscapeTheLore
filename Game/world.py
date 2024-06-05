@@ -15,6 +15,7 @@ class World():
     self.enemy_list = []
     self.outerWalls = []
     self.totalPizzas = 0
+    self.schanzenshop = None
 
 
   def process_data(self, data, tile_list,item_images, mob_animations, schanzenshop_images):

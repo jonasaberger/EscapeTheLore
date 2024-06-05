@@ -254,6 +254,7 @@ resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGH
 intro_fade = ScreenFade(1, constants.BLACK, 4, screen)
 death_fade = ScreenFade(2, constants.PINK, 14, screen)
 shopActive = False
+touchShop = False
 mouseDown = False
 
 # Drachenshop buttons
@@ -286,7 +287,6 @@ while run:
                    restart_available = False
                    subprocess.Popen(['python','Game/main.py'])
                    run = False
-            
                               
             else:
                 if resume_button.draw(screen):
@@ -373,7 +373,8 @@ while run:
                             hit_fx.play()
                 damage_text_group.update(screen_scroll)
                 item_group.update(screen_scroll,player, coin_fx, heal_fx)
-                world.schanzenshop.update(screen_scroll)
+                if world.schanzenshop != None:
+                    world.schanzenshop.update(screen_scroll)
                 # Game over
                 if game_over == True:
                     restart_available = True
@@ -390,17 +391,18 @@ while run:
                         pencil.draw(screen)
                     damage_text_group.draw(screen)
                     item_group.draw(screen)
-                    
-                    world.schanzenshop.draw(screen)
+                    if world.schanzenshop != None:
+                        world.schanzenshop.draw(screen)
+                        if player.rect.colliderect(world.schanzenshop.hitbox):
+                            touchShop = True
+                        else:
+                            touchShop = False
                 draw_info()
                 score_coin.draw(screen)
                 score_coin.update(screen_scroll,player,coin_fx,heal_fx)
                 
-                if player.rect.colliderect(world.schanzenshop.hitbox):
-                    touchShop = True
-                else:
-                    touchShop = False
 
+                
                 # Check if game over
                 if player.health == 0:
                     game_over = True

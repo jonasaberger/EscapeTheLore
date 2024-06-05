@@ -36,7 +36,7 @@ GAME_SCALE = 2
 
 TILE_SIZE = 16 * GAME_SCALE
 TILE_TYPES = 113
-LEVEL_NAMES = ["HTL","HAK"]
+LEVEL_NAMES = ["3AHINF","GANG","3BHME","GANG","4BHME","GANG","2BHME","GANG","5BHME","GANG","COUCHES"]
 MAIN_FONT = pygame.font.Font("Game/assets/fonts/MainFont.ttf",35)
 
 # Menu
