@@ -282,7 +282,7 @@ while run:
             if shopActive == True:
                 screen.blit(schanzenshop_images[1], (0,50))
                 score_coin.draw(screen)
-                score_coin.update(screen_scroll,player)
+                score_coin.update(screen_scroll,player,coin_fx,heal_fx)
 
                 if first_item.draw(screen) and buttonClicked != True:
                     buttonClicked = True
@@ -377,7 +377,7 @@ while run:
                     world.schanzenshop.draw(screen)
                 draw_info()
                 score_coin.draw(screen)
-                score_coin.update(screen_scroll,player)
+                score_coin.update(screen_scroll,player,coin_fx,heal_fx)
                 
                 if player.rect.colliderect(world.schanzenshop.hitbox):
                     touchShop = True
