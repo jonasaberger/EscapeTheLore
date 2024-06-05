@@ -20,7 +20,6 @@ class Item(pygame.sprite.Sprite):
             self.rect.y += screen_scroll[1]
 
 
-
         #check to see if item has been collected by the player
         if self.rect.colliderect(player.rect):
             #coin collected

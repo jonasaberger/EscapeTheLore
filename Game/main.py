@@ -1,6 +1,7 @@
 from pickle import TRUE
 import pygame
 import pygame.font
+import pygame.image
 import constants
 from character import Character # Import Character class
 from screenfade import ScreenFade
@@ -74,16 +75,23 @@ def getImages():
             tile_image = pygame.transform.scale(tile_image, (constants.TILE_SIZE*constants.GAME_SCALE, constants.TILE_SIZE*constants.GAME_SCALE))
             tile_images.append(tile_image)
         return tile_images
-
+    def getSchanzenShopImages():
+        schanzenshop_images = []
+        tile_texture = scale_img(pygame.image.load("Game/assets/images/schanzenshop/tile-texture.png").convert_alpha(),constants.SHOP_TILE_SCALE)
+        schanzenshop_images.append(tile_texture)
+        schanzenshop_images.append(pygame.image.load(f"Game/assets/images/schanzenshop/schanzenshop_main.png").convert_alpha())
+        
+        return schanzenshop_images
     item_images = getItemImages()
     heart_images = getHeartImages()
     weapon_images = getWeaponImages()
     button_images = getButtonImages()
     titlescreen_image = pygame.image.load("Game/assets/images/GUI/menu_bg.png")
     tile_images = getTileImages()
+    schanzenshop_images = getSchanzenShopImages()
 
-    return item_images, heart_images, weapon_images, button_images, titlescreen_image, tile_images
-item_images,heart_images,weapon_images,button_images,titlescreen_image,tile_images = getImages()
+    return item_images, heart_images, weapon_images, button_images, titlescreen_image, tile_images, schanzenshop_images
+item_images,heart_images,weapon_images,button_images,titlescreen_image,tile_images,schanzenshop_images = getImages()
 
 # Function for outputing text onto the screen
 def draw_text(text, font, text_col, x, y):
@@ -190,7 +198,7 @@ with open("Game/levels/test.csv", newline="") as csvfile:
             world_data[x][y] = int(tile)
 
 world = World()
-world.process_data(world_data,tile_images,item_images, mob_animations)
+world.process_data(world_data,tile_images,item_images, mob_animations, schanzenshop_images)
 
 # Create Player + Weapon
 player = world.player
@@ -207,10 +215,9 @@ fireball_group = pygame.sprite.Group()
 
 # Score/Display coin
 score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, item_images[0], True)
-item_group.add(score_coin)
 
 # Add the Items from the level data
-for item in world.item_list:
+for item in world.item_list: 
     item_group.add(item)
 
 
@@ -221,9 +228,22 @@ exit_pause_button = Button(constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_H
 restart_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 50, button_images[2])
 resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, button_images[3])
 
+# Drachenshop buttons
+first_item = Button(210,585,scale_img(item_images[1],3))
+first_item_price = 0
+
+second_item = Button(540,585,scale_img(item_images[1],3))
+second_item_price = 0
+
+third_item = Button(845,585,scale_img(item_images[1],3))
+third_item_price = 0
+
+
 #create screen fades
 intro_fade = ScreenFade(1, constants.BLACK, 4, screen)
 death_fade = ScreenFade(2, constants.PINK, 4, screen)
+shopActive = False
+mouseDown = False
 
 
 # Main-Game Loop
@@ -246,8 +266,33 @@ while run:
             if exit_pause_button.draw(screen):
                 run = False
         else:
-            screen.fill(constants.BACKGROUND)
+            if shopActive == True:
+                screen.blit(schanzenshop_images[1], (0,50))
+                score_coin.draw(screen)
+                score_coin.update(screen_scroll,player)
 
+                if first_item.draw(screen) and buttonClicked != True:
+                    buttonClicked = True
+                    print("First Item Bought")
+                if pygame.mouse.get_pressed()[0] == False:
+                    buttonClicked = False
+
+
+                if second_item.draw(screen) and buttonClicked != True:
+                    buttonClicked = True
+                    print("Second Item Bought")
+                if pygame.mouse.get_pressed()[0] == False:
+                    buttonClicked = False
+
+
+                if third_item.draw(screen) and buttonClicked != True:
+                    buttonClicked = True
+                    print("Third Item Bought")
+                if pygame.mouse.get_pressed()[0] == False:
+                    buttonClicked = False
+
+            else:
+                screen.fill(constants.BACKGROUND)
             # Calculate Player Movement
             dx = 0
             dy = 0
@@ -276,18 +321,19 @@ while run:
                 # Update the Player
                 player.update(updatedAction)
                 
-                # UPDATE-METHODS
-                world.update(screen_scroll)
+                    
 
                 # Update all enemies in enemy_list
-                for enemy in enemy_list:
-                    fireball = enemy.ai(screen,player, world.obstacle_tiles, screen_scroll)
+                if shopActive == False:
+                    for enemy in enemy_list:
+                        fireball = enemy.ai(screen,player, world.obstacle_tiles, screen_scroll)
+                    score_coin.update(screen_scroll,player)
+                    world.update(screen_scroll)
                     if fireball:
                         fireball_group.add(fireball)
 
                 # Update Ruler / Weapon
                 pencil = ruler.update(player)
-
                 if pencil:
                     pencil_group.add(pencil)
                 for pencil in pencil_group:
@@ -301,8 +347,8 @@ while run:
                 damage_text_group.update(screen_scroll)
                 fireball_group.update(screen_scroll, player)
                 item_group.update(screen_scroll,player)
+                world.schanzenshop.update(screen_scroll)
                 
-
                 # DRAW-METHODS
                 world.draw(screen)
                 for enemy in enemy_list:
@@ -312,12 +358,16 @@ while run:
                 ruler.draw(screen)
                 for pencil in pencil_group:
                     pencil.draw(screen)
-                for fireball in fireball_group:
-                    fireball.draw(screen)
                 damage_text_group.draw(screen)
                 item_group.draw(screen)
                 draw_info()
                 score_coin.draw(screen)
+                score_coin.update(screen_scroll,player)
+                
+                if player.rect.colliderect(world.schanzenshop.hitbox):
+                    touchShop = True
+                else:
+                    touchShop = False
 
                 # Check if level is complete 
                 if level_complete == True:
@@ -330,7 +380,7 @@ while run:
                             for y, tile in enumerate(row):
                                 world_data[x][y] = int(tile)
                     world = World()
-                    world.process_data(world_data, tile_images, item_images, mob_animations)
+                    world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images)
                     player = world.player
                     if player == None:
                         raise Exception('Player is None!')
@@ -340,7 +390,7 @@ while run:
                     player.score = temp_score
                     enemy_list = world.enemy_list
                     score_coin = Item(constants.SCREEN_WIDTH - 115, 23, 0, item_images[0], True)
-                    item_group.add(score_coin)
+
                     for item in world.item_list:
                         item_group.add(item)
             except Exception as error:
@@ -374,10 +424,20 @@ while run:
 
             # Menu
             if event.key == pygame.K_ESCAPE and pause_game == False:
-                pause_game = True
+                if shopActive == True:
+                    shopActive = False
+                else:
+                    pause_game = True
             elif event.key == pygame.K_ESCAPE and pause_game == True:
                 pause_game = False
 
+        # Schanzenshop
+            shopActive = False
+            if event.key == pygame.K_e and touchShop == True:
+                shopActive = True
+            else:
+                shopActive = False
+        
         # Key-Release
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a or event.key == pygame.K_LEFT:

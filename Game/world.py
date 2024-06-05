@@ -1,3 +1,4 @@
+from schanzenshop import Schanzenshop
 from character import Character
 from item import Item
 import constants
@@ -15,7 +16,7 @@ class World():
     self.outerWalls = []
 
 
-  def process_data(self, data, tile_list,item_images, mob_animations):
+  def process_data(self, data, tile_list,item_images, mob_animations, schanzenshop_images):
     self.level_length = len(data)
     # Iterate through every single value in level data file
     for y, row in enumerate(data):
@@ -37,8 +38,10 @@ class World():
         elif tile == 1:
           self.outerWalls.append(tile_data)
 
-        # X-TILE
+        # SCHANZENSHOP
         elif tile == 56:
+         schanzenshop = Schanzenshop(image_x,image_y,schanzenshop_images[0])
+         self.schanzenshop = schanzenshop
          tile_data[0] = tile_list[0]
 
         # Y-TILE
@@ -94,7 +97,7 @@ class World():
   def draw(self, surface):
     for tile in self.map_tiles:
       surface.blit(tile[0],tile[1])
-      pygame.draw.rect(surface, constants.RED,tile[1],1)
+      # pygame.draw.rect(surface, constants.RED,tile[1],1)
 
   def update(self,screen_scroll):
     for tile in self.map_tiles:
