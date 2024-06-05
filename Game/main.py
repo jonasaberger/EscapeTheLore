@@ -231,6 +231,16 @@ intro_fade = ScreenFade(1, constants.BLACK, 4, screen)
 death_fade = ScreenFade(2, constants.PINK, 4, screen)
 shopActive = False
 
+# Drachenshop buttons
+first_item = Button(210,585,scale_img(item_images[1],3))
+first_item_price = 0
+
+second_item = Button(540,585,scale_img(item_images[1],3))
+second_item_price = 0
+
+third_item = Button(845,585,scale_img(item_images[1],3))
+third_item_price = 0
+
 
 # Main-Game Loop
 run = True 
