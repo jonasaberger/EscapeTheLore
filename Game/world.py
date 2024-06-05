@@ -14,6 +14,7 @@ class World():
     self.item_list = []
     self.enemy_list = []
     self.outerWalls = []
+    self.totalPizzas = 0
 
 
   def process_data(self, data, tile_list,item_images, mob_animations, schanzenshop_images):
@@ -56,6 +57,9 @@ class World():
 
         # PIZZA-TILE
         elif tile == 59:
+          pizza = Item(image_x,image_y,2,[item_images[2]])
+          self.item_list.append(pizza)
+          self.totalPizzas += 1
           tile_data[0] = tile_list[0]
 
         # EXIT-TILE
@@ -75,7 +79,7 @@ class World():
 
         # LORE-GETRÄNK
         elif tile == 63:
-          potion = Item(image_x, image_y, 1, [potion])
+          potion = Item(image_x, image_y, 1, [item_images[1]])
           self.item_list.append(potion)
           tile_data[0] = tile_list[0]
 

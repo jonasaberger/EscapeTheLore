@@ -17,13 +17,15 @@ class Character():
         self.hit = False
         self.last_hit = pygame.time.get_ticks() # Timer for when player received last hit
         self.stunned = False
+        self.pizzaCount = 0
+        
 
         self.image = animation_list[self.action][self.frame_index]
         self.rect = pygame.Rect(0,0,width, height)
         self.rect.center = (x,y)
     
     # Player Movement Function
-    def move(self, dx, dy, obstacle_tiles, exit_tile = None):
+    def move(self, dx, dy, obstacle_tiles,exit_tile = None):
         screen_scroll = [0,0]
         level_complete = False
 

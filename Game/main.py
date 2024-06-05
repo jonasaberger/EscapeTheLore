@@ -1,5 +1,6 @@
 from pickle import TRUE
 import subprocess
+from tkinter.tix import INTEGER
 import pygame
 # from pygame import mixer
 import pygame.font
@@ -47,9 +48,10 @@ def scale_img(image, scale):
     image_heigth = image.get_height()
     return pygame.transform.scale(image, (image_width * scale, image_heigth * scale))
 
-#Function for loading music and sound effects
+#Function for loading music and xd effects
 pygame.mixer.music.load("Game/assets/audio/background_music.wav")
 pygame.mixer.music.set_volume(0.5)
+
 pygame.mixer.music.play(-1, 0.0, 5000)
 shot_fx = pygame.mixer.Sound("Game/assets/audio/arrow_shot.mp3")
 shot_fx.set_volume(0.6)
@@ -66,12 +68,15 @@ def getImages():
         # Load Coin Images
         coin_images = []
         for x in range(4):
-            img = scale_img(pygame.image.load(f"Game/assets/images/GUI/coin_f{x}.png").convert_alpha(), constants.ITEM_SCALE)
+            img = scale_img(pygame.image.load(f"Game/assets/images/GUI/coin_f{x}.png").convert_alpha(), constants.COIN_SCALE)
             coin_images.append(img)
 
         # Load Potion Images
         potion_image = scale_img(pygame.image.load("Game/assets/images/items/lore_potion.png").convert_alpha(), constants.POTION_SCALE)
-        return coin_images, potion_image
+
+        pizza_image = scale_img(pygame.image.load("Game/assets/images/items/pizza.png").convert_alpha(),constants.PIZZA_SCALE)
+        
+        return coin_images, potion_image, pizza_image
     def getHeartImages():
         heart_empty = scale_img(pygame.image.load("Game/assets/images/GUI/heart_empty.png").convert_alpha(), constants.HEART_SCALE)
         heart_half = scale_img(pygame.image.load("Game/assets/images/GUI/heart_half.png").convert_alpha(), constants.HEART_SCALE)
@@ -245,7 +250,7 @@ exit_pause_button = Button(constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_H
 restart_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, button_images[2])
 resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, button_images[3])
 
-#create screen fades
+# Create screen fades
 intro_fade = ScreenFade(1, constants.BLACK, 4, screen)
 death_fade = ScreenFade(2, constants.PINK, 14, screen)
 shopActive = False
@@ -281,6 +286,7 @@ while run:
                    restart_available = False
                    subprocess.Popen(['python','Game/main.py'])
                    run = False
+            
                               
             else:
                 if resume_button.draw(screen):
@@ -344,7 +350,6 @@ while run:
                 player.update(updatedAction)
                 
                     
-
                 # Update all enemies in enemy_list
                 if shopActive == False:
                     for enemy in enemy_list:
@@ -369,7 +374,7 @@ while run:
                 damage_text_group.update(screen_scroll)
                 item_group.update(screen_scroll,player, coin_fx, heal_fx)
                 world.schanzenshop.update(screen_scroll)
-                                # Game over
+                # Game over
                 if game_over == True:
                     restart_available = True
 
@@ -405,7 +410,8 @@ while run:
                     game_over = True
 
                 # Check if level is complete 
-                if level_complete == True:
+                
+                if level_complete == True and player.pizzaCount == world.totalPizzas:
                     level += 1
                     world_data = reset_level()
                     #load in level data and create world
@@ -428,6 +434,9 @@ while run:
 
                     for item in world.item_list:
                         item_group.add(item)
+
+                elif level_complete == True and player.pizzaCount < world.totalPizzas:
+                    print("!")
             except Exception as error:
                 print(error)
                 run = False
