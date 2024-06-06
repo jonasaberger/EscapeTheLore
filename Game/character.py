@@ -18,6 +18,7 @@ class Character():
         self.last_hit = pygame.time.get_ticks() # Timer for when player received last hit
         self.stunned = False
         self.pizzaCount = 0
+        self.death_animation = False
         
 
         self.image = animation_list[self.action][self.frame_index]
@@ -102,10 +103,9 @@ class Character():
         #Check which action player is performing
         self.update_action(action)
 
-        animation_cooldown = 70
         self.image = self.animation_list[self.action][self.frame_index]
 
-        if pygame.time.get_ticks() - self.updated_time > animation_cooldown:
+        if pygame.time.get_ticks() - self.updated_time > constants.ANIMATION_COOLDOWN:
             self.frame_index += 1
             self.updated_time = pygame.time.get_ticks()
         
@@ -150,6 +150,8 @@ class Character():
 
         # Enemy has simple line of sight and moves to player
         if not clipped_line and distance_to_player > constants.RANGE:
+
+
             # Move left
             if self.rect.centerx > player.rect.centerx:
                 ai_dx = -enemy_speed
@@ -193,6 +195,16 @@ class Character():
             # Reset the stun timeout
             if pygame.time.get_ticks() - self.last_hit > enemy_stun_cooldown:
                 self.stunned = False
+        elif self.death_animation == False:
+            if pygame.time.get_ticks() - self.updated_time > constants.ANIMATION_COOLDOWN:
+                self.updated_time = pygame.time.get_ticks()
+                if self.frame_index < len(self.animation_list[5]):
+                    # Set the current frame as the player's image
+                    self.image = self.animation_list[5][self.frame_index]
+                    self.frame_index += 1
+                else:
+                    # Mark death animation as complete
+                    self.death_animation = True
 
     def update_action(self,new_action):
         # Check if new Action is different

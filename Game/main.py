@@ -27,7 +27,7 @@ pygame.display.set_caption("Escape The Lore")
 clock = pygame.time.Clock()
 
 # Define game variables
-level = 2
+level = 1
 screen_scroll = [0,0]
 start_game = False
 pause_game = False
@@ -108,7 +108,7 @@ def getImages():
         exitOff_image = scale_img(pygame.image.load("Game/assets/images/GUI/exit/exit_off.png").convert_alpha(),constants.EXIT_SCALE)
         exitOn_image = scale_img(pygame.image.load("Game/assets/images/GUI/exit/exit_on.png").convert_alpha(),constants.EXIT_SCALE)
         return exitOff_image, exitOn_image
-    
+
     item_images = getItemImages()
     heart_images = getHeartImages()
     weapon_images = getWeaponImages()
@@ -209,6 +209,15 @@ def getMobAnimations():
         animation_list.append(up_list)
         animation_list.append(right_list)
         animation_list.append(left_list)
+        
+        death_animation_list = []
+        for i in range(8):
+            player_image = pygame.image.load(f"Game/assets/images/characters/Aberga/Death/{i}.png").convert_alpha()
+            player_image = scale_img(player_image, constants.GAME_SCALE)
+            death_animation_list.append(player_image)
+
+        animation_list.append(death_animation_list)
+        
         mob_animations.append(animation_list)
 
     return mob_animations

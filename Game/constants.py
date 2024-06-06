@@ -7,6 +7,7 @@ pygame.init()
 
 # Sizes
 MOB_TYPES = ["Player","Aberga","Rocker"]
+ANIMATION_COOLDOWN = 70
 PLAYER_HEIGHT = 48
 PLAYER_WIDTH = 32
 
