@@ -1,5 +1,7 @@
 import pygame
 
+from constants import BRISN_DAMAGE
+
 class Item(pygame.sprite.Sprite):
     def __init__(self, x, y, item_type, animation_list, dummy_coin = False):
         pygame.sprite.Sprite.__init__(self)
@@ -22,17 +24,23 @@ class Item(pygame.sprite.Sprite):
 
         #check to see if item has been collected by the player
         if self.rect.colliderect(player.rect):
-            #coin collected
+            # Coin
             if self.item_type == 0:
                 player.score += 1
                 coin_fx.play()
+            # Potion
             elif self.item_type == 1:
                 player.health += 10
                 heal_fx.play()
                 if player.health > 100:
                     player.health = 100
+            # Pizza
             elif self.item_type == 2:
                 player.pizzaCount += 1
+            
+            elif self.item_type == 3:
+                player.health -= BRISN_DAMAGE
+                
             self.kill()
 
         #handle animation

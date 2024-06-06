@@ -45,6 +45,7 @@ moving_down = False
 
 temp_hp = 0
 temp_score = 0
+brisn_boost = 0
 
 # Helper Function to scale images
 def scale_img(image, scale):
@@ -277,13 +278,13 @@ mouseDown = False
 
 # Drachenshop buttons
 schanzenshop_potion = Button(210,585,scale_img(item_images[1],3))
-schanzenshop_potion_price = 0
+schanzenshop_potion_price = constants.SHOP_POTION_BASE
 
 schanzenshop_brisn = Button(538,585,scale_img(item_images[3],1.5))
-schanzenshop_brisn_price = 0
+schanzenshop_brisn_price = constants.SHOP_BRISN_BASE
 
 schanzenshop_rockerflasche = Button(812,546,scale_img(item_images[4],5))
-schanzenshop_rockerflasche_price = 0
+schanzenshop_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_BASE
 
 # Main-Game Loop
 run = True
@@ -337,6 +338,9 @@ while run:
                     print("First Item Clicked")
                     if player.score >= schanzenshop_potion_price:
                         player.score -= schanzenshop_potion_price
+                        schanzenshop_potion_price += constants.SHOP_POTION_INCR
+
+                        # Add the Potion-Effect
 
                 if pygame.mouse.get_pressed()[0] == False:
                     buttonClicked = False
@@ -345,6 +349,14 @@ while run:
                 if schanzenshop_brisn.draw(screen) and buttonClicked != True:
                     buttonClicked = True
                     print("Second Item Bought")
+                    if player.score >= schanzenshop_brisn_price:
+                        player.score -= schanzenshop_brisn_price
+                        schanzenshop_brisn_price += constants.SHOP_BRISN_INCR
+
+                        # Add the Brisn-Effect
+                        brisn_boost += constants.BRISN_ATTACK_BOOST
+                        player.health -= constants.BRISN_DAMAGE
+
                 if pygame.mouse.get_pressed()[0] == False:
                     buttonClicked = False
 
@@ -352,6 +364,12 @@ while run:
                 if schanzenshop_rockerflasche.draw(screen) and buttonClicked != True:
                     buttonClicked = True
                     print("Third Item Bought")
+                    if player.score >= schanzenshop_rockerflasche_price:
+                        player.score -= schanzenshop_rockerflasche_price
+                        schanzenshop_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_INCR
+
+                        # TODO Add the Rockerflasche-Effect
+
                 if pygame.mouse.get_pressed()[0] == False:
                     buttonClicked = False
 
@@ -406,7 +424,7 @@ while run:
                         pencil_group.add(pencil)
                         shot_fx.play()
                     for pencil in pencil_group:
-                        damage, damage_pos = pencil.update(screen_scroll, world.enemy_list)
+                        damage, damage_pos = pencil.update(screen_scroll, world.enemy_list,brisn_boost)
                         if damage != 0:
                             if damage == 14:
                                 damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.YELLOW)

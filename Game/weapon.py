@@ -58,7 +58,7 @@ class Pencil(pygame.sprite.Sprite):
         self.dy = -(math.sin(math.radians(self.angle)) * constants.PENCIL_SPEED) # -ve because pygame y coordinats increases down the screen 
 
     
-    def update(self, screen_scroll, enemy_list):
+    def update(self, screen_scroll, enemy_list, brisn_boost):
 
         # Reset variables
         damage = 0
@@ -76,7 +76,7 @@ class Pencil(pygame.sprite.Sprite):
         for enemy in enemy_list:
             if enemy.rect.colliderect(self.rect) and enemy.alive:
                 # Calculate the damage delt
-                damage = constants.P_DAMAGE_BASE + random.randint(0,constants.P_DAMAGE_EXTRA)
+                damage = constants.P_DAMAGE_BASE + random.randint(0,constants.P_DAMAGE_EXTRA) + brisn_boost
                 damage_pos = enemy.rect
                 enemy.health -= damage
                 enemy.hit = True
