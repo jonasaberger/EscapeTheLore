@@ -412,7 +412,8 @@ while run:
                     game_over = True
 
                 # Check if level is complete 
-                
+                print(level_complete)
+
                 if level_complete == True and player.pizzaCount == world.totalPizzas:
                     level += 1
                     world_data = reset_level()

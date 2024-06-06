@@ -98,11 +98,12 @@ class World():
         # Add all tiles to main tiles list
         if tile >= 0:
           self.map_tiles.append(tile_data)
+          
     
   def draw(self, surface):
     for tile in self.map_tiles:
       surface.blit(tile[0],tile[1])
-      # pygame.draw.rect(surface, constants.RED,tile[1],1)
+      pygame.draw.rect(surface, constants.RED,tile[1],1)
 
   def update(self,screen_scroll):
     for tile in self.map_tiles:
