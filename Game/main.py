@@ -43,6 +43,9 @@ moving_right = False
 moving_up = False
 moving_down = False
 
+temp_hp = 0
+temp_score = 0
+
 # Helper Function to scale images
 def scale_img(image, scale):
     image_width = image.get_width()
@@ -331,7 +334,10 @@ while run:
                 # Lore-Getränk Logik
                 if schanzenshop_potion.draw(screen) and buttonClicked != True:
                     buttonClicked = True
-                    print("First Item Bought")
+                    print("First Item Clicked")
+                    if player.score >= schanzenshop_potion_price:
+                        player.score -= schanzenshop_potion_price
+
                 if pygame.mouse.get_pressed()[0] == False:
                     buttonClicked = False
 
@@ -447,6 +453,10 @@ while run:
                     world.activateExit()
 
                 if level_complete == True and player.pizzaCount == world.totalPizzas:
+                    # Save the hp and score
+                    temp_hp = player.health
+                    temp_score = player.score
+
                     level += 1
                     world_data = reset_level()
                     #load in level data and create world
@@ -460,8 +470,6 @@ while run:
                     player = world.player
                     if player == None:
                         raise Exception('Player is None!')
-                    temp_hp = player.health
-                    temp_score = player.score
                     player.health = temp_hp
                     player.score = temp_score
                     enemy_list = world.enemy_list
@@ -471,7 +479,7 @@ while run:
                         item_group.add(item)
                 # TODO: Maybe play error sound when cant access exit yet
                 elif level_complete == True and player.pizzaCount < world.totalPizzas:
-                    print("!")
+                    print(" ")
             except Exception as error:
                 print(error)
                 run = False
