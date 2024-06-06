@@ -378,22 +378,22 @@ while run:
                     #score_coin.update(screen_scroll,player)
                     world.update(screen_scroll)
 
-                # Update Ruler / Weapon
-                pencil = ruler.update(player)
-                if pencil:
-                    pencil_group.add(pencil)
-                    shot_fx.play()
-                for pencil in pencil_group:
-                    damage, damage_pos = pencil.update(screen_scroll, world.enemy_list)
-                    if damage != 0:
-                        if damage == 14:
-                            damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.YELLOW)
-                        else:
-                            damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.RED)
-                            damage_text_group.add(damage_text)
-                            hit_fx.play()
-                damage_text_group.update(screen_scroll)
-                item_group.update(screen_scroll,player, coin_fx, heal_fx)
+                    # Update Ruler / Weapon
+                    pencil = ruler.update(player)
+                    if pencil:
+                        pencil_group.add(pencil)
+                        shot_fx.play()
+                    for pencil in pencil_group:
+                        damage, damage_pos = pencil.update(screen_scroll, world.enemy_list)
+                        if damage != 0:
+                            if damage == 14:
+                                damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.YELLOW)
+                            else:
+                                damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.RED)
+                                damage_text_group.add(damage_text)
+                                hit_fx.play()
+                    damage_text_group.update(screen_scroll)
+                    item_group.update(screen_scroll,player, coin_fx, heal_fx)
                 if world.schanzenshop != None:
                     world.schanzenshop.update(screen_scroll)
                 # Game over
