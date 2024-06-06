@@ -54,7 +54,6 @@ class Character():
                      print()
                 if dy < 0:
                     self.rect.top = obstacle[1].bottom
-                    print("BOTTOM")
 
         # Every function used by the player
         if self.mob_type == 0:
