@@ -50,7 +50,7 @@ class Character():
                 # Check which side it collides with
                 if dy > 0:
                      self.rect.bottom = obstacle[1].top
-                     print(obstacle)
+                     print()
                 if dy < 0:
                     self.rect.top = obstacle[1].bottom
                     print("BOTTOM")

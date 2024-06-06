@@ -5,6 +5,7 @@ import pygame
 # from pygame import mixer
 import pygame.font
 import pygame.image
+from music import Music
 import constants
 from character import Character # Import Character class
 from screenfade import ScreenFade
@@ -48,11 +49,13 @@ def scale_img(image, scale):
     image_heigth = image.get_height()
     return pygame.transform.scale(image, (image_width * scale, image_heigth * scale))
 
-#Function for loading music and xd effects
-pygame.mixer.music.load("Game/assets/audio/background_music.wav")
-pygame.mixer.music.set_volume(0.5)
+#Function for loading music and soundfx
 
-pygame.mixer.music.play(-1, 0.0, 5000)
+# Music
+musicPlayer = Music("Game/assets/audio/background_music.wav",0.5)
+musicPlayer.toggleMusic()
+
+# SoundFX
 shot_fx = pygame.mixer.Sound("Game/assets/audio/arrow_shot.mp3")
 shot_fx.set_volume(0.6)
 hit_fx = pygame.mixer.Sound("Game/assets/audio/arrow_hit.wav")
@@ -226,8 +229,6 @@ world.process_data(world_data,tile_images,item_images, mob_animations, schanzens
 
 # Create Player + Weapon
 player = world.player
-screen_scroll[0] = player.rect.centerx - constants.SCREEN_WIDTH // 2
-screen_scroll[1] = player.rect.centery - constants.SCREEN_HEIGHT // 2
 ruler = Weapon(weapon_images[0], weapon_images[1], world.outerWalls)
 
 # Get the enemy list 
@@ -257,6 +258,8 @@ intro_fade = ScreenFade(1, constants.BLACK, 4, screen)
 death_fade = ScreenFade(2, constants.PINK, 14, screen)
 shopActive = False
 touchShop = False
+shopMusic = False
+mainMusic = True
 mouseDown = False
 
 # Drachenshop buttons
@@ -270,10 +273,12 @@ third_item = Button(845,585,scale_img(item_images[1],3))
 third_item_price = 0
 
 # Main-Game Loop
-run = True 
+run = True
+
 while run:
     # Limit Frame Rate
     clock.tick(constants.FRAMES_PER_SECOND)
+    
 
     if start_game == False:
         screen.blit(titlescreen_image, (0, 0))
@@ -297,6 +302,13 @@ while run:
                 run = False   
         else:
             if shopActive == True:
+                if not shopMusic:
+                    shopMusic = True
+                    mainMusic = False
+                    musicPlayer.toggleMusic()
+                    musicPlayer.loadMusic("Game/assets/audio/schanzenshop_theme.wav")
+                    musicPlayer.toggleMusic()
+                    
                 screen.blit(schanzenshop_images[1], (0,50))
                 score_coin.draw(screen)
                 score_coin.update(screen_scroll,player,coin_fx,heal_fx)
@@ -322,6 +334,12 @@ while run:
                     buttonClicked = False
 
             else:
+                shopMusic = False
+                if not mainMusic:
+                    mainMusic = True
+                    musicPlayer.toggleMusic()
+                    musicPlayer.loadMusic("Game/assets/audio/background_music.wav")
+                    musicPlayer.toggleMusic()
                 screen.fill(constants.BACKGROUND)
             # Calculate Player Movement
             dx = 0

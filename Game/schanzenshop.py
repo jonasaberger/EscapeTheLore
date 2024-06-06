@@ -9,6 +9,7 @@ class Schanzenshop(pygame.sprite.Sprite):
         self.rect.center = (x,y)
         self.hitbox = pygame.rect.Rect(0,0,self.rect.width+constants.SHOP_RANGE,self.rect.height+constants.SHOP_RANGE)
         self.hitbox.center = (x,y)
+        self.music = 
 
     def update(self,screen_scroll):
         self.rect.x += screen_scroll[0]
