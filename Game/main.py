@@ -68,7 +68,7 @@ def getImages():
         # Load Coin Images
         coin_images = []
         for x in range(4):
-            img = scale_img(pygame.image.load(f"Game/assets/images/GUI/coin_f{x}.png").convert_alpha(), constants.COIN_SCALE)
+            img = scale_img(pygame.image.load(f"Game/assets/images/GUI/coin_images/coin_f{x}.png").convert_alpha(), constants.COIN_SCALE)
             coin_images.append(img)
 
         # Load Potion Images
@@ -78,9 +78,9 @@ def getImages():
         
         return coin_images, potion_image, pizza_image
     def getHeartImages():
-        heart_empty = scale_img(pygame.image.load("Game/assets/images/GUI/heart_empty.png").convert_alpha(), constants.HEART_SCALE)
-        heart_half = scale_img(pygame.image.load("Game/assets/images/GUI/heart_half.png").convert_alpha(), constants.HEART_SCALE)
-        heart_full = scale_img(pygame.image.load("Game/assets/images/GUI/heart_full.png").convert_alpha(), constants.HEART_SCALE)
+        heart_empty = scale_img(pygame.image.load("Game/assets/images/GUI/heart_images/heart_empty.png").convert_alpha(), constants.HEART_SCALE)
+        heart_half = scale_img(pygame.image.load("Game/assets/images/GUI/heart_images/heart_half.png").convert_alpha(), constants.HEART_SCALE)
+        heart_full = scale_img(pygame.image.load("Game/assets/images/GUI/heart_images/heart_full.png").convert_alpha(), constants.HEART_SCALE)
         return heart_empty, heart_half, heart_full
     def getWeaponImages():
         ruler_image = scale_img(pygame.image.load("Game/assets/images/weapons/ruler.png").convert_alpha(), constants.WEAPON_SCALE)
