@@ -226,6 +226,8 @@ world.process_data(world_data,tile_images,item_images, mob_animations, schanzens
 
 # Create Player + Weapon
 player = world.player
+screen_scroll[0] = player.rect.centerx - constants.SCREEN_WIDTH // 2
+screen_scroll[1] = player.rect.centery - constants.SCREEN_HEIGHT // 2
 ruler = Weapon(weapon_images[0], weapon_images[1], world.outerWalls)
 
 # Get the enemy list 
@@ -345,11 +347,12 @@ while run:
                     raise Exception('Player is None!')
 
                 # Move Player Method
+
+
                 screen_scroll, level_complete = player.move(dx,dy,world.obstacle_tiles,world.exit_tile)
                 # Update the Player
                 player.update(updatedAction)
                 
-                    
                 # Update all enemies in enemy_list
                 if shopActive == False:
                     for enemy in enemy_list:
@@ -400,19 +403,10 @@ while run:
                 draw_info()
                 score_coin.draw(screen)
                 score_coin.update(screen_scroll,player,coin_fx,heal_fx)
-                
-
-                
+                  
                 # Check if game over
                 if player.health == 0:
                     game_over = True
-
-                # Check if game over
-                if player.health == 0:
-                    game_over = True
-
-                # Check if level is complete 
-                print(level_complete)
 
                 # Change the exit tile when all pizzas are collected
                 if player.pizzaCount == world.totalPizzas:
