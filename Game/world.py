@@ -72,6 +72,8 @@ class World():
 
         # BRISN-TILE
         elif tile == 61:
+          brisn = Item(image_x,image_y,3,[item_images[3]])
+          self.item_list.append(brisn)
           tile_data[0] = tile_list[0]
 
         # ABERGA-TILE

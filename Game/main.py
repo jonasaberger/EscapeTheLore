@@ -349,13 +349,13 @@ while run:
                 if schanzenshop_brisn.draw(screen) and buttonClicked != True:
                     buttonClicked = True
                     print("Second Item Bought")
-                    if player.score >= schanzenshop_brisn_price:
-                        player.score -= schanzenshop_brisn_price
+                    if player.score >= schanzenshop_brisn_price: #type:ignore -> Exception
+                        player.score -= schanzenshop_brisn_price #type:ignore -> Exception
                         schanzenshop_brisn_price += constants.SHOP_BRISN_INCR
 
                         # Add the Brisn-Effect
                         brisn_boost += constants.BRISN_ATTACK_BOOST
-                        player.health -= constants.BRISN_DAMAGE
+                        player.health -= constants.BRISN_DAMAGE #type:ignore -> Exception
 
                 if pygame.mouse.get_pressed()[0] == False:
                     buttonClicked = False
@@ -364,8 +364,8 @@ while run:
                 if schanzenshop_rockerflasche.draw(screen) and buttonClicked != True:
                     buttonClicked = True
                     print("Third Item Bought")
-                    if player.score >= schanzenshop_rockerflasche_price:
-                        player.score -= schanzenshop_rockerflasche_price
+                    if player.score >= schanzenshop_rockerflasche_price: #type:ignore -> Exception
+                        player.score -= schanzenshop_rockerflasche_price #type:ignore -> Exception
                         schanzenshop_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_INCR
 
                         # TODO Add the Rockerflasche-Effect
