@@ -336,8 +336,8 @@ while run:
                 if schanzenshop_potion.draw(screen) and buttonClicked != True:
                     buttonClicked = True
                     print("First Item Clicked")
-                    if player.score >= schanzenshop_potion_price:
-                        player.score -= schanzenshop_potion_price
+                    if player.score >= schanzenshop_potion_price: #type:ignore -> Exception
+                        player.score -= schanzenshop_potion_price #type:ignore -> Exception
                         schanzenshop_potion_price += constants.SHOP_POTION_INCR
 
                         # Add the Potion-Effect
