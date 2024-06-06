@@ -36,7 +36,6 @@ class Character():
 
         self.rect.x += dx
         for obstacle in obstacle_tiles:
-            
             if obstacle[1].colliderect(self.rect):
             # Check which side it collides with
                 if dx > 0:
@@ -51,39 +50,40 @@ class Character():
                 # Check which side it collides with
                 if dy > 0:
                      self.rect.bottom = obstacle[1].top
+                     print(obstacle)
                 if dy < 0:
                     self.rect.top = obstacle[1].bottom
+                    print("BOTTOM")
 
-            # Only scroll screen if it's the player
-            if self.mob_type == 0:
-                try:
-                    # Check for collision with exit tile
-                    if exit_tile == None:
-                        raise Exception('ExitTile is None')
-                    
-                    if exit_tile[1].colliderect(self.rect):
-                        level_complete = True
-                except Exception as error:
-                    print(error)
-                # Update Scroll -> Move camera
+        # Every function used by the player
+        if self.mob_type == 0:
+            try:
+                # Check for collision with exit tile
+                if exit_tile == None:
+                    raise Exception('ExitTile is None')
+                if exit_tile[1].colliderect(self.rect):
+                    level_complete = True
+            except Exception as error:
+                print(error)
+            # Update Scroll -> Move camera
 
-                # Left & Right
-                if self.rect.right > (constants.SCREEN_WIDTH - constants.SCROLL_THRES):
-                    screen_scroll[0] = (constants.SCREEN_WIDTH - constants.SCROLL_THRES) - self.rect.right
-                    self.rect.right = (constants.SCREEN_WIDTH - constants.SCROLL_THRES)
+            # Left & Right
+            if self.rect.right > (constants.SCREEN_WIDTH - constants.SCROLL_THRES):
+                screen_scroll[0] = (constants.SCREEN_WIDTH - constants.SCROLL_THRES) - self.rect.right
+                self.rect.right = (constants.SCREEN_WIDTH - constants.SCROLL_THRES)
 
-                if self.rect.left < constants.SCROLL_THRES:
-                    screen_scroll[0] = constants.SCROLL_THRES - self.rect.left
-                    self.rect.left = constants.SCROLL_THRES
+            if self.rect.left < constants.SCROLL_THRES:
+                screen_scroll[0] = constants.SCROLL_THRES - self.rect.left
+                self.rect.left = constants.SCROLL_THRES
 
-                # Up & Down
-                if self.rect.bottom > (constants.SCREEN_HEIGHT - constants.SCROLL_THRES):
-                    screen_scroll[1] = (constants.SCREEN_HEIGHT - constants.SCROLL_THRES) - self.rect.bottom
-                    self.rect.bottom = (constants.SCREEN_HEIGHT - constants.SCROLL_THRES)
+            # Up & Down
+            if self.rect.bottom > (constants.SCREEN_HEIGHT - constants.SCROLL_THRES):
+                screen_scroll[1] = (constants.SCREEN_HEIGHT - constants.SCROLL_THRES) - self.rect.bottom
+                self.rect.bottom = (constants.SCREEN_HEIGHT - constants.SCROLL_THRES)
 
-                if self.rect.top < constants.SCROLL_THRES:
-                    screen_scroll[1] = constants.SCROLL_THRES - self.rect.top
-                    self.rect.top = constants.SCROLL_THRES
+            if self.rect.top < constants.SCROLL_THRES:
+                screen_scroll[1] = constants.SCROLL_THRES - self.rect.top
+                self.rect.top = constants.SCROLL_THRES
 
         return screen_scroll, level_complete
 

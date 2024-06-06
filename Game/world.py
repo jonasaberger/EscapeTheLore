@@ -92,7 +92,7 @@ class World():
 
 
         # Specify Obstacle-Tiles
-        if tile != 0 and tile != 2 and tile != 3 and tile != 72 and tile != 62 and tile != 71 and tile != 63 and tile != 61 and tile != 59 and tile != 58 and tile != 60:
+        if tile != -1 and tile != 0 and tile != 2 and tile != 3 and tile != 72 and tile != 62 and tile != 71 and tile != 63 and tile != 61 and tile != 59 and tile != 58 and tile != 60:
           self.obstacle_tiles.append(tile_data)
 
         # Add all tiles to main tiles list
@@ -103,7 +103,7 @@ class World():
   def draw(self, surface):
     for tile in self.map_tiles:
       surface.blit(tile[0],tile[1])
-      pygame.draw.rect(surface, constants.RED,tile[1],1)
+      # pygame.draw.rect(surface, constants.RED,tile[1],1)
 
   def update(self,screen_scroll):
     for tile in self.map_tiles:
