@@ -115,5 +115,5 @@ class World():
       tile[1].center = (tile[2],tile[3])
 
   def activateExit(self):
-    self.exit_tile[0] = self.exit_images[1]
+    self.exit_tile[0] = self.exit_images[1] #type:ignore -> Exception
 

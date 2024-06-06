@@ -27,7 +27,7 @@ pygame.display.set_caption("Escape The Lore")
 clock = pygame.time.Clock()
 
 # Define game variables
-level = 1
+level = 2
 screen_scroll = [0,0]
 start_game = False
 pause_game = False
@@ -75,8 +75,9 @@ def getImages():
             coin_images.append(img)
         potion_image = scale_img(pygame.image.load("Game/assets/images/items/lore_potion.png").convert_alpha(), constants.POTION_SCALE)
         pizza_image = scale_img(pygame.image.load("Game/assets/images/items/pizza.png").convert_alpha(),constants.PIZZA_SCALE)
-        
-        return coin_images, potion_image, pizza_image
+        brisn_image = scale_img(pygame.image.load("Game/assets/images/items/brisn.png").convert_alpha(),constants.BRISN_SCALE)
+        rockflasche_image = scale_img(pygame.image.load("Game/assets/images/items/rockflasche.png").convert_alpha(),1)
+        return coin_images, potion_image, pizza_image,brisn_image,rockflasche_image
     def getHeartImages():
         heart_empty = scale_img(pygame.image.load("Game/assets/images/GUI/heart_images/heart_empty.png").convert_alpha(), constants.HEART_SCALE)
         heart_half = scale_img(pygame.image.load("Game/assets/images/GUI/heart_images/heart_half.png").convert_alpha(), constants.HEART_SCALE)
@@ -218,7 +219,7 @@ world_data = []
 for row in range(constants.ROWS):
     row = [-1] * constants.COLS
     world_data.append(row)
-with open("Game/levels/1.csv", newline="") as csvfile: 
+with open(f"Game/levels/{level}.csv", newline="") as csvfile: 
     reader = csv.reader(csvfile, delimiter=",")
     for x, row in enumerate(reader):
         for y, tile in enumerate(row):
@@ -263,14 +264,14 @@ mainMusic = True
 mouseDown = False
 
 # Drachenshop buttons
-first_item = Button(210,585,scale_img(item_images[1],3))
-first_item_price = 0
+schanzenshop_potion = Button(210,585,scale_img(item_images[1],3))
+schanzenshop_potion_price = 0
 
-second_item = Button(540,585,scale_img(item_images[1],3))
-second_item_price = 0
+schanzenshop_brisn = Button(538,585,scale_img(item_images[3],1.5))
+schanzenshop_brisn_price = 0
 
-third_item = Button(845,585,scale_img(item_images[1],3))
-third_item_price = 0
+schanzenshop_rockerflasche = Button(812,546,scale_img(item_images[4],5))
+schanzenshop_rockerflasche_price = 0
 
 # Main-Game Loop
 run = True
@@ -313,21 +314,27 @@ while run:
                 score_coin.draw(screen)
                 score_coin.update(screen_scroll,player,coin_fx,heal_fx)
 
-                if first_item.draw(screen) and buttonClicked != True:
+                # Draw the prices
+                draw_text(f"{schanzenshop_potion_price}",constants.MAIN_FONT,constants.WHITE,252,550)
+                draw_text(f"{schanzenshop_brisn_price}",constants.MAIN_FONT,constants.WHITE,580, 550)
+                draw_text(f"{schanzenshop_rockerflasche_price}",constants.MAIN_FONT,constants.WHITE,887, 550)
+
+                # Lore-Getränk Logik
+                if schanzenshop_potion.draw(screen) and buttonClicked != True:
                     buttonClicked = True
                     print("First Item Bought")
                 if pygame.mouse.get_pressed()[0] == False:
                     buttonClicked = False
 
-
-                if second_item.draw(screen) and buttonClicked != True:
+                # Brisn Logik
+                if schanzenshop_brisn.draw(screen) and buttonClicked != True:
                     buttonClicked = True
                     print("Second Item Bought")
                 if pygame.mouse.get_pressed()[0] == False:
                     buttonClicked = False
 
-
-                if third_item.draw(screen) and buttonClicked != True:
+                # Rocker-Flasche Logik
+                if schanzenshop_rockerflasche.draw(screen) and buttonClicked != True:
                     buttonClicked = True
                     print("Third Item Bought")
                 if pygame.mouse.get_pressed()[0] == False:
