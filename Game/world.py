@@ -7,6 +7,7 @@ import math
 
 class World():
   def __init__(self):
+    self.exit_images = None
     self.map_tiles = []
     self.obstacle_tiles = []
     self.exit_tile = None
@@ -18,7 +19,8 @@ class World():
     self.schanzenshop = None
 
   #TODO: Adjust Maps to 150x150
-  def process_data(self, data, tile_list,item_images, mob_animations, schanzenshop_images):
+  def process_data(self, data, tile_list,item_images, mob_animations, schanzenshop_images,exit_images):
+    self.exit_images = exit_images
     self.level_length = len(data)
     # Iterate through every single value in level data file
     for y, row in enumerate(data):
@@ -65,6 +67,7 @@ class World():
 
         # EXIT-TILE
         elif tile == 60:
+          tile_data[0] = exit_images[0]
           self.exit_tile = tile_data
 
         # BRISN-TILE
@@ -111,4 +114,6 @@ class World():
       tile[3] += screen_scroll[1] # Update Y-Kord
       tile[1].center = (tile[2],tile[3])
 
+  def activateExit(self):
+    self.exit_tile[0] = self.exit_images[1]
 

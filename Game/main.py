@@ -64,16 +64,13 @@ heal_fx.set_volume(0.6)
 
 # Function for loading all the sprite images -> Function for better readability
 def getImages():
+    # Load the different collectables Images
     def getItemImages():
-        # Load Coin Images
         coin_images = []
         for x in range(4):
             img = scale_img(pygame.image.load(f"Game/assets/images/GUI/coin_images/coin_f{x}.png").convert_alpha(), constants.COIN_SCALE)
             coin_images.append(img)
-
-        # Load Potion Images
         potion_image = scale_img(pygame.image.load("Game/assets/images/items/lore_potion.png").convert_alpha(), constants.POTION_SCALE)
-
         pizza_image = scale_img(pygame.image.load("Game/assets/images/items/pizza.png").convert_alpha(),constants.PIZZA_SCALE)
         
         return coin_images, potion_image, pizza_image
@@ -100,12 +97,14 @@ def getImages():
             tile_images.append(tile_image)
         return tile_images
     def getSchanzenShopImages():
-        schanzenshop_images = []
         tile_texture = scale_img(pygame.image.load("Game/assets/images/schanzenshop/tile-texture.png").convert_alpha(),constants.SHOP_TILE_SCALE)
-        schanzenshop_images.append(tile_texture)
-        schanzenshop_images.append(pygame.image.load(f"Game/assets/images/schanzenshop/schanzenshop_main.png").convert_alpha())
-        
-        return schanzenshop_images
+        schnazenshop_main = pygame.image.load("Game/assets/images/schanzenshop/schanzenshop_main.png").convert_alpha()
+        return tile_texture, schnazenshop_main
+    def getExitImages():
+        exitOff_image = scale_img(pygame.image.load("Game/assets/images/GUI/exit/exit_off.png").convert_alpha(),constants.EXIT_SCALE)
+        exitOn_image = scale_img(pygame.image.load("Game/assets/images/GUI/exit/exit_on.png").convert_alpha(),constants.EXIT_SCALE)
+        return exitOff_image, exitOn_image
+    
     item_images = getItemImages()
     heart_images = getHeartImages()
     weapon_images = getWeaponImages()
@@ -113,9 +112,10 @@ def getImages():
     titlescreen_image = pygame.image.load("Game/assets/images/GUI/menu_bg.png")
     tile_images = getTileImages()
     schanzenshop_images = getSchanzenShopImages()
+    exit_images = getExitImages()
 
-    return item_images, heart_images, weapon_images, button_images, titlescreen_image, tile_images, schanzenshop_images
-item_images,heart_images,weapon_images,button_images,titlescreen_image,tile_images,schanzenshop_images = getImages()
+    return item_images, heart_images, weapon_images, button_images, titlescreen_image, tile_images, schanzenshop_images, exit_images
+item_images,heart_images,weapon_images,button_images,titlescreen_image,tile_images,schanzenshop_images,exit_images = getImages()
 
 # Function for outputing text onto the screen
 def draw_text(text, font, text_col, x, y):
@@ -222,7 +222,7 @@ with open("Game/levels/1.csv", newline="") as csvfile:
             world_data[x][y] = int(tile)
 
 world = World()
-world.process_data(world_data,tile_images,item_images, mob_animations, schanzenshop_images)
+world.process_data(world_data,tile_images,item_images, mob_animations, schanzenshop_images,exit_images)
 
 # Create Player + Weapon
 player = world.player
@@ -414,6 +414,10 @@ while run:
                 # Check if level is complete 
                 print(level_complete)
 
+                # Change the exit tile when all pizzas are collected
+                if player.pizzaCount == world.totalPizzas:
+                    world.activateExit()
+
                 if level_complete == True and player.pizzaCount == world.totalPizzas:
                     level += 1
                     world_data = reset_level()
@@ -424,7 +428,7 @@ while run:
                             for y, tile in enumerate(row):
                                 world_data[x][y] = int(tile)
                     world = World()
-                    world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images)
+                    world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images,exit_images)
                     player = world.player
                     if player == None:
                         raise Exception('Player is None!')
@@ -437,7 +441,7 @@ while run:
 
                     for item in world.item_list:
                         item_group.add(item)
-
+                # TODO: Maybe play error sound when cant access exit yet
                 elif level_complete == True and player.pizzaCount < world.totalPizzas:
                     print("!")
             except Exception as error:
