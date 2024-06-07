@@ -5,7 +5,7 @@ import math
 
 class Character():
 
-    def __init__(self,x,y,health,animation_list, mob_type,width,height,boss):
+    def __init__(self,x,y,health,animation_list, mob_type,width,height,boss,boss_death_sound = None):
         self.score = 0
         self.mob_type = mob_type
         self.health = health
@@ -16,6 +16,7 @@ class Character():
         self.action = 0 # 0 = Idle | 1 = Down | 2 = Up | 3 = Right | 4 = Left
         self.updated_time = pygame.time.get_ticks()
         self.isRocker = False
+        self.boss_death_sound = boss_death_sound
 
         self.hit = False
         self.damage_boost = 0
@@ -211,6 +212,10 @@ class Character():
                         puck = weapon.Fireball(puck_image,self.rect.centerx,self.rect.centery,player.rect.centerx,player.rect.centery)
                         self.last_hit = pygame.time.get_ticks()
         elif self.death_animation == False:
+            if self.boss:
+                self.boss_death_sound.play()
+
+
             if pygame.time.get_ticks() - self.updated_time > constants.ANIMATION_COOLDOWN:
                 self.updated_time = pygame.time.get_ticks()
                 if self.frame_index < len(self.animation_list[5]):
