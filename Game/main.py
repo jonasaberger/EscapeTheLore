@@ -27,7 +27,7 @@ pygame.display.set_caption("Escape The Lore")
 clock = pygame.time.Clock()
 
 # Define game variables
-level = 11
+level = 1
 screen_scroll = [0,0]
 start_game = False
 pause_game = False
@@ -177,6 +177,7 @@ def reset_level():
 # Mob Types -> Different Types of Mobs and enemies -> Function for better readability
 def getMobAnimations():
     mob_animations = []
+    rock_animations = []
     for mob in constants.MOB_TYPES:
         # Master Animation List -> contains all animations
         animation_list = []
@@ -187,7 +188,6 @@ def getMobAnimations():
         up_list = []
         right_list = []
         left_list = []
-
 
         player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Idle/Default/0.png").convert_alpha()
         player_image = scale_img(player_image, constants.GAME_SCALE)
@@ -226,11 +226,47 @@ def getMobAnimations():
                 death_animation_list.append(player_image)
 
             animation_list.append(death_animation_list)
-        
         mob_animations.append(animation_list)
 
-    return mob_animations
-mob_animations = getMobAnimations()
+    # Add the Rocker skin for when buying the rockerflasche
+    rocker_animations = []
+    rocker_idle_list = []
+    rocker_down_list = []
+    rocker_up_list = []
+    rocker_left_list = []
+    rocker_right_list = []
+
+    player_image = pygame.image.load(f"Game/assets/images/characters/RockerPlayer/Idle/Default/0.png").convert_alpha()
+    player_image = scale_img(player_image, constants.GAME_SCALE)
+    rocker_idle_list.append(player_image)
+    for i in range(10):
+        player_image = pygame.image.load(f"Game/assets/images/characters/RockerPlayer/Run/Down/{i}.png").convert_alpha()
+        player_image = scale_img(player_image, constants.GAME_SCALE)
+        rocker_down_list.append(player_image)
+
+    for i in range(10):
+        player_image = pygame.image.load(f"Game/assets/images/characters/RockerPlayer/Run/Up/{i}.png").convert_alpha()
+        player_image = scale_img(player_image, constants.GAME_SCALE)
+        rocker_up_list.append(player_image)
+
+    for i in range(10):
+        player_image = pygame.image.load(f"Game/assets/images/characters/RockerPlayer/Run/Right/{i}.png").convert_alpha()
+        player_image = scale_img(player_image, constants.GAME_SCALE)
+        rocker_right_list.append(player_image)
+
+    for i in range(10):
+        player_image = pygame.image.load(f"Game/assets/images/characters/RockerPlayer/Run/Left/{i}.png").convert_alpha()
+        player_image = scale_img(player_image, constants.GAME_SCALE)
+        rocker_left_list.append(player_image)
+    
+    rocker_animations.append(rocker_idle_list)
+    rocker_animations.append(rocker_down_list)
+    rocker_animations.append(rocker_up_list)
+    rocker_animations.append(rocker_right_list)
+    rocker_animations.append(rocker_left_list)
+
+    return mob_animations, rocker_animations
+mob_animations,rocker_animations = getMobAnimations()
 
 # Load in level data and create world
 world_data = []
@@ -280,18 +316,16 @@ shopActive = False
 touchShop = False
 shopMusic = False
 mainMusic = True
-mouseDown = False
-
-
 
 # Main-Game Loop
 run = True
 
 while run:
+    if player.isRocker:
+        mob_animations[0] = rocker_animations
+
     # Limit Frame Rate
     clock.tick(constants.FRAMES_PER_SECOND)
-    
-
     if start_game == False:
         screen.blit(titlescreen_image, (0, 0))
         if start_button.draw(screen):
@@ -339,7 +373,6 @@ while run:
             dx = 0
             dy = 0
             updatedAction = 0
-
             if moving_right == True:
                 dx = constants.SPEED
                 updatedAction = 3
@@ -422,6 +455,10 @@ while run:
                 # Check if game over
                 if player.health == 0:
                     game_over = True
+
+                # Change player skin to rocker
+                if player.isRocker:
+                    player.changeSkin(rocker_animations)
 
                 # Change the exit tile when all pizzas are collected
                 if player.pizzaCount == world.totalPizzas:

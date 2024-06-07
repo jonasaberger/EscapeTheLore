@@ -29,6 +29,9 @@ class Character():
         self.rect = pygame.Rect(0,0,width, height)
         self.rect.center = (x,y)
     
+
+    def changeSkin(self, animation_list):
+        self.animation_list = animation_list
     # Player Movement Function
     def move(self, dx, dy, obstacle_tiles,exit_tile = None):
         screen_scroll = [0,0]
