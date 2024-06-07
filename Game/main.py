@@ -339,7 +339,7 @@ while run:
                     if player.score >= schanzenshop_potion_price: #type:ignore -> Exception
                         player.score -= schanzenshop_potion_price #type:ignore -> Exception
                         schanzenshop_potion_price += constants.SHOP_POTION_INCR
-                        player.health += constants.POTION_HEAL
+                        player.health += constants.POTION_HEAL #type:ignore -> Exception
 
                 if pygame.mouse.get_pressed()[0] == False:
                     buttonClicked = False
@@ -353,7 +353,7 @@ while run:
                         schanzenshop_brisn_price += constants.SHOP_BRISN_INCR
 
                         # Add the Brisn-Effect
-                        player.damage_boost += constants.BRISN_ATTACK_BOOST
+                        player.damage_boost += constants.BRISN_ATTACK_BOOST #type:ignore -> Exception
                         player.health -= constants.BRISN_DAMAGE #type:ignore -> Exception
 
                 if pygame.mouse.get_pressed()[0] == False:
