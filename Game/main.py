@@ -47,6 +47,10 @@ temp_hp = 0
 temp_score = 0
 brisn_boost = 0
 
+temp_potion_price = constants.SHOP_POTION_BASE
+temp_brisn_price = constants.SHOP_BRISN_BASE
+temp_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_BASE
+
 # Helper Function to scale images
 def scale_img(image, scale):
     image_width = image.get_width()
@@ -321,9 +325,6 @@ mainMusic = True
 run = True
 
 while run:
-    if player.isRocker:
-        mob_animations[0] = rocker_animations
-
     # Limit Frame Rate
     clock.tick(constants.FRAMES_PER_SECOND)
     if start_game == False:
@@ -470,6 +471,11 @@ while run:
                     temp_score = player.score
                     brisn_boost = player.damage_boost
 
+                    if world.schanzenshop != None:
+                        temp_potion_price = world.schanzenshop.schanzenshop_potion_price
+                        temp_brisn_price = world.schanzenshop.schanzenshop_brisn_price
+                        temp_rockerflasche_price = world.schanzenshop.schanzenshop_rockerflasche_price
+
                     level += 1
                     world_data = reset_level()
                     #load in level data and create world
@@ -491,6 +497,10 @@ while run:
 
                     for item in world.item_list:
                         item_group.add(item)
+
+                    if world.schanzenshop != None:
+                        world.schanzenshop.updatePrices(temp_potion_price,temp_brisn_price,temp_rockerflasche_price)
+
                 # TODO: Maybe play error sound when cant access exit yet
                 elif level_complete == True and player.pizzaCount < world.totalPizzas:
                     print(" ")

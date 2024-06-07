@@ -84,7 +84,6 @@ class World():
           self.enemy_list.append(aberga)
           tile_data[0] = tile_list[0]
                 
-
         # LORE-GETRÄNK
         elif tile == 63:
           potion = Item(image_x, image_y, 1, [item_images[1]])
