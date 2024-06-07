@@ -22,6 +22,7 @@ pygame.init()
 
 screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
 pygame.display.set_caption("Escape The Lore")
+pygame.display.set_icon(pygame.image.load("Game/assets/images/GUI/icon.png"))
 
 # Creating Clock -> Frame Rate
 clock = pygame.time.Clock()
@@ -84,6 +85,7 @@ igolDeath_fx.set_volume(1)
 
 # Function for loading all the sprite images -> Function for better readability
 def getImages():
+    
     # Load the different collectables Images
     def getItemImages():
         coin_images = []
@@ -125,7 +127,11 @@ def getImages():
         exitOff_image = scale_img(pygame.image.load("Game/assets/images/GUI/exit/exit_off.png").convert_alpha(),constants.EXIT_SCALE)
         exitOn_image = scale_img(pygame.image.load("Game/assets/images/GUI/exit/exit_on.png").convert_alpha(),constants.EXIT_SCALE)
         return exitOff_image, exitOn_image
-
+    def getEndImages():
+        goodEnd_image = pygame.image.load("Game/assets/images/GUI/endings/good_ending.jpg").convert_alpha()
+        badEnd_image = pygame.image.load("Game/assets/images/GUI/endings/bad_ending.jpg").convert_alpha()
+        return goodEnd_image,badEnd_image
+    
     item_images = getItemImages()
     heart_images = getHeartImages()
     weapon_images = getWeaponImages()
@@ -134,9 +140,10 @@ def getImages():
     tile_images = getTileImages()
     schanzenshop_images = getSchanzenShopImages()
     exit_images = getExitImages()
+    ending_images = getEndImages()
 
-    return item_images, heart_images, weapon_images, button_images, titlescreen_image, tile_images, schanzenshop_images, exit_images
-item_images,heart_images,weapon_images,button_images,titlescreen_image,tile_images,schanzenshop_images,exit_images = getImages()
+    return item_images, heart_images, weapon_images, button_images, titlescreen_image, tile_images, schanzenshop_images, exit_images, ending_images
+item_images,heart_images,weapon_images,button_images,titlescreen_image,tile_images,schanzenshop_images,exit_images, ending_images = getImages()
 
 # Function for outputing text onto the screen
 def draw_text(text, font, text_col, x, y):
@@ -505,7 +512,7 @@ while run:
                                 for y, tile in enumerate(row):
                                     world_data[x][y] = int(tile)
                         world = World()
-                        world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images,exit_images,igolDeath_fx,level)
+                        world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images,exit_images,igolDeath_fx)
                         player = world.player
                         if player == None:
                             raise Exception('Player is None!')
@@ -522,12 +529,20 @@ while run:
                             world.schanzenshop.updatePrices(temp_potion_price,temp_brisn_price,temp_rockerflasche_price)
                     # Complete Last Level Mechanics
                     elif last_exit_active:
+                        game_over = True
                         # Play correct End-Screen "Cutscene"
-                        run = False
+                        musicPlayer.stopMusic()
+                        # Good-Ending
+                        if player.isRocker:
+                            screen.fill(constants.BLACK)
+                            screen.blit(ending_images[0],(0,0))
+
+                        # Bad-Ending
+                        if not player.isRocker:
+                            screen.fill(constants.BLACK)
+                            screen.blit(ending_images[1],(0,0))
+
                         
-
-
-
                 # TODO: Maybe play error sound when cant access exit yet
                 elif level_complete == True and player.pizzaCount < world.totalPizzas:
                     print("TEST")
@@ -541,11 +556,15 @@ while run:
           intro_fade.fade_counter = 0
 
     # show deathfade
-    if game_over == True:
+    if game_over == True and not last_exit_active:
         if death_fade.fade():
           pause_game = True
           game_over = False
           death_fade.fade_counter = 0
+    elif game_over == True and last_exit_active:
+        restart_available = True
+        pause_game = True
+
 
     # Event Handler
     for event in pygame.event.get():
