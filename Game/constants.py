@@ -6,7 +6,7 @@ pygame.init()
 # This File defines all the constants used for Colours, Sizes,...
 
 # Sizes
-MOB_TYPES = ["Player","Aberga","Rocker"]
+MOB_TYPES = ["Player","Aberga","Rocker","Igol"]
 ANIMATION_COOLDOWN = 70
 PLAYER_HEIGHT = 48
 PLAYER_WIDTH = 32
@@ -26,6 +26,15 @@ ROCKER_SPEED = 2
 ROCKER_RANGE = 51
 ROCKER_DAMAGE = 20
 ROCKER_STUN_COOLDOWN = 100
+
+IGOL_HEALTH = 100
+IGOL_HEIGHT = 96
+IGOL_WIDTH = 32
+IGOL_SPEED = 2
+IGOL_RANGE = 51
+IGOL_DAMAGE = 50
+IGOL_STUN_COOLDOWN = 100
+PUCK_COOLDOWN = 500
 
 RANGE = 50
 

@@ -34,7 +34,7 @@ class World():
 
         # PLAYER-TILE
         if tile == 72:
-          player = Character(image_x,image_y,100,mob_animations,0,constants.PLAYER_WIDTH,constants.PLAYER_HEIGHT)
+          player = Character(image_x,image_y,100,mob_animations,0,constants.PLAYER_WIDTH,constants.PLAYER_HEIGHT,False)
           self.player = player
           tile_data[0] = tile_list[0]
 
@@ -50,12 +50,13 @@ class World():
 
         # YAG-TILE
         elif tile == 57:
-          
+          ilogyag = Character(image_x,image_y,constants.IGOL_HEALTH,mob_animations,3,constants.IGOL_WIDTH,constants.IGOL_HEIGHT,True)
+          self.enemy_list.append(ilogyag)
           tile_data[0] = tile_list[0]
 
         # ROCKER-ABERGA
         elif tile == 58:
-          rocker = Character(image_x,image_y,constants.ROCKER_HEALTH,mob_animations,2,constants.ROCKER_WIDTH,constants.ROCKER_HEIGHT)
+          rocker = Character(image_x,image_y,constants.ROCKER_HEALTH,mob_animations,2,constants.ROCKER_WIDTH,constants.ROCKER_HEIGHT,False)
           self.enemy_list.append(rocker)
           tile_data[0] = tile_list[0]
 
@@ -79,7 +80,7 @@ class World():
 
         # ABERGA-TILE
         elif tile == 62:
-          aberga = Character(image_x, image_y, constants.ABERGA_HEALTH, mob_animations,1,constants.ABERGA_WIDTH,constants.ABERGA_HEIGHT)
+          aberga = Character(image_x, image_y, constants.ABERGA_HEALTH, mob_animations,1,constants.ABERGA_WIDTH,constants.ABERGA_HEIGHT,False)
           self.enemy_list.append(aberga)
           tile_data[0] = tile_list[0]
                 
@@ -98,14 +99,13 @@ class World():
 
 
         # Specify Obstacle-Tiles
-        if tile != -1 and tile != 0 and tile != 2 and tile != 3 and tile != 72 and tile != 62 and tile != 71 and tile != 63 and tile != 61 and tile != 59 and tile != 58 and tile != 60:
+        if tile != 57 and tile != -1 and tile != 0 and tile != 2 and tile != 3 and tile != 72 and tile != 62 and tile != 71 and tile != 63 and tile != 61 and tile != 59 and tile != 58 and tile != 60:
           self.obstacle_tiles.append(tile_data)
 
         # Add all tiles to main tiles list
         if tile >= 0:
           self.map_tiles.append(tile_data)
           
-    
   def draw(self, surface):
     for tile in self.map_tiles:
       surface.blit(tile[0],tile[1])

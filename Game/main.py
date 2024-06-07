@@ -27,7 +27,7 @@ pygame.display.set_caption("Escape The Lore")
 clock = pygame.time.Clock()
 
 # Define game variables
-level = 2
+level = 11
 screen_scroll = [0,0]
 start_game = False
 pause_game = False
@@ -188,10 +188,10 @@ def getMobAnimations():
         right_list = []
         left_list = []
 
+
         player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Idle/Default/0.png").convert_alpha()
         player_image = scale_img(player_image, constants.GAME_SCALE)
         idle_list.append(player_image)
-
         for i in range(10):
             player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Down/{i}.png").convert_alpha()
             player_image = scale_img(player_image, constants.GAME_SCALE)
@@ -218,13 +218,14 @@ def getMobAnimations():
         animation_list.append(right_list)
         animation_list.append(left_list)
         
-        death_animation_list = []
-        for i in range(8):
-            player_image = pygame.image.load(f"Game/assets/images/characters/Aberga/Death/{i}.png").convert_alpha()
-            player_image = scale_img(player_image, constants.GAME_SCALE)
-            death_animation_list.append(player_image)
+        if mob != "Player" and mob != "Igol":
+            death_animation_list = []
+            for i in range(8):
+                player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Death/{i}.png").convert_alpha()
+                player_image = scale_img(player_image, constants.GAME_SCALE)
+                death_animation_list.append(player_image)
 
-        animation_list.append(death_animation_list)
+            animation_list.append(death_animation_list)
         
         mob_animations.append(animation_list)
 
@@ -256,6 +257,7 @@ enemy_list = world.enemy_list
 damage_text_group = pygame.sprite.Group()
 pencil_group = pygame.sprite.Group()
 item_group = pygame.sprite.Group()
+puck_group = pygame.sprite.Group()
 
 # Score/Display coin
 score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, item_images[0], True)
@@ -364,7 +366,9 @@ while run:
                 # Update all enemies in enemy_list
                 if shopActive == False:
                     for enemy in enemy_list:
-                        enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
+                        puck = enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
+                        if puck:
+                            puck_group.add(puck)
                     #score_coin.update(screen_scroll,player)
                     world.update(screen_scroll)
 
@@ -383,6 +387,7 @@ while run:
                                 damage_text_group.add(damage_text)
                                 hit_fx.play()
                     damage_text_group.update(screen_scroll)
+                    puck_group.update(screen_scroll,player)
                     item_group.update(screen_scroll,player, coin_fx, heal_fx, pizza_fx,brisn_fx)
                 if world.schanzenshop != None:
                     world.schanzenshop.update(screen_scroll)
@@ -400,6 +405,8 @@ while run:
                     ruler.draw(screen)
                     for pencil in pencil_group:
                         pencil.draw(screen)
+                    for puck in puck_group:
+                        puck.draw(screen)
                     damage_text_group.draw(screen)
                     item_group.draw(screen)
                     if world.schanzenshop != None:
