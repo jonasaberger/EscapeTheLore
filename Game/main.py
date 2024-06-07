@@ -28,6 +28,8 @@ clock = pygame.time.Clock()
 
 # Define game variables
 level = 11
+last_exit_active = False
+
 screen_scroll = [0,0]
 start_game = False
 pause_game = False
@@ -471,49 +473,64 @@ while run:
                     player.changeSkin(rocker_animations)
 
                 # Change the exit tile when all pizzas are collected
-                if player.pizzaCount == world.totalPizzas:
+                if player.pizzaCount == world.totalPizzas and level != 11:
                     world.activateExit()
 
+                # Spawn the last exit when Boss dies
+                if level == 11 and enemy_list[0].health <= 0 and last_exit_active == False:
+                    world.activateExit()
+                    last_exit_active = True
+
+
+                # Complete Level + Collect all Pizzas
                 if level_complete == True and player.pizzaCount == world.totalPizzas:
-                    # Save the hp and score
-                    temp_hp = player.health
-                    temp_score = player.score
-                    brisn_boost = player.damage_boost
-                    temp_rocker = player.isRocker
+                    # Complete Generic Level
+                    if level != 11:
+                        temp_hp = player.health
+                        temp_score = player.score
+                        brisn_boost = player.damage_boost
+                        temp_rocker = player.isRocker
 
-                    if world.schanzenshop != None:
-                        temp_potion_price = world.schanzenshop.schanzenshop_potion_price
-                        temp_brisn_price = world.schanzenshop.schanzenshop_brisn_price
-                        temp_rockerflasche_price = world.schanzenshop.schanzenshop_rockerflasche_price
+                        if world.schanzenshop != None:
+                            temp_potion_price = world.schanzenshop.schanzenshop_potion_price
+                            temp_brisn_price = world.schanzenshop.schanzenshop_brisn_price
+                            temp_rockerflasche_price = world.schanzenshop.schanzenshop_rockerflasche_price
 
-                    level += 1
-                    world_data = reset_level()
-                    #load in level data and create world
-                    with open(f"Game/levels/{level}.csv", newline="") as csvfile:
-                        reader = csv.reader(csvfile, delimiter = ",")
-                        for x, row in enumerate(reader):
-                            for y, tile in enumerate(row):
-                                world_data[x][y] = int(tile)
-                    world = World()
-                    world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images,exit_images,igolDeath_fx)
-                    player = world.player
-                    if player == None:
-                        raise Exception('Player is None!')
-                    player.health = temp_hp
-                    player.score = temp_score
-                    player.damage_boost = brisn_boost
-                    enemy_list = world.enemy_list
-                    score_coin = Item(constants.SCREEN_WIDTH - 160, 26.5, 0, item_images[0], True)
-                    player.isRocker = temp_rocker
-                    for item in world.item_list:
-                        item_group.add(item)
+                        level += 1
+                        world_data = reset_level()
+                        #load in level data and create world
+                        with open(f"Game/levels/{level}.csv", newline="") as csvfile:
+                            reader = csv.reader(csvfile, delimiter = ",")
+                            for x, row in enumerate(reader):
+                                for y, tile in enumerate(row):
+                                    world_data[x][y] = int(tile)
+                        world = World()
+                        world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images,exit_images,igolDeath_fx,level)
+                        player = world.player
+                        if player == None:
+                            raise Exception('Player is None!')
+                        player.health = temp_hp
+                        player.score = temp_score
+                        player.damage_boost = brisn_boost
+                        enemy_list = world.enemy_list
+                        score_coin = Item(constants.SCREEN_WIDTH - 160, 26.5, 0, item_images[0], True)
+                        player.isRocker = temp_rocker
+                        for item in world.item_list:
+                            item_group.add(item)
 
-                    if world.schanzenshop != None:
-                        world.schanzenshop.updatePrices(temp_potion_price,temp_brisn_price,temp_rockerflasche_price)
+                        if world.schanzenshop != None:
+                            world.schanzenshop.updatePrices(temp_potion_price,temp_brisn_price,temp_rockerflasche_price)
+                    # Complete Last Level Mechanics
+                    elif last_exit_active:
+                        # Play correct End-Screen "Cutscene"
+                        run = False
+                        
+
+
 
                 # TODO: Maybe play error sound when cant access exit yet
                 elif level_complete == True and player.pizzaCount < world.totalPizzas:
-                    print(" ")
+                    print("TEST")
             except Exception as error:
                 print(error)
                 run = False
