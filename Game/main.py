@@ -27,7 +27,7 @@ pygame.display.set_caption("Escape The Lore")
 clock = pygame.time.Clock()
 
 # Define game variables
-level = 1
+level = 11
 screen_scroll = [0,0]
 start_game = False
 pause_game = False
@@ -46,6 +46,11 @@ moving_down = False
 temp_hp = 0
 temp_score = 0
 brisn_boost = 0
+
+temp_potion_price = constants.SHOP_POTION_BASE
+temp_brisn_price = constants.SHOP_BRISN_BASE
+temp_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_BASE
+temp_rocker = False
 
 # Helper Function to scale images
 def scale_img(image, scale):
@@ -68,6 +73,12 @@ coin_fx = pygame.mixer.Sound("Game/assets/audio/coin.wav")
 coin_fx.set_volume(0.6)
 heal_fx = pygame.mixer.Sound("Game/assets/audio/heal.wav")
 heal_fx.set_volume(0.6)
+pizza_fx = pygame.mixer.Sound("Game/assets/audio/pizza_consume.mp3")
+pizza_fx.set_volume(0.6)
+brisn_fx = pygame.mixer.Sound("Game/assets/audio/brisn_consume.mp3")
+brisn_fx.set_volume(0.6)
+igolDeath_fx = pygame.mixer.Sound("Game/assets/audio/igol_death.mp3")
+igolDeath_fx.set_volume(1)
 
 # Function for loading all the sprite images -> Function for better readability
 def getImages():
@@ -173,6 +184,7 @@ def reset_level():
 # Mob Types -> Different Types of Mobs and enemies -> Function for better readability
 def getMobAnimations():
     mob_animations = []
+    rock_animations = []
     for mob in constants.MOB_TYPES:
         # Master Animation List -> contains all animations
         animation_list = []
@@ -187,7 +199,6 @@ def getMobAnimations():
         player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Idle/Default/0.png").convert_alpha()
         player_image = scale_img(player_image, constants.GAME_SCALE)
         idle_list.append(player_image)
-
         for i in range(10):
             player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Run/Down/{i}.png").convert_alpha()
             player_image = scale_img(player_image, constants.GAME_SCALE)
@@ -214,18 +225,61 @@ def getMobAnimations():
         animation_list.append(right_list)
         animation_list.append(left_list)
         
-        death_animation_list = []
-        for i in range(8):
-            player_image = pygame.image.load(f"Game/assets/images/characters/Aberga/Death/{i}.png").convert_alpha()
-            player_image = scale_img(player_image, constants.GAME_SCALE)
-            death_animation_list.append(player_image)
+        if mob != "Player":
+            death_animation_list = []
+            if mob != "Igol":
+                for i in range(8):
+                    player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Death/{i}.png").convert_alpha()
+                    player_image = scale_img(player_image, constants.GAME_SCALE)
+                    death_animation_list.append(player_image)
+            else:
+                for i in range(22):
+                    player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Death/{i}.png").convert_alpha()
+                    player_image = scale_img(player_image, constants.GAME_SCALE)
+                    death_animation_list.append(player_image)
 
-        animation_list.append(death_animation_list)
-        
+            animation_list.append(death_animation_list)
         mob_animations.append(animation_list)
 
-    return mob_animations
-mob_animations = getMobAnimations()
+    # Add the Rocker skin for when buying the rockerflasche
+    rocker_animations = []
+    rocker_idle_list = []
+    rocker_down_list = []
+    rocker_up_list = []
+    rocker_left_list = []
+    rocker_right_list = []
+
+    player_image = pygame.image.load(f"Game/assets/images/characters/RockerPlayer/Idle/Default/0.png").convert_alpha()
+    player_image = scale_img(player_image, constants.GAME_SCALE)
+    rocker_idle_list.append(player_image)
+    for i in range(10):
+        player_image = pygame.image.load(f"Game/assets/images/characters/RockerPlayer/Run/Down/{i}.png").convert_alpha()
+        player_image = scale_img(player_image, constants.GAME_SCALE)
+        rocker_down_list.append(player_image)
+
+    for i in range(10):
+        player_image = pygame.image.load(f"Game/assets/images/characters/RockerPlayer/Run/Up/{i}.png").convert_alpha()
+        player_image = scale_img(player_image, constants.GAME_SCALE)
+        rocker_up_list.append(player_image)
+
+    for i in range(10):
+        player_image = pygame.image.load(f"Game/assets/images/characters/RockerPlayer/Run/Right/{i}.png").convert_alpha()
+        player_image = scale_img(player_image, constants.GAME_SCALE)
+        rocker_right_list.append(player_image)
+
+    for i in range(10):
+        player_image = pygame.image.load(f"Game/assets/images/characters/RockerPlayer/Run/Left/{i}.png").convert_alpha()
+        player_image = scale_img(player_image, constants.GAME_SCALE)
+        rocker_left_list.append(player_image)
+    
+    rocker_animations.append(rocker_idle_list)
+    rocker_animations.append(rocker_down_list)
+    rocker_animations.append(rocker_up_list)
+    rocker_animations.append(rocker_right_list)
+    rocker_animations.append(rocker_left_list)
+
+    return mob_animations, rocker_animations
+mob_animations,rocker_animations = getMobAnimations()
 
 # Load in level data and create world
 world_data = []
@@ -239,7 +293,7 @@ with open(f"Game/levels/{level}.csv", newline="") as csvfile:
             world_data[x][y] = int(tile)
 
 world = World()
-world.process_data(world_data,tile_images,item_images, mob_animations, schanzenshop_images,exit_images)
+world.process_data(world_data,tile_images,item_images, mob_animations, schanzenshop_images,exit_images,igolDeath_fx)
 
 # Create Player + Weapon
 player = world.player
@@ -252,6 +306,7 @@ enemy_list = world.enemy_list
 damage_text_group = pygame.sprite.Group()
 pencil_group = pygame.sprite.Group()
 item_group = pygame.sprite.Group()
+puck_group = pygame.sprite.Group()
 
 # Score/Display coin
 score_coin = Item(constants.SCREEN_WIDTH-160, 26.5, 0, item_images[0], True)
@@ -274,17 +329,6 @@ shopActive = False
 touchShop = False
 shopMusic = False
 mainMusic = True
-mouseDown = False
-
-# Drachenshop buttons
-schanzenshop_potion = Button(210,585,scale_img(item_images[1],3))
-schanzenshop_potion_price = constants.SHOP_POTION_BASE
-
-schanzenshop_brisn = Button(538,585,scale_img(item_images[3],1.5))
-schanzenshop_brisn_price = constants.SHOP_BRISN_BASE
-
-schanzenshop_rockerflasche = Button(812,546,scale_img(item_images[4],5))
-schanzenshop_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_BASE
 
 # Main-Game Loop
 run = True
@@ -292,8 +336,6 @@ run = True
 while run:
     # Limit Frame Rate
     clock.tick(constants.FRAMES_PER_SECOND)
-    
-
     if start_game == False:
         screen.blit(titlescreen_image, (0, 0))
         if start_button.draw(screen):
@@ -322,71 +364,25 @@ while run:
                     musicPlayer.toggleMusic()
                     musicPlayer.loadMusic("Game/assets/audio/schanzenshop_theme.wav")
                     musicPlayer.toggleMusic()
-                    
-                screen.blit(schanzenshop_images[1], (0,50))
-                score_coin.draw(screen)
-                score_coin.update(screen_scroll,player,coin_fx,heal_fx)
 
-                # Draw the prices
-                draw_text(f"{schanzenshop_potion_price}",constants.MAIN_FONT,constants.WHITE,252,550)
-                draw_text(f"{schanzenshop_brisn_price}",constants.MAIN_FONT,constants.WHITE,580, 550)
-                draw_text(f"{schanzenshop_rockerflasche_price}",constants.MAIN_FONT,constants.WHITE,887, 550)
-
-                # Lore-Getränk Logik
-                if schanzenshop_potion.draw(screen) and buttonClicked != True:
-                    buttonClicked = True
-                    print("First Item Clicked")
-                    if player.score >= schanzenshop_potion_price: #type:ignore -> Exception
-                        player.score -= schanzenshop_potion_price #type:ignore -> Exception
-                        schanzenshop_potion_price += constants.SHOP_POTION_INCR
-                        player.health += constants.POTION_HEAL
-
-                        # Add the Potion-Effect
-
-                if pygame.mouse.get_pressed()[0] == False:
-                    buttonClicked = False
-
-                # Brisn Logik
-                if schanzenshop_brisn.draw(screen) and buttonClicked != True:
-                    buttonClicked = True
-                    print("Second Item Bought")
-                    if player.score >= schanzenshop_brisn_price: #type:ignore -> Exception
-                        player.score -= schanzenshop_brisn_price #type:ignore -> Exception
-                        schanzenshop_brisn_price += constants.SHOP_BRISN_INCR
-
-                        # Add the Brisn-Effect
-                        brisn_boost += constants.BRISN_ATTACK_BOOST
-                        player.health -= constants.BRISN_DAMAGE #type:ignore -> Exception
-
-                if pygame.mouse.get_pressed()[0] == False:
-                    buttonClicked = False
-
-                # Rocker-Flasche Logik
-                if schanzenshop_rockerflasche.draw(screen) and buttonClicked != True:
-                    buttonClicked = True
-                    print("Third Item Bought")
-                    if player.score >= schanzenshop_rockerflasche_price: #type:ignore -> Exception
-                        player.score -= schanzenshop_rockerflasche_price #type:ignore -> Exception
-                        schanzenshop_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_INCR
-
-                        # TODO Add the Rockerflasche-Effect
-
-                if pygame.mouse.get_pressed()[0] == False:
-                    buttonClicked = False
-
+                world.schanzenshop.drawInterface(screen,score_coin,schanzenshop_images,item_images,screen_scroll,player,coin_fx,heal_fx,pizza_fx,brisn_fx,draw_text,scale_img) #type:ignore -> Exception 
             else:
                 shopMusic = False
-                if not mainMusic:
+                if not mainMusic and player.isRocker == False: #type:ignore -> Exception
                     mainMusic = True
                     musicPlayer.toggleMusic()
                     musicPlayer.loadMusic("Game/assets/audio/background_music.wav")
+                    musicPlayer.toggleMusic()
+                elif not mainMusic and player.isRocker == True: #type:ignore -> Exception
+                    mainMusic = True
+                    musicPlayer.toggleMusic()
+                    musicPlayer.loadMusic("Game/assets/audio/rocker_theme.mp3")
                     musicPlayer.toggleMusic()
                 screen.fill(constants.BACKGROUND)
             # Calculate Player Movement
             dx = 0
             dy = 0
             updatedAction = 0
-
             if moving_right == True:
                 dx = constants.SPEED
                 updatedAction = 3
@@ -406,8 +402,6 @@ while run:
                     raise Exception('Player is None!')
 
                 # Move Player Method
-
-
                 screen_scroll, level_complete = player.move(dx,dy,world.obstacle_tiles,world.exit_tile)
                 # Update the Player
                 player.update(updatedAction)
@@ -415,7 +409,9 @@ while run:
                 # Update all enemies in enemy_list
                 if shopActive == False:
                     for enemy in enemy_list:
-                        enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
+                        puck = enemy.ai(screen, player, world.obstacle_tiles, screen_scroll)
+                        if puck:
+                            puck_group.add(puck)
                     #score_coin.update(screen_scroll,player)
                     world.update(screen_scroll)
 
@@ -425,7 +421,7 @@ while run:
                         pencil_group.add(pencil)
                         shot_fx.play()
                     for pencil in pencil_group:
-                        damage, damage_pos = pencil.update(screen_scroll, world.enemy_list,brisn_boost)
+                        damage, damage_pos = pencil.update(screen_scroll, world.enemy_list,player.damage_boost)
                         if damage != 0:
                             if damage == 14:
                                 damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.YELLOW)
@@ -434,7 +430,8 @@ while run:
                                 damage_text_group.add(damage_text)
                                 hit_fx.play()
                     damage_text_group.update(screen_scroll)
-                    item_group.update(screen_scroll,player, coin_fx, heal_fx)
+                    puck_group.update(screen_scroll,player)
+                    item_group.update(screen_scroll,player, coin_fx, heal_fx, pizza_fx,brisn_fx)
                 if world.schanzenshop != None:
                     world.schanzenshop.update(screen_scroll)
                 # Game over
@@ -451,6 +448,8 @@ while run:
                     ruler.draw(screen)
                     for pencil in pencil_group:
                         pencil.draw(screen)
+                    for puck in puck_group:
+                        puck.draw(screen)
                     damage_text_group.draw(screen)
                     item_group.draw(screen)
                     if world.schanzenshop != None:
@@ -461,11 +460,15 @@ while run:
                             touchShop = False
                 draw_info()
                 score_coin.draw(screen)
-                score_coin.update(screen_scroll,player,coin_fx,heal_fx)
+                score_coin.update(screen_scroll,player,coin_fx,heal_fx,pizza_fx,brisn_fx)
                   
                 # Check if game over
                 if player.health == 0:
                     game_over = True
+
+                # Change player skin to rocker
+                if player.isRocker:
+                    player.changeSkin(rocker_animations)
 
                 # Change the exit tile when all pizzas are collected
                 if player.pizzaCount == world.totalPizzas:
@@ -475,6 +478,13 @@ while run:
                     # Save the hp and score
                     temp_hp = player.health
                     temp_score = player.score
+                    brisn_boost = player.damage_boost
+                    temp_rocker = player.isRocker
+
+                    if world.schanzenshop != None:
+                        temp_potion_price = world.schanzenshop.schanzenshop_potion_price
+                        temp_brisn_price = world.schanzenshop.schanzenshop_brisn_price
+                        temp_rockerflasche_price = world.schanzenshop.schanzenshop_rockerflasche_price
 
                     level += 1
                     world_data = reset_level()
@@ -485,17 +495,22 @@ while run:
                             for y, tile in enumerate(row):
                                 world_data[x][y] = int(tile)
                     world = World()
-                    world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images,exit_images)
+                    world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images,exit_images,igolDeath_fx)
                     player = world.player
                     if player == None:
                         raise Exception('Player is None!')
                     player.health = temp_hp
                     player.score = temp_score
+                    player.damage_boost = brisn_boost
                     enemy_list = world.enemy_list
                     score_coin = Item(constants.SCREEN_WIDTH - 160, 26.5, 0, item_images[0], True)
-
+                    player.isRocker = temp_rocker
                     for item in world.item_list:
                         item_group.add(item)
+
+                    if world.schanzenshop != None:
+                        world.schanzenshop.updatePrices(temp_potion_price,temp_brisn_price,temp_rockerflasche_price)
+
                 # TODO: Maybe play error sound when cant access exit yet
                 elif level_complete == True and player.pizzaCount < world.totalPizzas:
                     print(" ")

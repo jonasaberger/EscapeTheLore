@@ -14,7 +14,7 @@ class Item(pygame.sprite.Sprite):
         self.rect.center = (x,y)
         self.dummy_coin = dummy_coin
 
-    def update(self,screen_scroll, player, coin_fx, heal_fx): 
+    def update(self,screen_scroll, player, coin_fx, heal_fx, pizza_fx,brisn_fx): 
         # Not apply scroll to the "Score-Coin"
         if not self.dummy_coin: 
             # Reposition with the screen_scroll
@@ -37,9 +37,14 @@ class Item(pygame.sprite.Sprite):
             # Pizza
             elif self.item_type == 2:
                 player.pizzaCount += 1
+                pizza_fx.play()
             
             elif self.item_type == 3:
                 player.health -= constants.BRISN_DAMAGE
+                player.damage_boost += constants.BRISN_ATTACK_BOOST
+                brisn_fx.play()
+                self.kill()
+                
                 
             self.kill()
 

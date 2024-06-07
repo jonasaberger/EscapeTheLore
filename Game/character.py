@@ -1,20 +1,25 @@
 import pygame;
+import weapon
 import constants
 import math
 
 class Character():
 
-    def __init__(self,x,y,health,animation_list, mob_type,width,height):
+    def __init__(self,x,y,health,animation_list, mob_type,width,height,boss,boss_death_sound = None):
         self.score = 0
         self.mob_type = mob_type
         self.health = health
         self.alive = True
+        self.boss = boss
         self.animation_list = animation_list[mob_type]
         self.frame_index = 0
         self.action = 0 # 0 = Idle | 1 = Down | 2 = Up | 3 = Right | 4 = Left
         self.updated_time = pygame.time.get_ticks()
+        self.isRocker = False
+        self.boss_death_sound = boss_death_sound
 
         self.hit = False
+        self.damage_boost = 0
         self.last_hit = pygame.time.get_ticks() # Timer for when player received last hit
         self.stunned = False
         self.pizzaCount = 0
@@ -25,6 +30,9 @@ class Character():
         self.rect = pygame.Rect(0,0,width, height)
         self.rect.center = (x,y)
     
+
+    def changeSkin(self, animation_list):
+        self.animation_list = animation_list
     # Player Movement Function
     def move(self, dx, dy, obstacle_tiles,exit_tile = None):
         screen_scroll = [0,0]
@@ -93,6 +101,8 @@ class Character():
         if self.health <= 0:
             self.health = 0
             self.alive = False
+        
+        
 
         # Timer to reset player getting hit
         if self.mob_type == 0:
@@ -120,10 +130,13 @@ class Character():
              return constants.ABERGA_SPEED, constants.ABERGA_RANGE, constants.ABERGA_DAMAGE, constants.ABERGA_STUN_COOLDOWN
          if self.mob_type == 2:
              return constants.ROCKER_SPEED,constants.ROCKER_RANGE,constants.ROCKER_DAMAGE,constants.ROCKER_STUN_COOLDOWN
+         if self.mob_type == 3:
+             return constants.IGOL_SPEED,constants.IGOL_RANGE,constants.IGOL_DAMAGE,constants.IGOL_STUN_COOLDOWN
 
     # AI for chasing the Player
     def ai(self, screen, player, obstacle_tiles, screen_scroll):
         # Movement Variables
+        puck = None
         ai_dx = 0
         ai_dy = 0
         updatedAction = 0
@@ -149,8 +162,6 @@ class Character():
 
         # Enemy has simple line of sight and moves to player
         if not clipped_line and distance_to_player > constants.RANGE:
-
-
             # Move left
             if self.rect.centerx > player.rect.centerx:
                 ai_dx = -enemy_speed
@@ -194,7 +205,19 @@ class Character():
             # Reset the stun timeout
             if pygame.time.get_ticks() - self.last_hit > enemy_stun_cooldown:
                 self.stunned = False
+
+            puck_cooldown = constants.PUCK_COOLDOWN
+            puck_image = pygame.image.load("Game/assets/images/characters/Igol/Weapon/puck.png")
+            if self.boss:
+                if distance_to_player < 500:
+                    if pygame.time.get_ticks() - self.last_hit >= puck_cooldown:
+                        puck = weapon.Fireball(puck_image,self.rect.centerx,self.rect.centery,player.rect.centerx,player.rect.centery)
+                        self.last_hit = pygame.time.get_ticks()
         elif self.death_animation == False:
+            if self.boss:
+                self.boss_death_sound.play()
+
+
             if pygame.time.get_ticks() - self.updated_time > constants.ANIMATION_COOLDOWN:
                 self.updated_time = pygame.time.get_ticks()
                 if self.frame_index < len(self.animation_list[5]):
@@ -204,6 +227,7 @@ class Character():
                 else:
                     # Mark death animation as complete
                     self.death_animation = True
+        return puck
 
     def update_action(self,new_action):
         # Check if new Action is different
