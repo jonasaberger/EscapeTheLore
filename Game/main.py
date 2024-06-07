@@ -339,6 +339,7 @@ while run:
                     if player.score >= schanzenshop_potion_price: #type:ignore -> Exception
                         player.score -= schanzenshop_potion_price #type:ignore -> Exception
                         schanzenshop_potion_price += constants.SHOP_POTION_INCR
+                        player.health += constants.POTION_HEAL
 
                         # Add the Potion-Effect
 

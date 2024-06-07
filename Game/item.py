@@ -1,6 +1,6 @@
 import pygame
 
-from constants import BRISN_DAMAGE
+import constants
 
 class Item(pygame.sprite.Sprite):
     def __init__(self, x, y, item_type, animation_list, dummy_coin = False):
@@ -30,7 +30,7 @@ class Item(pygame.sprite.Sprite):
                 coin_fx.play()
             # Potion
             elif self.item_type == 1:
-                player.health += 10
+                player.health += constants.POTION_HEAL
                 heal_fx.play()
                 if player.health > 100:
                     player.health = 100
@@ -39,7 +39,7 @@ class Item(pygame.sprite.Sprite):
                 player.pizzaCount += 1
             
             elif self.item_type == 3:
-                player.health -= BRISN_DAMAGE
+                player.health -= constants.BRISN_DAMAGE
                 
             self.kill()
 
