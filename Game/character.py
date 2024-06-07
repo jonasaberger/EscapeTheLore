@@ -236,4 +236,4 @@ class Character():
         x_offset = (self.rect.width - self.image.get_width()) / 2
         y_offset = (self.rect.height - self.image.get_height()) / 2
         surface.blit(self.image, (self.rect.x + x_offset, self.rect.y + y_offset))
-        pygame.draw.rect(surface, constants.RED, self.rect.move(0, 0), 1)
+        # pygame.draw.rect(surface, constants.RED, self.rect.move(0, 0), 1)

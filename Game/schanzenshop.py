@@ -90,9 +90,3 @@ class Schanzenshop(pygame.sprite.Sprite):
 
         if pygame.mouse.get_pressed()[0] == False:
             self.buttonClicked = False
-        
-
-
-
-
-

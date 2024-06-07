@@ -27,7 +27,7 @@ pygame.display.set_caption("Escape The Lore")
 clock = pygame.time.Clock()
 
 # Define game variables
-level = 1
+level = 11
 screen_scroll = [0,0]
 start_game = False
 pause_game = False
@@ -223,12 +223,18 @@ def getMobAnimations():
         animation_list.append(right_list)
         animation_list.append(left_list)
         
-        if mob != "Player" and mob != "Igol":
+        if mob != "Player":
             death_animation_list = []
-            for i in range(8):
-                player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Death/{i}.png").convert_alpha()
-                player_image = scale_img(player_image, constants.GAME_SCALE)
-                death_animation_list.append(player_image)
+            if mob != "Igol":
+                for i in range(8):
+                    player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Death/{i}.png").convert_alpha()
+                    player_image = scale_img(player_image, constants.GAME_SCALE)
+                    death_animation_list.append(player_image)
+            else:
+                for i in range(22):
+                    player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Death/{i}.png").convert_alpha()
+                    player_image = scale_img(player_image, constants.GAME_SCALE)
+                    death_animation_list.append(player_image)
 
             animation_list.append(death_animation_list)
         mob_animations.append(animation_list)
