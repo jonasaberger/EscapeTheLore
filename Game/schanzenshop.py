@@ -82,7 +82,7 @@ class Schanzenshop(pygame.sprite.Sprite):
             print("Third Item Bought")
             if player.score >= schanzenshop_rockerflasche_price: #type:ignore -> Exception
                 player.score -= schanzenshop_rockerflasche_price #type:ignore -> Exception
-                schanzenshop_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_INCR
+                self.schanzenshop_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_INCR
 
                 # TODO Add the Rockerflasche-Effect
                 player.isRocker = True
