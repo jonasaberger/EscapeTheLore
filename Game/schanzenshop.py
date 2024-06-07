@@ -23,8 +23,8 @@ class Schanzenshop(pygame.sprite.Sprite):
         self.hitbox.y += screen_scroll[1]
 
     def draw(self,surface):
-        pygame.draw.rect(surface,constants.WHITE,self.rect,1)
-        pygame.draw.rect(surface,constants.RED,self.hitbox,1)
+        # pygame.draw.rect(surface,constants.WHITE,self.rect,1)
+        # pygame.draw.rect(surface,constants.RED,self.hitbox,1)
         surface.blit(self.tile_texture,self.rect)
 
     def drawInterface(self,screen,score_coin,schanzenshop_images,item_images,screen_scroll,player,coin_fx,heal_fx,pizza_fx,brisn_fx,draw_text,scale_img):

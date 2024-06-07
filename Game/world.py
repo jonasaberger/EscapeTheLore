@@ -48,8 +48,9 @@ class World():
          self.schanzenshop = schanzenshop
          tile_data[0] = tile_list[0]
 
-        # Y-TILE
+        # YAG-TILE
         elif tile == 57:
+          
           tile_data[0] = tile_list[0]
 
         # ROCKER-ABERGA

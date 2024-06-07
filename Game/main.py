@@ -357,8 +357,6 @@ while run:
                     raise Exception('Player is None!')
 
                 # Move Player Method
-
-
                 screen_scroll, level_complete = player.move(dx,dy,world.obstacle_tiles,world.exit_tile)
                 # Update the Player
                 player.update(updatedAction)
