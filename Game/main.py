@@ -50,6 +50,7 @@ brisn_boost = 0
 temp_potion_price = constants.SHOP_POTION_BASE
 temp_brisn_price = constants.SHOP_BRISN_BASE
 temp_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_BASE
+temp_rocker = False
 
 # Helper Function to scale images
 def scale_img(image, scale):
@@ -470,6 +471,7 @@ while run:
                     temp_hp = player.health
                     temp_score = player.score
                     brisn_boost = player.damage_boost
+                    temp_rocker = player.isRocker
 
                     if world.schanzenshop != None:
                         temp_potion_price = world.schanzenshop.schanzenshop_potion_price
@@ -494,7 +496,7 @@ while run:
                     player.damage_boost = brisn_boost
                     enemy_list = world.enemy_list
                     score_coin = Item(constants.SCREEN_WIDTH - 160, 26.5, 0, item_images[0], True)
-
+                    player.isRocker = temp_rocker
                     for item in world.item_list:
                         item_group.add(item)
 
