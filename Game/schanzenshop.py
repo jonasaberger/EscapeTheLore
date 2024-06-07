@@ -42,7 +42,6 @@ class Schanzenshop(pygame.sprite.Sprite):
         schanzenshop_rockerflasche = Button(812,546,scale_img(item_images[4],5))
         schanzenshop_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_BASE
 
-
         # Draw the prices
         draw_text(f"{self.schanzenshop_potion_price}",constants.MAIN_FONT,constants.WHITE,252,550)
         draw_text(f"{self.schanzenshop_brisn_price}",constants.MAIN_FONT,constants.WHITE,580, 550)
@@ -57,8 +56,8 @@ class Schanzenshop(pygame.sprite.Sprite):
                 self.schanzenshop_potion_price += constants.SHOP_POTION_INCR
                 player.health += constants.POTION_HEAL #type:ignore -> Exception
 
-                if pygame.mouse.get_pressed()[0] == False:
-                    self.buttonClicked = False
+        if pygame.mouse.get_pressed()[0] == False:
+            self.buttonClicked = False
 
         # Brisn Logik
         if schanzenshop_brisn.draw(screen) and self.buttonClicked != True:
@@ -72,8 +71,8 @@ class Schanzenshop(pygame.sprite.Sprite):
                 player.damage_boost += constants.BRISN_ATTACK_BOOST #type:ignore -> Exception
                 player.health -= constants.BRISN_DAMAGE #type:ignore -> Exception
 
-            if pygame.mouse.get_pressed()[0] == False:
-                self.buttonClicked = False
+        if pygame.mouse.get_pressed()[0] == False:
+            self.buttonClicked = False
 
         # Rocker-Flasche Logik
         if schanzenshop_rockerflasche.draw(screen) and self.buttonClicked != True:
@@ -85,8 +84,8 @@ class Schanzenshop(pygame.sprite.Sprite):
 
                 # TODO Add the Rockerflasche-Effect
 
-            if pygame.mouse.get_pressed()[0] == False:
-                self.buttonClicked = False
+        if pygame.mouse.get_pressed()[0] == False:
+            self.buttonClicked = False
         
 
 
