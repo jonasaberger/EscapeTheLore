@@ -473,6 +473,7 @@ while run:
                     # Save the hp and score
                     temp_hp = player.health
                     temp_score = player.score
+                    brisn_boost = player.damage_boost
 
                     level += 1
                     world_data = reset_level()
@@ -489,6 +490,7 @@ while run:
                         raise Exception('Player is None!')
                     player.health = temp_hp
                     player.score = temp_score
+                    player.damage_boost = brisn_boost
                     enemy_list = world.enemy_list
                     score_coin = Item(constants.SCREEN_WIDTH - 160, 26.5, 0, item_images[0], True)
 
