@@ -19,7 +19,7 @@ class World():
     self.schanzenshop = None
 
   #TODO: Adjust Maps to 150x150
-  def process_data(self, data, tile_list,item_images, mob_animations, schanzenshop_images,exit_images,boss_death_sound,boss_hurt_sound):
+  def process_data(self, data, tile_list,item_images, mob_animations, schanzenshop_images,exit_images,boss_death_sound):
     self.exit_images = exit_images
     self.level_length = len(data)
     # Iterate through every single value in level data file
@@ -50,7 +50,7 @@ class World():
 
         # YAG-TILE
         elif tile == 57:
-          ilogyag = Character(image_x,image_y,constants.IGOL_HEALTH,mob_animations,3,constants.IGOL_WIDTH,constants.IGOL_HEIGHT,True,boss_death_sound,boss_hurt_sound)
+          ilogyag = Character(image_x,image_y,constants.IGOL_HEALTH,mob_animations,3,constants.IGOL_WIDTH,constants.IGOL_HEIGHT,True,boss_death_sound)
           self.enemy_list.append(ilogyag)
           tile_data[0] = tile_list[0]
 

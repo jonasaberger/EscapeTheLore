@@ -5,7 +5,7 @@ import math
 
 class Character():
 
-    def __init__(self,x,y,health,animation_list, mob_type,width,height,boss,boss_death_sound = None, boss_hurt_sound = None):
+    def __init__(self,x,y,health,animation_list, mob_type,width,height,boss,boss_death_sound = None):
         self.score = 0
         self.mob_type = mob_type
         self.health = health
@@ -17,7 +17,6 @@ class Character():
         self.updated_time = pygame.time.get_ticks()
         self.isRocker = False
         self.boss_death_sound = boss_death_sound
-        self.boss_hurt_sound = boss_hurt_sound
 
         self.hit = False
         self.damage_boost = 0
@@ -199,8 +198,6 @@ class Character():
                 self.last_hit = pygame.time.get_ticks()
                 self.stunned = True
                 self.update(updatedAction)
-                if self.boss:
-                    self.boss_hurt_sound.play()
             else:
                 # Update animation based on movement direction
                 self.update(updatedAction)
