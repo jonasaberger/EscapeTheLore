@@ -13,6 +13,7 @@ class Character():
         self.frame_index = 0
         self.action = 0 # 0 = Idle | 1 = Down | 2 = Up | 3 = Right | 4 = Left
         self.updated_time = pygame.time.get_ticks()
+        self.isRocker = False
 
         self.hit = False
         self.damage_boost = 0

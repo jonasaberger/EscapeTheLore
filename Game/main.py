@@ -27,7 +27,7 @@ pygame.display.set_caption("Escape The Lore")
 clock = pygame.time.Clock()
 
 # Define game variables
-level = 1
+level = 2
 screen_scroll = [0,0]
 start_game = False
 pause_game = False
@@ -68,6 +68,10 @@ coin_fx = pygame.mixer.Sound("Game/assets/audio/coin.wav")
 coin_fx.set_volume(0.6)
 heal_fx = pygame.mixer.Sound("Game/assets/audio/heal.wav")
 heal_fx.set_volume(0.6)
+pizza_fx = pygame.mixer.Sound("Game/assets/audio/pizza_consume.mp3")
+pizza_fx.set_volume(0.6)
+brisn_fx = pygame.mixer.Sound("Game/assets/audio/brisn_consume.mp3")
+brisn_fx.set_volume(0.6)
 
 # Function for loading all the sprite images -> Function for better readability
 def getImages():
@@ -315,14 +319,18 @@ while run:
                     musicPlayer.loadMusic("Game/assets/audio/schanzenshop_theme.wav")
                     musicPlayer.toggleMusic()
 
-                world.schanzenshop.drawInterface(screen,score_coin,schanzenshop_images,item_images,screen_scroll,player,coin_fx,heal_fx,draw_text,scale_img)
-                    
+                world.schanzenshop.drawInterface(screen,score_coin,schanzenshop_images,item_images,screen_scroll,player,coin_fx,heal_fx,pizza_fx,brisn_fx,draw_text,scale_img) #type:ignore -> Exception 
             else:
                 shopMusic = False
-                if not mainMusic:
+                if not mainMusic and player.isRocker == False: #type:ignore -> Exception
                     mainMusic = True
                     musicPlayer.toggleMusic()
                     musicPlayer.loadMusic("Game/assets/audio/background_music.wav")
+                    musicPlayer.toggleMusic()
+                elif not mainMusic and player.isRocker == True: #type:ignore -> Exception
+                    mainMusic = True
+                    musicPlayer.toggleMusic()
+                    musicPlayer.loadMusic("Game/assets/audio/rocker_theme.mp3")
                     musicPlayer.toggleMusic()
                 screen.fill(constants.BACKGROUND)
             # Calculate Player Movement
@@ -377,7 +385,7 @@ while run:
                                 damage_text_group.add(damage_text)
                                 hit_fx.play()
                     damage_text_group.update(screen_scroll)
-                    item_group.update(screen_scroll,player, coin_fx, heal_fx)
+                    item_group.update(screen_scroll,player, coin_fx, heal_fx, pizza_fx,brisn_fx)
                 if world.schanzenshop != None:
                     world.schanzenshop.update(screen_scroll)
                 # Game over
@@ -404,7 +412,7 @@ while run:
                             touchShop = False
                 draw_info()
                 score_coin.draw(screen)
-                score_coin.update(screen_scroll,player,coin_fx,heal_fx)
+                score_coin.update(screen_scroll,player,coin_fx,heal_fx,pizza_fx,brisn_fx)
                   
                 # Check if game over
                 if player.health == 0:

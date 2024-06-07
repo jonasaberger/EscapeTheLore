@@ -27,10 +27,10 @@ class Schanzenshop(pygame.sprite.Sprite):
         pygame.draw.rect(surface,constants.RED,self.hitbox,1)
         surface.blit(self.tile_texture,self.rect)
 
-    def drawInterface(self,screen,score_coin,schanzenshop_images,item_images,screen_scroll,player,coin_fx,heal_fx,draw_text,scale_img):
+    def drawInterface(self,screen,score_coin,schanzenshop_images,item_images,screen_scroll,player,coin_fx,heal_fx,pizza_fx,brisn_fx,draw_text,scale_img):
         screen.blit(schanzenshop_images[1], (0,50))
         score_coin.draw(screen)
-        score_coin.update(screen_scroll,player,coin_fx,heal_fx)
+        score_coin.update(screen_scroll,player,coin_fx,heal_fx,pizza_fx,brisn_fx)
         
         # Drachenshop buttons
         schanzenshop_potion = Button(210,585,scale_img(item_images[1],3))
@@ -55,6 +55,7 @@ class Schanzenshop(pygame.sprite.Sprite):
                 player.score -= schanzenshop_potion_price #type:ignore -> Exception
                 self.schanzenshop_potion_price += constants.SHOP_POTION_INCR
                 player.health += constants.POTION_HEAL #type:ignore -> Exception
+                heal_fx.play()
 
         if pygame.mouse.get_pressed()[0] == False:
             self.buttonClicked = False
@@ -66,6 +67,7 @@ class Schanzenshop(pygame.sprite.Sprite):
             if player.score >= schanzenshop_brisn_price: #type:ignore -> Exception
                 player.score -= schanzenshop_brisn_price #type:ignore -> Exception
                 self.schanzenshop_brisn_price += constants.SHOP_BRISN_INCR
+                brisn_fx.play()
 
                 # Add the Brisn-Effect
                 player.damage_boost += constants.BRISN_ATTACK_BOOST #type:ignore -> Exception
@@ -83,6 +85,7 @@ class Schanzenshop(pygame.sprite.Sprite):
                 schanzenshop_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_INCR
 
                 # TODO Add the Rockerflasche-Effect
+                player.isRocker = True
 
         if pygame.mouse.get_pressed()[0] == False:
             self.buttonClicked = False
