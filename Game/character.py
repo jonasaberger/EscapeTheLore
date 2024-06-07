@@ -15,6 +15,7 @@ class Character():
         self.updated_time = pygame.time.get_ticks()
 
         self.hit = False
+        self.damage_boost = 0
         self.last_hit = pygame.time.get_ticks() # Timer for when player received last hit
         self.stunned = False
         self.pizzaCount = 0

@@ -40,6 +40,9 @@ class Item(pygame.sprite.Sprite):
             
             elif self.item_type == 3:
                 player.health -= constants.BRISN_DAMAGE
+                player.damage_boost += constants.BRISN_ATTACK_BOOST
+                self.kill()
+                
                 
             self.kill()
 

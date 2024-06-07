@@ -27,7 +27,7 @@ pygame.display.set_caption("Escape The Lore")
 clock = pygame.time.Clock()
 
 # Define game variables
-level = 1
+level = 3
 screen_scroll = [0,0]
 start_game = False
 pause_game = False
@@ -341,8 +341,6 @@ while run:
                         schanzenshop_potion_price += constants.SHOP_POTION_INCR
                         player.health += constants.POTION_HEAL
 
-                        # Add the Potion-Effect
-
                 if pygame.mouse.get_pressed()[0] == False:
                     buttonClicked = False
 
@@ -355,7 +353,7 @@ while run:
                         schanzenshop_brisn_price += constants.SHOP_BRISN_INCR
 
                         # Add the Brisn-Effect
-                        brisn_boost += constants.BRISN_ATTACK_BOOST
+                        player.damage_boost += constants.BRISN_ATTACK_BOOST
                         player.health -= constants.BRISN_DAMAGE #type:ignore -> Exception
 
                 if pygame.mouse.get_pressed()[0] == False:
@@ -425,7 +423,7 @@ while run:
                         pencil_group.add(pencil)
                         shot_fx.play()
                     for pencil in pencil_group:
-                        damage, damage_pos = pencil.update(screen_scroll, world.enemy_list,brisn_boost)
+                        damage, damage_pos = pencil.update(screen_scroll, world.enemy_list,player.damage_boost)
                         if damage != 0:
                             if damage == 14:
                                 damage_text = DamageText(damage_pos.centerx, damage_pos.y, str(damage), constants.YELLOW)
