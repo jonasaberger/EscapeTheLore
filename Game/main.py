@@ -27,7 +27,7 @@ pygame.display.set_caption("Escape The Lore")
 clock = pygame.time.Clock()
 
 # Define game variables
-level = 3
+level = 1
 screen_scroll = [0,0]
 start_game = False
 pause_game = False
