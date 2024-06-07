@@ -276,15 +276,7 @@ shopMusic = False
 mainMusic = True
 mouseDown = False
 
-# Drachenshop buttons
-schanzenshop_potion = Button(210,585,scale_img(item_images[1],3))
-schanzenshop_potion_price = constants.SHOP_POTION_BASE
 
-schanzenshop_brisn = Button(538,585,scale_img(item_images[3],1.5))
-schanzenshop_brisn_price = constants.SHOP_BRISN_BASE
-
-schanzenshop_rockerflasche = Button(812,546,scale_img(item_images[4],5))
-schanzenshop_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_BASE
 
 # Main-Game Loop
 run = True
@@ -322,56 +314,9 @@ while run:
                     musicPlayer.toggleMusic()
                     musicPlayer.loadMusic("Game/assets/audio/schanzenshop_theme.wav")
                     musicPlayer.toggleMusic()
+
+                world.schanzenshop.drawInterface(screen,score_coin,schanzenshop_images,item_images,screen_scroll,player,coin_fx,heal_fx,draw_text,scale_img)
                     
-                screen.blit(schanzenshop_images[1], (0,50))
-                score_coin.draw(screen)
-                score_coin.update(screen_scroll,player,coin_fx,heal_fx)
-
-                # Draw the prices
-                draw_text(f"{schanzenshop_potion_price}",constants.MAIN_FONT,constants.WHITE,252,550)
-                draw_text(f"{schanzenshop_brisn_price}",constants.MAIN_FONT,constants.WHITE,580, 550)
-                draw_text(f"{schanzenshop_rockerflasche_price}",constants.MAIN_FONT,constants.WHITE,887, 550)
-
-                # Lore-Getränk Logik
-                if schanzenshop_potion.draw(screen) and buttonClicked != True:
-                    buttonClicked = True
-                    print("First Item Clicked")
-                    if player.score >= schanzenshop_potion_price: #type:ignore -> Exception
-                        player.score -= schanzenshop_potion_price #type:ignore -> Exception
-                        schanzenshop_potion_price += constants.SHOP_POTION_INCR
-                        player.health += constants.POTION_HEAL #type:ignore -> Exception
-
-                if pygame.mouse.get_pressed()[0] == False:
-                    buttonClicked = False
-
-                # Brisn Logik
-                if schanzenshop_brisn.draw(screen) and buttonClicked != True:
-                    buttonClicked = True
-                    print("Second Item Bought")
-                    if player.score >= schanzenshop_brisn_price: #type:ignore -> Exception
-                        player.score -= schanzenshop_brisn_price #type:ignore -> Exception
-                        schanzenshop_brisn_price += constants.SHOP_BRISN_INCR
-
-                        # Add the Brisn-Effect
-                        player.damage_boost += constants.BRISN_ATTACK_BOOST #type:ignore -> Exception
-                        player.health -= constants.BRISN_DAMAGE #type:ignore -> Exception
-
-                if pygame.mouse.get_pressed()[0] == False:
-                    buttonClicked = False
-
-                # Rocker-Flasche Logik
-                if schanzenshop_rockerflasche.draw(screen) and buttonClicked != True:
-                    buttonClicked = True
-                    print("Third Item Bought")
-                    if player.score >= schanzenshop_rockerflasche_price: #type:ignore -> Exception
-                        player.score -= schanzenshop_rockerflasche_price #type:ignore -> Exception
-                        schanzenshop_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_INCR
-
-                        # TODO Add the Rockerflasche-Effect
-
-                if pygame.mouse.get_pressed()[0] == False:
-                    buttonClicked = False
-
             else:
                 shopMusic = False
                 if not mainMusic:
