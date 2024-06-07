@@ -79,6 +79,8 @@ brisn_fx = pygame.mixer.Sound("Game/assets/audio/brisn_consume.mp3")
 brisn_fx.set_volume(0.6)
 igolDeath_fx = pygame.mixer.Sound("Game/assets/audio/igol_death.mp3")
 igolDeath_fx.set_volume(1)
+igolHurt_fx = pygame.mixer.Sound("Game/assets/audio/igol_hurt.mp3")
+igolHurt_fx.set_volume(1)
 # Function for loading all the sprite images -> Function for better readability
 def getImages():
     # Load the different collectables Images
@@ -292,7 +294,7 @@ with open(f"Game/levels/{level}.csv", newline="") as csvfile:
             world_data[x][y] = int(tile)
 
 world = World()
-world.process_data(world_data,tile_images,item_images, mob_animations, schanzenshop_images,exit_images,igolDeath_fx)
+world.process_data(world_data,tile_images,item_images, mob_animations, schanzenshop_images,exit_images,igolDeath_fx,igolHurt_fx)
 
 # Create Player + Weapon
 player = world.player
@@ -494,7 +496,7 @@ while run:
                             for y, tile in enumerate(row):
                                 world_data[x][y] = int(tile)
                     world = World()
-                    world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images,exit_images,igolDeath_fx)
+                    world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images,exit_images,igolDeath_fx,igolHurt_fx)
                     player = world.player
                     if player == None:
                         raise Exception('Player is None!')
