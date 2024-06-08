@@ -37,6 +37,7 @@ pause_game = False
 start_intro = False
 game_over = False
 restart_available = False
+end_screen = False
 
 # Define Player movement variables
 dx = 0
@@ -328,6 +329,7 @@ for item in world.item_list:
 start_button = Button(630, 530, button_images[0]) #constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150
 exit_button = Button(665,630, button_images[1]) #constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT // 2 + 50
 exit_pause_button = Button(constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT // 2 + 50, button_images[1])
+exit_end_button = Button(constants.SCREEN_WIDTH //2 - 110, constants.SCREEN_HEIGHT-100,button_images[1])
 restart_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, button_images[2])
 resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, button_images[3])
 
@@ -364,7 +366,10 @@ while run:
                 if resume_button.draw(screen):
                     pause_game = False
             if exit_pause_button.draw(screen):
-                run = False   
+                run = False 
+        elif end_screen == True:
+            if exit_end_button.draw(screen):
+                run = False  
         else:
             if shopActive == True:
                 if not shopMusic:
@@ -529,7 +534,8 @@ while run:
                             world.schanzenshop.updatePrices(temp_potion_price,temp_brisn_price,temp_rockerflasche_price)
                     # Complete Last Level Mechanics
                     elif last_exit_active:
-                        game_over = True
+                        end_screen = True
+
                         # Play correct End-Screen "Cutscene"
                         musicPlayer.stopMusic()
                         # Good-Ending
@@ -556,14 +562,11 @@ while run:
           intro_fade.fade_counter = 0
 
     # show deathfade
-    if game_over == True and not last_exit_active:
+    if game_over == True:
         if death_fade.fade():
           pause_game = True
           game_over = False
           death_fade.fade_counter = 0
-    elif game_over == True and last_exit_active:
-        restart_available = True
-        pause_game = True
 
 
     # Event Handler
