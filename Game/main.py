@@ -81,8 +81,8 @@ pizza_fx = pygame.mixer.Sound("Game/assets/audio/pizza_consume.mp3")
 pizza_fx.set_volume(0.6)
 brisn_fx = pygame.mixer.Sound("Game/assets/audio/brisn_consume.mp3")
 brisn_fx.set_volume(0.6)
-igolDeath_fx = pygame.mixer.Sound("Game/assets/audio/igol_death.mp3")
-igolDeath_fx.set_volume(1)
+ilogDeath_fx = pygame.mixer.Sound("Game/assets/audio/ilog_death.mp3")
+ilogDeath_fx.set_volume(1)
 
 # Function for loading all the sprite images -> Function for better readability
 def getImages():
@@ -169,7 +169,6 @@ def draw_info():
             else:
                 screen.blit(heart_images[0], (10 + i * 50, 0))
     
-        
         # Display level
         draw_text(f"LEVEL: {constants.LEVEL_NAMES[level-1]}", constants.MAIN_FONT,constants.WHITE,constants.SCREEN_WIDTH/2,15)
         
@@ -194,7 +193,6 @@ def reset_level():
 # Mob Types -> Different Types of Mobs and enemies -> Function for better readability
 def getMobAnimations():
     mob_animations = []
-    rock_animations = []
     for mob in constants.MOB_TYPES:
         # Master Animation List -> contains all animations
         animation_list = []
@@ -237,7 +235,7 @@ def getMobAnimations():
         
         if mob != "Player":
             death_animation_list = []
-            if mob != "Igol":
+            if mob != "Ilog":
                 for i in range(8):
                     player_image = pygame.image.load(f"Game/assets/images/characters/{mob}/Death/{i}.png").convert_alpha()
                     player_image = scale_img(player_image, constants.GAME_SCALE)
@@ -303,7 +301,7 @@ with open(f"Game/levels/{level}.csv", newline="") as csvfile:
             world_data[x][y] = int(tile)
 
 world = World()
-world.process_data(world_data,tile_images,item_images, mob_animations, schanzenshop_images,exit_images,igolDeath_fx)
+world.process_data(world_data,tile_images,item_images, mob_animations, schanzenshop_images,exit_images,ilogDeath_fx)
 
 # Create Player + Weapon
 player = world.player
@@ -517,7 +515,7 @@ while run:
                                 for y, tile in enumerate(row):
                                     world_data[x][y] = int(tile)
                         world = World()
-                        world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images,exit_images,igolDeath_fx)
+                        world.process_data(world_data, tile_images, item_images, mob_animations,schanzenshop_images,exit_images,ilogDeath_fx)
                         player = world.player
                         if player == None:
                             raise Exception('Player is None!')

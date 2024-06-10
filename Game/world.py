@@ -50,7 +50,7 @@ class World():
 
         # YAG-TILE
         elif tile == 57:
-          ilogyag = Character(image_x,image_y,constants.IGOL_HEALTH,mob_animations,3,constants.IGOL_WIDTH,constants.IGOL_HEIGHT,True,boss_death_sound)
+          ilogyag = Character(image_x,image_y,constants.ILOG_HEALTH,mob_animations,3,constants.ILOG_WIDTH,constants.ILOG_HEIGHT,True,boss_death_sound)
           self.enemy_list.append(ilogyag)
           tile_data[0] = tile_list[0]
 
