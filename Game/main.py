@@ -364,19 +364,20 @@ while run:
             if exit_end_button.draw(screen):
                 run = False  
         else:
-            try:
-                if world.schanzenshop == None:
-                    raise Exception('World.schanzenshop is None!')
-                if shopActive == True:
+            if shopActive == True:
+                try:
+                    if world.schanzenshop == None:
+                        if constants.LEVEL_NAMES[level-1] == "GANG":
+                            raise Exception('Schanzenshop is None but should be there!')
                     if not shopMusic:
                         shopMusic = True
                         mainMusic = False
                         musicPlayer.toggleMusic()
                         musicPlayer.loadMusic("Game/assets/audio/schanzenshop_theme.wav")
                         musicPlayer.toggleMusic()
-                    world.schanzenshop.drawInterface(screen,score_coin,schanzenshop_images,item_images,screen_scroll,player,coin_fx,heal_fx,pizza_fx,brisn_fx,draw_text,scale_img)
-            except Exception as error:
-                print(error)
+                        world.schanzenshop.drawInterface(screen,score_coin,schanzenshop_images,item_images,screen_scroll,player,coin_fx,heal_fx,pizza_fx,brisn_fx,draw_text,scale_img) #type:ignore
+                except Exception as error:
+                    print(error)
             else:
                 try:
                     # Check if player was defined correctly and is not None
