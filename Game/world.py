@@ -18,7 +18,6 @@ class World():
     self.totalPizzas = 0
     self.schanzenshop = None
 
-  #TODO: Adjust Maps to 150x150
   def process_data(self, data, tile_list,item_images, mob_animations, schanzenshop_images,exit_images,boss_death_sound):
     self.exit_images = exit_images
     self.level_length = len(data)

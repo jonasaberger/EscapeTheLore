@@ -63,7 +63,6 @@ def scale_img(image, scale):
     return pygame.transform.scale(image, (image_width * scale, image_heigth * scale))
 
 #Function for loading music and soundfx
-
 # Music
 musicPlayer = Music("Game/assets/audio/background_music.wav",0.5)
 musicPlayer.toggleMusic()
@@ -324,8 +323,8 @@ for item in world.item_list:
     item_group.add(item)
 
 # Create button
-start_button = Button(630, 530, button_images[0]) #constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150
-exit_button = Button(665,630, button_images[1]) #constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT // 2 + 50
+start_button = Button(630, 530, button_images[0]) # constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150
+exit_button = Button(665,630, button_images[1]) # constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT // 2 + 50
 exit_pause_button = Button(constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT // 2 + 50, button_images[1])
 exit_end_button = Button(constants.SCREEN_WIDTH //2 - 110, constants.SCREEN_HEIGHT-100,button_images[1])
 restart_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, button_images[2])
@@ -358,8 +357,7 @@ while run:
                 if restart_button.draw(screen):
                    restart_available = False
                    subprocess.Popen(['python','Game/main.py'])
-                   run = False
-                              
+                   run = False        
             else:
                 if resume_button.draw(screen):
                     pause_game = False
@@ -376,7 +374,6 @@ while run:
                     musicPlayer.toggleMusic()
                     musicPlayer.loadMusic("Game/assets/audio/schanzenshop_theme.wav")
                     musicPlayer.toggleMusic()
-
                 world.schanzenshop.drawInterface(screen,score_coin,schanzenshop_images,item_images,screen_scroll,player,coin_fx,heal_fx,pizza_fx,brisn_fx,draw_text,scale_img) #type:ignore -> Exception 
             else:
                 shopMusic = False
@@ -569,11 +566,9 @@ while run:
 
     # Event Handler
     for event in pygame.event.get():
-
         # Quit Game
         if event.type == pygame.QUIT:
             run = False
-        
         # Take Keyboard Input
         # Key-Press
         if event.type == pygame.KEYDOWN:
