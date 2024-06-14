@@ -110,8 +110,8 @@ class Fireball(pygame.sprite.Sprite):
     self.rect = self.image.get_rect()
     self.rect.center = (x, y)
     #calculate the horizontal and vertical speeds based on the angle
-    self.dx = math.cos(math.radians(self.angle)) * constants.FIREBALL_SPEED
-    self.dy = -(math.sin(math.radians(self.angle)) * constants.FIREBALL_SPEED)#-ve because pygame y coordiate increases down the screen
+    self.dx = math.cos(math.radians(self.angle)) * constants.PUCK_SPEED
+    self.dy = -(math.sin(math.radians(self.angle)) * constants.PUCK_SPEED)#-ve because pygame y coordiate increases down the screen
 
 
   def update(self, screen_scroll, player):
