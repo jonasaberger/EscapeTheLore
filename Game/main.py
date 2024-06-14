@@ -24,7 +24,7 @@ pygame.display.set_icon(pygame.image.load("Game/assets/images/GUI/icon.png"))
 clock = pygame.time.Clock()
 
 # Define game variables
-level = 11
+level = 1
 last_exit_active = False
 
 screen_scroll = [0,0]
