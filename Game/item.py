@@ -44,8 +44,6 @@ class Item(pygame.sprite.Sprite):
                 player.damage_boost += constants.BRISN_ATTACK_BOOST
                 brisn_fx.play()
                 self.kill()
-                
-                
             self.kill()
 
         #handle animation

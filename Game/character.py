@@ -131,7 +131,7 @@ class Character():
          if self.mob_type == 2:
              return constants.ROCKER_SPEED,constants.ROCKER_RANGE,constants.ROCKER_DAMAGE,constants.ROCKER_STUN_COOLDOWN
          if self.mob_type == 3:
-             return constants.IGOL_SPEED,constants.IGOL_RANGE,constants.IGOL_DAMAGE,constants.IGOL_STUN_COOLDOWN
+             return constants.ILOG_SPEED,constants.ILOG_RANGE,constants.ILOG_DAMAGE,constants.ILOG_STUN_COOLDOWN
 
     # AI for chasing the Player
     def ai(self, screen, player, obstacle_tiles, screen_scroll):
@@ -149,7 +149,7 @@ class Character():
 
         # Creating line of sight
         line_of_sight = ((self.rect.centerx, self.rect.centery), (player.rect.centerx, player.rect.centery))
-        pygame.draw.line(screen,constants.RED,self.rect.center,player.rect.center)
+        # pygame.draw.line(screen,constants.RED,self.rect.center,player.rect.center)
 
         # Check if the line_of_sight collides with an obstacle_tile
         for obstacle in obstacle_tiles:
@@ -207,7 +207,7 @@ class Character():
                 self.stunned = False
 
             puck_cooldown = constants.PUCK_COOLDOWN
-            puck_image = pygame.image.load("Game/assets/images/characters/Igol/Weapon/puck.png")
+            puck_image = pygame.image.load("Game/assets/images/characters/Ilog/Weapon/puck.png")
             if self.boss:
                 if distance_to_player < 500:
                     if pygame.time.get_ticks() - self.last_hit >= puck_cooldown:
@@ -215,7 +215,7 @@ class Character():
                         self.last_hit = pygame.time.get_ticks()
         elif self.death_animation == False:
             if self.boss:
-                self.boss_death_sound.play()
+                self.boss_death_sound.play() #type:ignore -> Exception
 
 
             if pygame.time.get_ticks() - self.updated_time > constants.ANIMATION_COOLDOWN:

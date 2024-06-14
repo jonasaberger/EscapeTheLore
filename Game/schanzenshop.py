@@ -85,7 +85,6 @@ class Schanzenshop(pygame.sprite.Sprite):
                 player.score -= self.schanzenshop_rockerflasche_price #type:ignore -> Exception
                 self.schanzenshop_rockerflasche_price = constants.SHOP_ROCKERFLASCHE_INCR
 
-                # TODO Add the Rockerflasche-Effect
                 player.isRocker = True
 
         if pygame.mouse.get_pressed()[0] == False:
