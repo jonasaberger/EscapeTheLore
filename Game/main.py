@@ -13,6 +13,9 @@ from world import World
 from item import Item
 import csv
 
+# ESCAPE THE LORE 1.0
+# Aberger, Haslinger, Hechenberger, Winkler
+
 # mixer.init()
 pygame.init()
 
